@@ -104,8 +104,15 @@
         field.setAttribute('aria-invalid', 'false');
       });
 
+      var nameValue = contactForm.elements.name ? contactForm.elements.name.value.trim() : '';
+      var emailValue = contactForm.elements.email ? contactForm.elements.email.value.trim() : '';
+      var messageValue = contactForm.elements.message ? contactForm.elements.message.value.trim() : '';
+      var mailtoLink = 'mailto:info@company.com?subject=' + encodeURIComponent('New message from ' + nameValue) + '&body=' + encodeURIComponent('Name: ' + nameValue + '\nEmail: ' + emailValue + '\n\nMessage:\n' + messageValue);
+
+      window.location.href = mailtoLink;
+
       if (success) {
-        success.textContent = 'Thank you! We will get back to you soon.';
+        success.textContent = 'Your email app should open with your message ready to send.';
       }
     });
 
