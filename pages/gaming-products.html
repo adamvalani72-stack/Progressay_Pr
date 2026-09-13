@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; style-src 'self' https://cdn.jsdelivr.net https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com; img-src 'self' data:; script-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-ancestors 'none'"
+    />
+    <meta name="referrer" content="no-referrer" />
+    <meta
+      http-equiv="Permissions-Policy"
+      content="geolocation=(), microphone=(), camera=(), payment=()"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"
+      referrerpolicy="no-referrer"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Lato:400,700|Raleway:300,400,500,600,700,800,900"
+      rel="stylesheet"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="../styles.css" />
+    <title>Gaming Products | Gaming Hub</title>
+    <meta
+      name="description"
+      content="Explore premium gaming products, accessories, and gear at Gaming Hub."
+    />
+    <style>
+      body {
+        background: #f5f7fb;
+      }
+
+      .products-page {
+        padding: 80px 0 60px;
+      }
+
+      .page-hero {
+        background: linear-gradient(135deg, #0b1020, #1b2340 55%, #223767);
+        color: #fff;
+        padding: 90px 0 60px;
+      }
+
+      .page-hero .container {
+        max-width: 1240px;
+      }
+
+      .hero-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 18px;
+        flex-wrap: wrap;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: rgba(148, 163, 184, 0.14);
+        border: 1px solid rgba(148, 163, 184, 0.3);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #e2e8f0;
+      }
+
+      .hero-badges {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .hero-badges span {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 999px;
+        padding: 8px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #e2e8f0;
+      }
+
+      .page-hero h1 {
+        margin: 0 0 15px;
+        font-size: clamp(2.5rem, 4vw, 4rem);
+        color: #fff;
+        letter-spacing: -0.05em;
+      }
+
+      .page-hero p {
+        font-size: 18px;
+        line-height: 1.7;
+        color: rgba(255,255,255,0.82);
+        max-width: 760px;
+        margin: 0 auto;
+      }
+
+      .shop-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin: 24px 0 18px;
+        flex-wrap: wrap;
+      }
+
+      .filter-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .chip {
+        border: 1px solid #cbd5e1;
+        background: #fff;
+        color: #334155;
+        border-radius: 999px;
+        padding: 8px 14px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .chip.active {
+        background: linear-gradient(135deg, #2563eb, #7c3aed);
+        color: #fff;
+        border-color: transparent;
+      }
+
+      .meta-row {
+        display: flex;
+        gap: 14px;
+        align-items: center;
+        flex-wrap: wrap;
+        color: #475569;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .meta-row select {
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        background: #fff;
+        color: #0f172a;
+        padding: 8px 12px;
+        font: inherit;
+      }
+
+      .product-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 2.6fr) minmax(280px, 0.9fr);
+        gap: 28px;
+        align-items: start;
+      }
+
+      .product-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 30px;
+        margin-top: 16px;
+      }
+
+      .product-card {
+        background: #fff;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 12px 30px rgba(16, 24, 44, 0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid rgba(148, 163, 184, 0.16);
+      }
+
+      .product-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 42px rgba(16, 24, 44, 0.12);
+      }
+
+      .product-image-wrap {
+        position: relative;
+        background: #eff6ff;
+      }
+
+      .product-card img {
+        display: block;
+        width: 100%;
+        height: 260px;
+        object-fit: cover;
+      }
+
+      .product-badge {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        background: rgba(17, 24, 39, 0.85);
+        color: #fff;
+        border-radius: 999px;
+        padding: 7px 12px;
+        font-size: 11px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        font-weight: 700;
+      }
+
+      .product-card-body {
+        padding: 22px 20px 24px;
+      }
+
+      .product-topline {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .tag {
+        display: inline-block;
+        background: #eef2ff;
+        color: #3c4e9c;
+        border-radius: 999px;
+        padding: 6px 10px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .rating {
+        font-size: 13px;
+        color: #f59e0b;
+        font-weight: 700;
+      }
+
+      .product-card-body h3 {
+        margin: 0 0 12px;
+        font-size: 22px;
+        line-height: 1.3;
+      }
+
+      .product-card-body p {
+        margin: 0 0 18px;
+        line-height: 1.6;
+        color: #4b5563;
+      }
+
+      .product-specs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 0 0 18px;
+        padding: 0;
+        list-style: none;
+      }
+
+      .product-specs li {
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        font-size: 11px;
+        color: #334155;
+        font-weight: 600;
+      }
+
+      .product-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .product-price {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+
+      .price {
+        font-size: 28px;
+        font-weight: 800;
+        color: #111827;
+        line-height: 1;
+      }
+
+      .old-price {
+        font-size: 13px;
+        color: #94a3b8;
+        text-decoration: line-through;
+      }
+
+      .stock {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        font-weight: 700;
+        color: #15803d;
+        background: #ecfdf5;
+        border: 1px solid #bbf7d0;
+        border-radius: 999px;
+        padding: 6px 10px;
+      }
+
+      .btn-custom {
+        background: linear-gradient(135deg, #2563eb, #7c3aed);
+        color: #fff;
+        border-radius: 10px;
+        padding: 10px 16px;
+        font-weight: 700;
+        transition: opacity 0.2s ease;
+      }
+
+      .btn-custom:hover {
+        opacity: 0.92;
+      }
+
+      .shop-benefits {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+        margin-top: 36px;
+      }
+
+      .benefit-box {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 18px 16px;
+        text-align: center;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      }
+
+      .benefit-box i {
+        font-size: 26px;
+        color: #2563eb;
+        display: block;
+        margin-bottom: 10px;
+      }
+
+      .benefit-box h4 {
+        margin: 0 0 6px;
+        font-size: 18px;
+      }
+
+      .benefit-box p {
+        margin: 0;
+        color: #475569;
+        font-size: 14px;
+      }
+
+      .cta-box {
+        margin-top: 50px;
+        padding: 30px 24px;
+        background: linear-gradient(135deg, #111827, #1f2a44);
+        border-radius: 20px;
+        color: #fff;
+        text-align: center;
+      }
+
+      .cta-box h3 {
+        color: #fff;
+        margin-bottom: 12px;
+      }
+
+      .cta-box p {
+        color: rgba(255,255,255,0.8);
+        margin-bottom: 20px;
+      }
+
+      .cart-panel {
+        position: sticky;
+        top: 90px;
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        padding: 22px 20px;
+        margin-top: 0;
+      }
+
+      .cart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+
+      .cart-header h3 {
+        margin: 0;
+      }
+
+      .cart-count {
+        background: #eef2ff;
+        color: #3730a3;
+        border-radius: 999px;
+        padding: 5px 10px;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .cart-items {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .cart-items li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 0;
+        border-bottom: 1px solid #e2e8f0;
+        font-size: 14px;
+        color: #334155;
+      }
+
+      .cart-items li:last-child {
+        border-bottom: none;
+      }
+
+      .remove-item {
+        border: none;
+        background: none;
+        color: #ef4444;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .cart-total {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 18px;
+        padding-top: 16px;
+        border-top: 1px solid #e2e8f0;
+        font-weight: 700;
+        color: #0f172a;
+      }
+
+      .cart-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .cart-actions .btn-custom {
+        flex: 1;
+        text-align: center;
+      }
+
+      .btn-secondary {
+        background: #e2e8f0;
+        color: #0f172a;
+        border-radius: 10px;
+        padding: 10px 16px;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+      }
+
+      .checkout-modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.72);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.2s ease;
+        z-index: 2000;
+      }
+
+      .checkout-modal.open {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .checkout-panel {
+        position: fixed;
+        top: 24px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: min(720px, calc(100% - 32px));
+        background: #fff;
+        border-radius: 22px;
+        box-shadow: 0 28px 60px rgba(15, 23, 42, 0.2);
+        padding: 24px;
+        max-height: calc(100vh - 48px);
+        overflow-y: auto;
+      }
+
+      .checkout-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+      }
+
+      .checkout-header h3 {
+        margin: 0;
+      }
+
+      .close-checkout {
+        border: none;
+        background: #f1f5f9;
+        color: #0f172a;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 20px;
+      }
+
+      .checkout-layout {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 24px;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+
+      .form-field.full {
+        grid-column: 1 / -1;
+      }
+
+      .form-field label {
+        font-size: 13px;
+        font-weight: 700;
+        color: #334155;
+      }
+
+      .form-field input,
+      .form-field select {
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        background: #fff;
+        padding: 12px 14px;
+        font: inherit;
+      }
+
+      .checkout-summary {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 18px;
+      }
+
+      .checkout-summary h4 {
+        margin: 0 0 12px;
+      }
+
+      .summary-items {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 16px;
+      }
+
+      .summary-items li {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 8px 0;
+        border-bottom: 1px solid #e2e8f0;
+        color: #334155;
+      }
+
+      .summary-total {
+        display: flex;
+        justify-content: space-between;
+        font-weight: 800;
+        font-size: 20px;
+        color: #0f172a;
+      }
+
+      .checkout-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 20px;
+      }
+
+      .checkout-success {
+        display: none;
+        margin-top: 18px;
+        background: #ecfdf5;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+        border-radius: 12px;
+        padding: 12px 16px;
+        font-weight: 700;
+      }
+
+      .checkout-success.visible {
+        display: block;
+      }
+
+      @media (max-width: 991px) {
+        .product-layout {
+          grid-template-columns: 1fr;
+        }
+
+        .product-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .shop-benefits {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 767px) {
+        .page-hero h1 {
+          font-size: 38px;
+        }
+
+        .product-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .shop-toolbar {
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav id="menu" class="site-nav">
+      <div class="container nav-inner">
+        <a class="nav-brand page-scroll" href="../index.html#page-top">
+          gaming hub
+        </a>
+        <button
+          type="button"
+          class="nav-toggle"
+          aria-expanded="false"
+          aria-controls="nav-links"
+        >
+          <span class="visually-hidden">Toggle navigation</span>
+          <span class="nav-toggle-bar"></span>
+          <span class="nav-toggle-bar"></span>
+          <span class="nav-toggle-bar"></span>
+        </button>
+        <div id="nav-links" class="nav-links">
+          <ul class="nav-list">
+            <li><a href="../index.html#features">Features</a></li>
+            <li><a href="../index.html#about">About</a></li>
+            <li><a href="../index.html#services">Services</a></li>
+            <li><a href="gaming-products.html">Products</a></li>
+            <li><a href="../index.html#portfolio">Gallery</a></li>
+            <li><a href="../index.html#testimonials">Testimonials</a></li>
+            <li><a href="../index.html#contact">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <header class="page-hero">
+      <div class="container text-center">
+        <div class="hero-top">
+          <span class="eyebrow">Trusted by 50k gamers</span>
+          <div class="hero-badges">
+            <span>Free delivery over £50</span>
+            <span>Secure checkout</span>
+            <span>30-day returns</span>
+          </div>
+        </div>
+        <h1>Gaming Products</h1>
+        <p>
+          Upgrade your setup with premium gear, performance accessories, and must-have essentials built for serious players.
+        </p>
+      </div>
+    </header>
+
+    <main class="products-page">
+      <div class="container">
+        <div class="shop-toolbar">
+          <div class="filter-row">
+            <button type="button" class="chip active">All products</button>
+            <button type="button" class="chip">Audio</button>
+            <button type="button" class="chip">Peripherals</button>
+            <button type="button" class="chip">Furniture</button>
+            <button type="button" class="chip">Displays</button>
+          </div>
+          <div class="meta-row">
+            <span>Showing 6 products</span>
+            <label>
+              Sort by
+              <select>
+                <option>Featured</option>
+                <option>Price: low to high</option>
+                <option>Price: high to low</option>
+                <option>Top rated</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div class="product-layout">
+          <div class="product-grid">
+          <article class="product-card">
+            <div class="product-image-wrap">
+              <span class="product-badge">Best seller</span>
+              <img src="../img/portfolio/01-small.jpg" alt="Apex Pro gaming headset" />
+            </div>
+            <div class="product-card-body">
+              <div class="product-topline">
+                <span class="tag">Audio</span>
+                <span class="rating">★★★★★ 4.9</span>
+              </div>
+              <h3>Apex Pro Headset</h3>
+              <p>Engineered for high-precision gaming with noise isolation, deep bass, and crystal-clear team chat.</p>
+              <ul class="product-specs">
+                <li>7.1 surround</li>
+                <li>30h battery</li>
+                <li>USB-C</li>
+              </ul>
+              <div class="product-meta">
+                <div class="product-price">
+                  <span class="price">£79</span>
+                  <span class="old-price">£109</span>
+                </div>
+                <span class="stock">In stock</span>
+              </div>
+              <div style="margin-top: 18px;">
+                <button type="button" class="btn btn-custom add-to-cart" data-name="Apex Pro Headset" data-price="79">Add to cart</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card">
+            <div class="product-image-wrap">
+              <span class="product-badge">Featured</span>
+              <img src="../img/portfolio/02-small.jpg" alt="Vortex RGB mechanical keyboard" />
+            </div>
+            <div class="product-card-body">
+              <div class="product-topline">
+                <span class="tag">Peripherals</span>
+                <span class="rating">★★★★★ 4.8</span>
+              </div>
+              <h3>Vortex RGB Keyboard</h3>
+              <p>Hot-swappable switches, silent keycaps, and dynamic RGB lighting made for daily competitive sessions.</p>
+              <ul class="product-specs">
+                <li>104 keys</li>
+                <li>RGB backlit</li>
+                <li>Wireless + wired</li>
+              </ul>
+              <div class="product-meta">
+                <div class="product-price">
+                  <span class="price">£99</span>
+                  <span class="old-price">£139</span>
+                </div>
+                <span class="stock">In stock</span>
+              </div>
+              <div style="margin-top: 18px;">
+                <button type="button" class="btn btn-custom add-to-cart" data-name="Vortex RGB Keyboard" data-price="99">Add to cart</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card">
+            <div class="product-image-wrap">
+              <span class="product-badge">New</span>
+              <img src="../img/portfolio/03-small.jpg" alt="Strike X gaming mouse" />
+            </div>
+            <div class="product-card-body">
+              <div class="product-topline">
+                <span class="tag">Precision</span>
+                <span class="rating">★★★★★ 4.7</span>
+              </div>
+              <h3>Strike X Mouse</h3>
+              <p>Ultra-responsive sensor, lightweight body, and ergonomic grip built to keep your aim sharp in every match.</p>
+              <ul class="product-specs">
+                <li>26K DPI</li>
+                <li>8 buttons</li>
+                <li>Low latency</li>
+              </ul>
+              <div class="product-meta">
+                <div class="product-price">
+                  <span class="price">£69</span>
+                  <span class="old-price">£94</span>
+                </div>
+                <span class="stock">In stock</span>
+              </div>
+              <div style="margin-top: 18px;">
+                <button type="button" class="btn btn-custom add-to-cart" data-name="Strike X Mouse" data-price="69">Add to cart</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card">
+            <div class="product-image-wrap">
+              <span class="product-badge">Comfort</span>
+              <img src="../img/portfolio/04-small.jpg" alt="Titan gaming chair" />
+            </div>
+            <div class="product-card-body">
+              <div class="product-topline">
+                <span class="tag">Setup</span>
+                <span class="rating">★★★★★ 4.9</span>
+              </div>
+              <h3>Titan Gaming Chair</h3>
+              <p>Memory foam lumbar support and premium materials designed to keep you locked in for long sessions.</p>
+              <ul class="product-specs">
+                <li>360° swivel</li>
+                <li>120 kg support</li>
+                <li>Adjustable arms</li>
+              </ul>
+              <div class="product-meta">
+                <div class="product-price">
+                  <span class="price">£249</span>
+                  <span class="old-price">£329</span>
+                </div>
+                <span class="stock">In stock</span>
+              </div>
+              <div style="margin-top: 18px;">
+                <button type="button" class="btn btn-custom add-to-cart" data-name="Titan Gaming Chair" data-price="249">Add to cart</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card">
+            <div class="product-image-wrap">
+              <span class="product-badge">Pro choice</span>
+              <img src="../img/portfolio/05-small.jpg" alt="Nebula 27 inch gaming monitor" />
+            </div>
+            <div class="product-card-body">
+              <div class="product-topline">
+                <span class="tag">Display</span>
+                <span class="rating">★★★★★ 4.8</span>
+              </div>
+              <h3>Nebula 27&quot; Monitor</h3>
+              <p>High refresh-rate visuals with vivid colors and deep contrast for smooth, immersive gameplay.</p>
+              <ul class="product-specs">
+                <li>144Hz</li>
+                <li>1ms response</li>
+                <li>QHD</li>
+              </ul>
+              <div class="product-meta">
+                <div class="product-price">
+                  <span class="price">£399</span>
+                  <span class="old-price">£499</span>
+                </div>
+                <span class="stock">In stock</span>
+              </div>
+              <div style="margin-top: 18px;">
+                <button type="button" class="btn btn-custom add-to-cart" data-name="Nebula 27&quot; Monitor" data-price="399">Add to cart</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card">
+            <div class="product-image-wrap">
+              <span class="product-badge">Top rated</span>
+              <img src="../img/portfolio/06-small.jpg" alt="Arc wireless controller" />
+            </div>
+            <div class="product-card-body">
+              <div class="product-topline">
+                <span class="tag">Accessories</span>
+                <span class="rating">★★★★★ 4.9</span>
+              </div>
+              <h3>Arc Wireless Controller</h3>
+              <p>Comfortable grip, precise control, and ultra-fast wireless response for couch co-op and competitive play.</p>
+              <ul class="product-specs">
+                <li>Low latency</li>
+                <li>Dual trigger</li>
+                <li>USB-C charging</li>
+              </ul>
+              <div class="product-meta">
+                <div class="product-price">
+                  <span class="price">£59</span>
+                  <span class="old-price">£79</span>
+                </div>
+                <span class="stock">In stock</span>
+              </div>
+              <div style="margin-top: 18px;">
+                <button type="button" class="btn btn-custom add-to-cart" data-name="Arc Wireless Controller" data-price="59">Add to cart</button>
+              </div>
+            </div>
+          </article>
+        </div>
+
+          </div>
+
+          <aside class="cart-panel" id="shopping-cart" aria-live="polite">
+            <div class="cart-header">
+              <h3>Shopping cart</h3>
+              <span class="cart-count" id="cart-count">0 items</span>
+            </div>
+            <ul class="cart-items" id="cart-items">
+              <li>Your cart is empty.</li>
+            </ul>
+            <div class="cart-total">
+              <span>Total</span>
+              <span id="cart-total">£0.00</span>
+            </div>
+            <div class="cart-actions">
+              <button type="button" class="btn-secondary" id="clear-cart">Clear</button>
+              <button type="button" class="btn btn-custom" id="checkout-button">Checkout</button>
+            </div>
+          </aside>
+        </div>
+
+        <div class="shop-benefits">
+          <div class="benefit-box">
+            <i class="fa fa-truck"></i>
+            <h4>Fast delivery</h4>
+            <p>Next-day dispatch on in-stock items.</p>
+          </div>
+          <div class="benefit-box">
+            <i class="fa fa-shield"></i>
+            <h4>Secure payment</h4>
+            <p>Protected checkout with trusted payment methods.</p>
+          </div>
+          <div class="benefit-box">
+            <i class="fa fa-headphones"></i>
+            <h4>Expert support</h4>
+            <p>Need help? Our gaming specialists are here.</p>
+          </div>
+        </div>
+
+        <div class="cta-box">
+          <h3>Ready to level up your setup?</h3>
+          <p>Browse top-tier gaming products and find the gear that fits your play style.</p>
+          <a href="../index.html#contact" class="btn btn-custom btn-lg">Contact us</a>
+        </div>
+      </div>
+    </main>
+
+    <div class="checkout-modal" id="checkout-modal" aria-hidden="true">
+      <div class="checkout-panel" role="dialog" aria-modal="true" aria-labelledby="checkout-title">
+        <div class="checkout-header">
+          <h3 id="checkout-title">Checkout</h3>
+          <button type="button" class="close-checkout" id="close-checkout" aria-label="Close checkout">×</button>
+        </div>
+
+        <div class="checkout-layout">
+          <form id="checkout-form">
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="checkout-name">Full name</label>
+                <input id="checkout-name" name="checkout-name" type="text" required />
+              </div>
+              <div class="form-field">
+                <label for="checkout-email">Email</label>
+                <input id="checkout-email" name="checkout-email" type="email" required />
+              </div>
+              <div class="form-field full">
+                <label for="checkout-address">Address</label>
+                <input id="checkout-address" name="checkout-address" type="text" required />
+              </div>
+              <div class="form-field">
+                <label for="checkout-city">City</label>
+                <input id="checkout-city" name="checkout-city" type="text" required />
+              </div>
+              <div class="form-field">
+                <label for="checkout-country">Country</label>
+                <select id="checkout-country" name="checkout-country" required>
+                  <option value="">Select</option>
+                  <option>United States</option>
+                  <option>Canada</option>
+                  <option>United Kingdom</option>
+                  <option>Australia</option>
+                  <option>Germany</option>
+                  <option>Other</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="checkout-actions">
+              <button type="button" class="btn-secondary" id="cancel-checkout">Cancel</button>
+              <button type="submit" class="btn btn-custom">Place order</button>
+            </div>
+
+            <div class="checkout-success" id="checkout-success">Your order has been placed successfully.</div>
+          </form>
+
+          <div class="checkout-summary">
+            <h4>Order Summary</h4>
+            <ul class="summary-items" id="checkout-summary-items">
+              <li><span>Cart empty</span><span>£0.00</span></li>
+            </ul>
+            <div class="summary-total">
+              <span>Total</span>
+              <span id="checkout-total">£0.00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../script.js"></script>
+  </body>
+</html>
