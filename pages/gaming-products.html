@@ -558,6 +558,130 @@
         font: inherit;
       }
 
+      .form-field input:focus,
+      .form-field select:focus {
+        outline: none;
+        border-color: #6372ff;
+        box-shadow: 0 0 0 3px rgba(99, 114, 255, 0.12);
+      }
+
+      .payment-box {
+        margin-top: 20px;
+        background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+        border: 1px solid #dbe4ff;
+        border-radius: 16px;
+        padding: 18px;
+      }
+
+      .payment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 14px;
+        font-size: 12px;
+      }
+
+      .secure-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 700;
+        color: #166534;
+        background: #ecfdf5;
+        border: 1px solid #bbf7d0;
+        border-radius: 999px;
+        padding: 6px 10px;
+      }
+
+      .accepted-cards {
+        color: #475569;
+        font-weight: 600;
+      }
+
+      .payment-methods {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+      }
+
+      .payment-option {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+        min-width: 160px;
+        background: #fff;
+        border: 1px solid #dfe7f5;
+        border-radius: 10px;
+        padding: 10px 12px;
+        font-size: 14px;
+        color: #334155;
+        font-weight: 600;
+      }
+
+      .payment-option input {
+        accent-color: #6372ff;
+      }
+
+      .payment-option.selected {
+        border-color: #6372ff;
+        box-shadow: 0 0 0 2px rgba(99, 114, 255, 0.12);
+      }
+
+      .payment-grid {
+        margin-top: 4px;
+      }
+
+      .secure-check {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-top: 16px;
+        font-size: 13px;
+        color: #334155;
+        font-weight: 600;
+      }
+
+      .secure-check input {
+        margin-top: 2px;
+        accent-color: #22c55e;
+      }
+
+      .security-footer {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 18px;
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        border-radius: 12px;
+        padding: 12px 14px;
+      }
+
+      .security-lock {
+        display: grid;
+        place-items: center;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: #dcfce7;
+        font-size: 18px;
+      }
+
+      .security-footer strong {
+        display: block;
+        margin-bottom: 4px;
+        color: #166534;
+      }
+
+      .security-footer p {
+        margin: 0;
+        color: #166534;
+        font-size: 12px;
+      }
+
       .checkout-summary {
         background: #f8fafc;
         border: 1px solid #e2e8f0;
@@ -702,7 +826,7 @@
             <button type="button" class="chip">Displays</button>
           </div>
           <div class="meta-row">
-            <span>Showing 6 products</span>
+            <span>Showing 17 products</span>
             <label>
               Sort by
               <select>
@@ -717,6 +841,126 @@
 
         <div class="product-layout">
           <div class="product-grid">
+          <article class="product-card">
+            <div class="product-image-wrap">
+              <span class="product-badge">Absolute luxury</span>
+              <img src="../img/portfolio/07-small.jpg" alt="The Sovereign gaming empire" />
+            </div>
+            <div class="product-card-body">
+              <div class="product-topline">
+                <span class="tag">Royal</span>
+                <span class="rating">★★★★★ 5.0</span>
+              </div>
+              <h3>The Sovereign Gaming Empire</h3>
+              <p>Ultra-exclusive elite gaming empire package with luxury installation, private services, and full custom world-building.</p>
+              <ul class="product-specs">
+                <li>Custom estate</li>
+                <li>Dedicated crew</li>
+                <li>Private access</li>
+              </ul>
+              <div class="product-meta">
+                <div class="product-price">
+                  <span class="price">£100,000,000,000</span>
+                  <span class="old-price">£130,000,000,000</span>
+                </div>
+                <span class="stock">Invitation only</span>
+              </div>
+              <div style="margin-top: 18px;">
+                <button type="button" class="btn btn-custom add-to-cart" data-name="The Sovereign Gaming Empire" data-price="100000000000">Add to cart</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card">
+            <div class="product-image-wrap">
+              <span class="product-badge">Supreme</span>
+              <img src="../img/portfolio/06-small.jpg" alt="The Monarch gaming kingdom" />
+            </div>
+            <div class="product-card-body">
+              <div class="product-topline">
+                <span class="tag">Founder</span>
+                <span class="rating">★★★★★ 5.0</span>
+              </div>
+              <h3>The Monarch Gaming Kingdom</h3>
+              <p>Full luxury gaming estate package with custom installations, elite support, and a private performance suite.</p>
+              <ul class="product-specs">
+                <li>Private estate</li>
+                <li>Full concierge</li>
+                <li>Custom design</li>
+              </ul>
+              <div class="product-meta">
+                <div class="product-price">
+                  <span class="price">£50,000,000,000</span>
+                  <span class="old-price">£65,000,000,000</span>
+                </div>
+                <span class="stock">By invitation</span>
+              </div>
+              <div style="margin-top: 18px;">
+                <button type="button" class="btn btn-custom add-to-cart" data-name="The Monarch Gaming Kingdom" data-price="50000000000">Add to cart</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card">
+            <div class="product-image-wrap">
+              <span class="product-badge">Ultra luxury</span>
+              <img src="../img/portfolio/04-small.jpg" alt="Royal Crown gaming suite" />
+            </div>
+            <div class="product-card-body">
+              <div class="product-topline">
+                <span class="tag">VIP</span>
+                <span class="rating">★★★★★ 5.0</span>
+              </div>
+              <h3>Royal Crown Gaming Suite</h3>
+              <p>Limited-edition luxury gaming suite with bespoke furniture, immersive sound, and private-club styling.</p>
+              <ul class="product-specs">
+                <li>Private edition</li>
+                <li>Custom build</li>
+                <li>Concierge setup</li>
+              </ul>
+              <div class="product-meta">
+                <div class="product-price">
+                  <span class="price">£20,000,000</span>
+                  <span class="old-price">£25,000,000</span>
+                </div>
+                <span class="stock">One of one</span>
+              </div>
+              <div style="margin-top: 18px;">
+                <button type="button" class="btn btn-custom add-to-cart" data-name="Royal Crown Gaming Suite" data-price="20000000">Add to cart</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card">
+            <div class="product-image-wrap">
+              <span class="product-badge">Legendary</span>
+              <img src="../img/portfolio/05-small.jpg" alt="Empire of the Titans gaming palace" />
+            </div>
+            <div class="product-card-body">
+              <div class="product-topline">
+                <span class="tag">VIP</span>
+                <span class="rating">★★★★★ 5.0</span>
+              </div>
+              <h3>Empire of the Titans</h3>
+              <p>Private luxury arena package with custom streaming room, elite equipment, and full concierge support.</p>
+              <ul class="product-specs">
+                <li>Private build</li>
+                <li>Concierge</li>
+                <li>Premium network</li>
+              </ul>
+              <div class="product-meta">
+                <div class="product-price">
+                  <span class="price">£2,000,000,000</span>
+                  <span class="old-price">£2,500,000,000</span>
+                </div>
+                <span class="stock">Elite only</span>
+              </div>
+              <div style="margin-top: 18px;">
+                <button type="button" class="btn btn-custom add-to-cart" data-name="Empire of the Titans" data-price="2000000000">Add to cart</button>
+              </div>
+            </div>
+          </article>
+
           <article class="product-card">
             <div class="product-image-wrap">
               <span class="product-badge">Best seller</span>
@@ -736,13 +980,13 @@
               </ul>
               <div class="product-meta">
                 <div class="product-price">
-                  <span class="price">£79</span>
+                  <span class="price">£10000</span>
                   <span class="old-price">£109</span>
                 </div>
                 <span class="stock">In stock</span>
               </div>
               <div style="margin-top: 18px;">
-                <button type="button" class="btn btn-custom add-to-cart" data-name="Apex Pro Headset" data-price="79">Add to cart</button>
+                <button type="button" class="btn btn-custom add-to-cart" data-name="Apex Pro Headset" data-price="10000">Add to cart</button>
               </div>
             </div>
           </article>
@@ -896,6 +1140,216 @@
               </div>
             </div>
           </article>
+
+          <article class="product-card">
+            <div class="product-image-wrap">
+              <span class="product-badge">New audio</span>
+              <img src="../img/portfolio/07-small.jpg" alt="Pulse Elite earbuds" />
+            </div>
+            <div class="product-card-body">
+              <div class="product-topline">
+                <span class="tag">Audio</span>
+                <span class="rating">★★★★★ 4.8</span>
+              </div>
+              <h3>Pulse Elite Earbuds</h3>
+              <p>Low-profile sound with rich detail, strong bass, and an all-day battery that keeps up with long sessions.</p>
+              <ul class="product-specs">
+                <li>40h battery</li>
+                <li>Water resistant</li>
+                <li>Bluetooth 5.3</li>
+              </ul>
+              <div class="product-meta">
+                <div class="product-price">
+                  <span class="price">£49</span>
+                  <span class="old-price">£69</span>
+                </div>
+                <span class="stock">In stock</span>
+              </div>
+              <div style="margin-top: 18px;">
+                <button type="button" class="btn btn-custom add-to-cart" data-name="Pulse Elite Earbuds" data-price="49">Add to cart</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card">
+            <div class="product-image-wrap">
+              <span class="product-badge">Immersive</span>
+              <img src="../img/portfolio/08-small.jpg" alt="Storm speaker" />
+            </div>
+            <div class="product-card-body">
+              <div class="product-topline">
+                <span class="tag">Audio</span>
+                <span class="rating">★★★★★ 4.7</span>
+              </div>
+              <h3>Storm 5.1 Speaker</h3>
+              <p>Room-filling sound with deep bass and crisp directional audio for cinematic gaming nights.</p>
+              <ul class="product-specs">
+                <li>5.1 sound</li>
+                <li>Bluetooth + aux</li>
+                <li>360° audio</li>
+              </ul>
+              <div class="product-meta">
+                <div class="product-price">
+                  <span class="price">£129</span>
+                  <span class="old-price">£169</span>
+                </div>
+                <span class="stock">In stock</span>
+              </div>
+              <div style="margin-top: 18px;">
+                <button type="button" class="btn btn-custom add-to-cart" data-name="Storm 5.1 Speaker" data-price="129">Add to cart</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card">
+            <div class="product-image-wrap">
+              <span class="product-badge">Desk upgrade</span>
+              <img src="../img/portfolio/09-small.jpg" alt="Volt X desk mat" />
+            </div>
+            <div class="product-card-body">
+              <div class="product-topline">
+                <span class="tag">Furniture</span>
+                <span class="rating">★★★★★ 4.9</span>
+              </div>
+              <h3>Volt X Desk Mat</h3>
+              <p>Extra-large soft-touch mat with anti-slip grip and cable channels for a cleaner battle station.</p>
+              <ul class="product-specs">
+                <li>XL size</li>
+                <li>Water resistant</li>
+                <li>Non-slip base</li>
+              </ul>
+              <div class="product-meta">
+                <div class="product-price">
+                  <span class="price">£39</span>
+                  <span class="old-price">£59</span>
+                </div>
+                <span class="stock">In stock</span>
+              </div>
+              <div style="margin-top: 18px;">
+                <button type="button" class="btn btn-custom add-to-cart" data-name="Volt X Desk Mat" data-price="39">Add to cart</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card">
+            <div class="product-image-wrap">
+              <span class="product-badge">Ultra premium</span>
+              <img src="../img/portfolio/01-small.jpg" alt="Titanium battle station" />
+            </div>
+            <div class="product-card-body">
+              <div class="product-topline">
+                <span class="tag">Furniture</span>
+                <span class="rating">★★★★★ 5.0</span>
+              </div>
+              <h3>Titanium Battle Station</h3>
+              <p>Luxury gaming desk with integrated cable management, premium finish, and racing-inspired ergonomics.</p>
+              <ul class="product-specs">
+                <li>2.4m desk</li>
+                <li>Steel frame</li>
+                <li>Integrated lighting</li>
+              </ul>
+              <div class="product-meta">
+                <div class="product-price">
+                  <span class="price">£2999</span>
+                  <span class="old-price">£3999</span>
+                </div>
+                <span class="stock">Limited</span>
+              </div>
+              <div style="margin-top: 18px;">
+                <button type="button" class="btn btn-custom add-to-cart" data-name="Titanium Battle Station" data-price="2999">Add to cart</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card">
+            <div class="product-image-wrap">
+              <span class="product-badge">Collector</span>
+              <img src="../img/portfolio/02-small.jpg" alt="Apex prestige setup" />
+            </div>
+            <div class="product-card-body">
+              <div class="product-topline">
+                <span class="tag">Peripherals</span>
+                <span class="rating">★★★★★ 5.0</span>
+              </div>
+              <h3>Apex Prestige Setup</h3>
+              <p>Custom luxury bundle with signature mechanical keyboard, premium chair, and high-end audio essentials.</p>
+              <ul class="product-specs">
+                <li>Custom build</li>
+                <li>Signature finish</li>
+                <li>VIP support</li>
+              </ul>
+              <div class="product-meta">
+                <div class="product-price">
+                  <span class="price">£4999</span>
+                  <span class="old-price">£6499</span>
+                </div>
+                <span class="stock">Exclusive</span>
+              </div>
+              <div style="margin-top: 18px;">
+                <button type="button" class="btn btn-custom add-to-cart" data-name="Apex Prestige Setup" data-price="4999">Add to cart</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card">
+            <div class="product-image-wrap">
+              <span class="product-badge">Luxury</span>
+              <img src="../img/portfolio/03-small.jpg" alt="Galactic summon rig" />
+            </div>
+            <div class="product-card-body">
+              <div class="product-topline">
+                <span class="tag">Setup</span>
+                <span class="rating">★★★★★ 5.0</span>
+              </div>
+              <h3>Galactic Summon Rig</h3>
+              <p>High-end tournament-grade setup handcrafted for players who want the absolute finest performance and style.</p>
+              <ul class="product-specs">
+                <li>Custom alloy</li>
+                <li>4K display</li>
+                <li>Pro-grade audio</li>
+              </ul>
+              <div class="product-meta">
+                <div class="product-price">
+                  <span class="price">£7999</span>
+                  <span class="old-price">£9999</span>
+                </div>
+                <span class="stock">Rare</span>
+              </div>
+              <div style="margin-top: 18px;">
+                <button type="button" class="btn btn-custom add-to-cart" data-name="Galactic Summon Rig" data-price="7999">Add to cart</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card">
+            <div class="product-image-wrap">
+              <span class="product-badge">Infinity</span>
+              <img src="../img/portfolio/01-small.jpg" alt="The Cosmic Empire Vault" />
+            </div>
+            <div class="product-card-body">
+              <div class="product-topline">
+                <span class="tag">Collector</span>
+                <span class="rating">★★★★★ 5.0</span>
+              </div>
+              <h3>The Cosmic Empire Vault</h3>
+              <p>Legendary ultra-luxury gaming vault with a complete private arena, elite concierge, and a one-of-a-kind prestige installation.</p>
+              <ul class="product-specs">
+                <li>Private vault</li>
+                <li>Full concierge</li>
+                <li>Exclusive access</li>
+              </ul>
+              <div class="product-meta">
+                <div class="product-price">
+                  <span class="price">£100,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000</span>
+                  <span class="old-price">£150,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000</span>
+                </div>
+                <span class="stock">By invitation</span>
+              </div>
+              <div style="margin-top: 18px;">
+                <button type="button" class="btn btn-custom add-to-cart" data-name="The Cosmic Empire Vault" data-price="10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000">Add to cart</button>
+              </div>
+            </div>
+          </article>
         </div>
 
           </div>
@@ -910,7 +1364,7 @@
             </ul>
             <div class="cart-total">
               <span>Total</span>
-              <span id="cart-total">£0.00</span>
+              <span id="cart-total">£0</span>
             </div>
             <div class="cart-actions">
               <button type="button" class="btn-secondary" id="clear-cart">Clear</button>
@@ -983,6 +1437,79 @@
                   <option>Other</option>
                 </select>
               </div>
+              <div class="form-field full">
+                <label for="promo-code">Promo code</label>
+                <div class="promo-inline">
+                  <input id="promo-code" name="promo-code" type="text" placeholder="Enter code 6532" />
+                  <button type="button" class="btn-secondary" id="apply-promo">Apply</button>
+                </div>
+                <div class="promo-message" id="promo-message" aria-live="polite"></div>
+              </div>
+            </div>
+
+            <div class="payment-box">
+              <div class="payment-header">
+                <span class="secure-badge">Secure checkout</span>
+                <span class="accepted-cards">Visa • Mastercard • Amex</span>
+              </div>
+
+              <div class="payment-methods" aria-label="Payment method">
+                <label class="payment-option selected">
+                  <input type="radio" name="payment-method" checked />
+                  <span>Credit / Debit Card</span>
+                </label>
+                <label class="payment-option">
+                  <input type="radio" name="payment-method" />
+                  <span>PayPal</span>
+                </label>
+              </div>
+
+              <div class="form-grid payment-grid">
+                <div class="form-field full">
+                  <label for="card-name">Name on card</label>
+                  <input id="card-name" name="card-name" type="text" placeholder="Adam Valani" autocomplete="cc-name" required />
+                </div>
+                <div class="form-field full">
+                  <label for="card-number">Card number</label>
+                  <input id="card-number" name="card-number" type="text" inputmode="numeric" autocomplete="cc-number" placeholder="1234 5678 9012 3456" maxlength="19" required />
+                </div>
+                <div class="form-field">
+                  <label for="card-expiry">Expiry</label>
+                  <input id="card-expiry" name="card-expiry" type="text" inputmode="numeric" autocomplete="cc-exp" placeholder="MM / YY" maxlength="7" required />
+                </div>
+                <div class="form-field">
+                  <label for="card-cvv">CVV</label>
+                  <input id="card-cvv" name="card-cvv" type="password" inputmode="numeric" autocomplete="cc-csc" placeholder="123" maxlength="4" required />
+                </div>
+                <div class="form-field">
+                  <label for="card-postcode">Billing postcode</label>
+                  <input id="card-postcode" name="card-postcode" type="text" autocomplete="postal-code" placeholder="SW1A 1AA" required />
+                </div>
+                <div class="form-field">
+                  <label for="card-country">Billing country</label>
+                  <select id="card-country" name="card-country" required>
+                    <option value="">Select</option>
+                    <option>United Kingdom</option>
+                    <option>United States</option>
+                    <option>Canada</option>
+                    <option>Australia</option>
+                    <option>Germany</option>
+                  </select>
+                </div>
+              </div>
+
+              <label class="secure-check">
+                <input type="checkbox" name="secure-auth" checked required />
+                I confirm this payment is protected by 3D Secure and encrypted checkout.
+              </label>
+            </div>
+
+            <div class="security-footer">
+              <div class="security-lock">🔒</div>
+              <div>
+                <strong>256-bit encrypted payment</strong>
+                <p>Your payment details are protected using secure bank-grade encryption.</p>
+              </div>
             </div>
 
             <div class="checkout-actions">
@@ -996,11 +1523,11 @@
           <div class="checkout-summary">
             <h4>Order Summary</h4>
             <ul class="summary-items" id="checkout-summary-items">
-              <li><span>Cart empty</span><span>£0.00</span></li>
+              <li><span>Cart empty</span><span>£0</span></li>
             </ul>
             <div class="summary-total">
               <span>Total</span>
-              <span id="checkout-total">£0.00</span>
+              <span id="checkout-total">£0</span>
             </div>
           </div>
         </div>

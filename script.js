@@ -40,7 +40,11 @@
     var checkoutSummaryItems = document.getElementById('checkout-summary-items');
     var checkoutTotal = document.getElementById('checkout-total');
     var checkoutSuccess = document.getElementById('checkout-success');
+    var promoCodeInput = document.getElementById('promo-code');
+    var applyPromoButton = document.getElementById('apply-promo');
+    var promoMessage = document.getElementById('promo-message');
     var storageKey = 'gamingHubCart';
+    var promoCode = '6532';
 
     function getCart() {
       try {
@@ -59,38 +63,115 @@
     }
 
     function formatCurrency(value) {
-      return '£' + Number(value).toFixed(2);
+      var numeric = toBigInt(value);
+      var sign = numeric < 0n ? '-' : '';
+      var digits = sign ? numeric.toString().slice(1) : numeric.toString();
+
+      if (!digits) {
+        return '£0';
+      }
+
+      var groups = [];
+      while (digits.length > 3) {
+        groups.unshift(digits.slice(-3));
+        digits = digits.slice(0, -3);
+      }
+      groups.unshift(digits);
+
+      return '£' + sign + groups.join(',');
+    }
+
+    function toBigInt(value) {
+      if (typeof value === 'bigint') {
+        return value;
+      }
+
+      if (typeof value === 'number') {
+        if (!Number.isFinite(value)) {
+          return 0n;
+        }
+        return BigInt(Math.trunc(value));
+      }
+
+      var cleanValue = String(value).replace(/[^0-9-]/g, '');
+      if (!cleanValue || cleanValue === '-') {
+        return 0n;
+      }
+
+      return BigInt(cleanValue);
+    }
+
+    function getPromoAmount() {
+      return 2000000n;
+    }
+
+    function getPromoStatus() {
+      if (!promoCodeInput) {
+        return false;
+      }
+
+      var value = promoCodeInput.value.trim();
+      return value.toUpperCase() === promoCode;
+    }
+
+    function renderPromoMessage() {
+      if (!promoMessage || !promoCodeInput) {
+        return;
+      }
+
+      var value = promoCodeInput.value.trim();
+      if (!value) {
+        promoMessage.textContent = 'Admin exclusive: enter code 6532 for £2,000,000 off';
+        promoMessage.style.color = '#ffd166';
+        return;
+      }
+
+      if (value.toUpperCase() === promoCode) {
+        promoMessage.textContent = 'Admin exclusive applied: £2,000,000 off with code 6532';
+        promoMessage.style.color = '#2ecc71';
+      } else {
+        promoMessage.textContent = 'Invalid promo code';
+        promoMessage.style.color = '#ff6b6b';
+      }
+    }
+
+    function getTotalWithPromo(totalCost) {
+      var cost = toBigInt(totalCost);
+      if (getPromoStatus()) {
+        return cost > getPromoAmount() ? cost - getPromoAmount() : 0n;
+      }
+      return cost;
     }
 
     function updateCheckoutSummary() {
       var cart = getCart();
-      var totalCost = 0;
+      var totalCost = 0n;
 
       if (!checkoutSummaryItems || !checkoutTotal) {
         return;
       }
 
       if (!cart.length) {
-        checkoutSummaryItems.innerHTML = '<li><span>Cart empty</span><span>£0.00</span></li>';
-        checkoutTotal.textContent = '£0.00';
+        checkoutSummaryItems.innerHTML = '<li><span>Cart empty</span><span>£0</span></li>';
+        checkoutTotal.textContent = '£0';
         return;
       }
 
       checkoutSummaryItems.innerHTML = '';
       cart.forEach(function (item) {
-        totalCost += item.price * item.quantity;
+        totalCost += toBigInt(item.price) * BigInt(item.quantity);
         var line = document.createElement('li');
-        line.innerHTML = '<span>' + item.name + ' x' + item.quantity + '</span><span>' + formatCurrency(item.price * item.quantity) + '</span>';
+        line.innerHTML = '<span>' + item.name + ' x' + item.quantity + '</span><span>' + formatCurrency(toBigInt(item.price) * BigInt(item.quantity)) + '</span>';
         checkoutSummaryItems.appendChild(line);
       });
 
-      checkoutTotal.textContent = formatCurrency(totalCost);
+      checkoutTotal.textContent = formatCurrency(getTotalWithPromo(totalCost));
     }
 
     function renderCart() {
       var cart = getCart();
       var totalItems = 0;
-      var totalCost = 0;
+      var totalCost = 0n;
 
       if (!cartList || !cartCount || !cartTotal) {
         return;
@@ -107,13 +188,13 @@
       cartList.innerHTML = '';
       cart.forEach(function (item, index) {
         totalItems += item.quantity;
-        totalCost += item.price * item.quantity;
+        totalCost += toBigInt(item.price) * BigInt(item.quantity);
 
         var listItem = document.createElement('li');
         var productInfo = document.createElement('span');
         var removeButton = document.createElement('button');
 
-        productInfo.textContent = item.name + ' x' + item.quantity + ' — ' + formatCurrency(item.price * item.quantity);
+        productInfo.textContent = item.name + ' x' + item.quantity + ' — ' + formatCurrency(toBigInt(item.price) * BigInt(item.quantity));
         removeButton.type = 'button';
         removeButton.className = 'remove-item';
         removeButton.textContent = 'Remove';
@@ -153,7 +234,7 @@
     document.querySelectorAll('.add-to-cart').forEach(function (button) {
       button.addEventListener('click', function () {
         var name = button.dataset.name;
-        var price = Number(button.dataset.price || 0);
+        var price = toBigInt(button.dataset.price || '0');
         var cart = getCart();
         var existingItem = cart.find(function (item) {
           return item.name === name;
@@ -162,7 +243,7 @@
         if (existingItem) {
           existingItem.quantity += 1;
         } else {
-          cart.push({ name: name, price: price, quantity: 1 });
+          cart.push({ name: name, price: String(price), quantity: 1 });
         }
 
         saveCart(cart);
@@ -174,10 +255,10 @@
       checkoutButton.addEventListener('click', function () {
         if (!getCart().length) {
           if (checkoutSummaryItems) {
-            checkoutSummaryItems.innerHTML = '<li><span>Cart empty</span><span>£0.00</span></li>';
+            checkoutSummaryItems.innerHTML = '<li><span>Cart empty</span><span>£0</span></li>';
           }
           if (checkoutTotal) {
-            checkoutTotal.textContent = '£0.00';
+            checkoutTotal.textContent = '£0';
           }
           return;
         }
@@ -201,9 +282,66 @@
       });
     }
 
+    function validateCardDetails() {
+      var cardNumber = document.getElementById('card-number');
+      var cardExpiry = document.getElementById('card-expiry');
+      var cardCvv = document.getElementById('card-cvv');
+      var cardPostcode = document.getElementById('card-postcode');
+      var isValid = true;
+
+      if (cardNumber) {
+        var digits = cardNumber.value.replace(/\D/g, '');
+        if (digits.length < 15 || digits.length > 19) {
+          cardNumber.setCustomValidity('Enter a valid card number.');
+          isValid = false;
+        } else {
+          cardNumber.setCustomValidity('');
+        }
+      }
+
+      if (cardExpiry) {
+        var expiry = cardExpiry.value.trim();
+        var expiryMatch = /^(0[1-9]|1[0-2])\s*\/\s*(\d{2,4})$/;
+        if (!expiryMatch.test(expiry)) {
+          cardExpiry.setCustomValidity('Use MM / YY format.');
+          isValid = false;
+        } else {
+          cardExpiry.setCustomValidity('');
+        }
+      }
+
+      if (cardCvv) {
+        var cvv = cardCvv.value.replace(/\D/g, '');
+        if (cvv.length < 3 || cvv.length > 4) {
+          cardCvv.setCustomValidity('Enter a valid CVV.');
+          isValid = false;
+        } else {
+          cardCvv.setCustomValidity('');
+        }
+      }
+
+      if (cardPostcode) {
+        var postcode = cardPostcode.value.trim();
+        if (!postcode) {
+          cardPostcode.setCustomValidity('Billing postcode is required.');
+          isValid = false;
+        } else {
+          cardPostcode.setCustomValidity('');
+        }
+      }
+
+      return isValid;
+    }
+
     if (checkoutForm) {
       checkoutForm.addEventListener('submit', function (event) {
         event.preventDefault();
+
+        if (!validateCardDetails()) {
+          checkoutForm.reportValidity();
+          return;
+        }
+
         if (checkoutSuccess) {
           checkoutSuccess.classList.add('visible');
         }
@@ -223,7 +361,22 @@
       });
     }
 
+    if (promoCodeInput) {
+      promoCodeInput.addEventListener('input', function () {
+        renderPromoMessage();
+        updateCheckoutSummary();
+      });
+    }
+
+    if (applyPromoButton) {
+      applyPromoButton.addEventListener('click', function () {
+        renderPromoMessage();
+        updateCheckoutSummary();
+      });
+    }
+
     renderCart();
+    renderPromoMessage();
   }
 
   var contactForm = document.querySelector('#contact form');

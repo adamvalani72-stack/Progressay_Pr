@@ -107,6 +107,56 @@ img {
   font-size: 18px;
 }
 
+.short-url-pill {
+  display: inline-block;
+  margin-bottom: 18px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  color: #ffffff;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: lowercase;
+  font-weight: 700;
+}
+
+.promo-banner {
+  display: inline-block;
+  margin-bottom: 18px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: rgba(39, 174, 96, 0.2);
+  border: 1px solid rgba(122, 255, 176, 0.6);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.nav-brand {
+  font-size: 1.4rem;
+  font-weight: 800;
+  text-transform: lowercase;
+  letter-spacing: 0.04em;
+}
+
+.promo-inline {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.promo-inline input {
+  flex: 1;
+}
+
+.promo-message {
+  min-height: 20px;
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
 @media (max-width: 991px) {
   .col-4,
   .col-3 {
@@ -349,6 +399,7 @@ hr {
 .section-title p {
   font-size: 18px;
 }
+
 .btn-custom {
   font-family: "Raleway", sans-serif;
   text-transform: uppercase;
