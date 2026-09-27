@@ -44,7 +44,7 @@
     var applyPromoButton = document.getElementById('apply-promo');
     var promoMessage = document.getElementById('promo-message');
     var storageKey = 'gamingHubCart';
-    var promoCode = '6532';
+    var promoCode = '5833';
 
     function getCart() {
       try {
@@ -101,8 +101,22 @@
       return BigInt(cleanValue);
     }
 
-    function getPromoAmount() {
-      return 2000000n;
+    function getFreeSubscriptionTotal(cart) {
+      var currentCart = cart || getCart();
+      var freeAmount = 0n;
+
+      if (!currentCart || !currentCart.length) {
+        return freeAmount;
+      }
+
+      currentCart.forEach(function (item) {
+        var name = String(item && item.name ? item.name : '').toLowerCase();
+        if (name.indexOf('pro gaming hub subscription') !== -1) {
+          freeAmount += toBigInt(item.price) * BigInt(item.quantity || 1);
+        }
+      });
+
+      return freeAmount;
     }
 
     function getPromoStatus() {
@@ -121,13 +135,13 @@
 
       var value = promoCodeInput.value.trim();
       if (!value) {
-        promoMessage.textContent = 'Admin exclusive: enter code 6532 for £2,000,000 off';
+        promoMessage.textContent = 'Enter a valid promo code';
         promoMessage.style.color = '#ffd166';
         return;
       }
 
       if (value.toUpperCase() === promoCode) {
-        promoMessage.textContent = 'Admin exclusive applied: £2,000,000 off with code 6532';
+        promoMessage.textContent = 'Promo applied';
         promoMessage.style.color = '#2ecc71';
       } else {
         promoMessage.textContent = 'Invalid promo code';
@@ -135,11 +149,17 @@
       }
     }
 
-    function getTotalWithPromo(totalCost) {
+    function getTotalWithPromo(totalCost, cart) {
       var cost = toBigInt(totalCost);
-      if (getPromoStatus()) {
-        return cost > getPromoAmount() ? cost - getPromoAmount() : 0n;
+      if (!getPromoStatus()) {
+        return cost;
       }
+
+      var subscriptionDiscount = getFreeSubscriptionTotal(cart);
+      if (subscriptionDiscount > 0n) {
+        return cost > subscriptionDiscount ? cost - subscriptionDiscount : 0n;
+      }
+
       return cost;
     }
 
@@ -165,7 +185,7 @@
         checkoutSummaryItems.appendChild(line);
       });
 
-      checkoutTotal.textContent = formatCurrency(getTotalWithPromo(totalCost));
+      checkoutTotal.textContent = formatCurrency(getTotalWithPromo(totalCost, cart));
     }
 
     function renderCart() {
@@ -211,7 +231,7 @@
       });
 
       cartCount.textContent = totalItems + (totalItems === 1 ? ' item' : ' items');
-      cartTotal.textContent = formatCurrency(totalCost);
+      cartTotal.textContent = formatCurrency(getTotalWithPromo(totalCost, cart));
       updateCheckoutSummary();
     }
 
