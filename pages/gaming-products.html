@@ -257,6 +257,13 @@
         list-style: none;
       }
 
+      .included-games-label {
+        margin: 0 0 8px;
+        color: #344057;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
       .product-specs li {
         padding: 6px 10px;
         border-radius: 999px;
@@ -285,6 +292,13 @@
         font-weight: 800;
         color: #111827;
         line-height: 1;
+      }
+
+      .price-galactic {
+        max-width: 100%;
+        font-size: 14px;
+        line-height: 1.35;
+        overflow-wrap: anywhere;
       }
 
       .old-price {
@@ -630,8 +644,19 @@
         box-shadow: 0 0 0 2px rgba(99, 114, 255, 0.12);
       }
 
+      .payment-demo-note {
+        margin: -4px 0 14px;
+        color: #69758a;
+        font-size: 12px;
+      }
+
       .payment-grid {
         margin-top: 4px;
+      }
+
+      .payment-grid[hidden],
+      .secure-check[hidden] {
+        display: none;
       }
 
       .secure-check {
@@ -790,6 +815,9 @@
             <li><a href="../index.html#about">About</a></li>
             <li><a href="../index.html#services">Services</a></li>
             <li><a href="gaming-products.html">Products</a></li>
+            <li><a href="subscriptions.html">Subscriptions</a></li>
+            <li><a href="login.html">Log in</a></li>
+            <li><a href="signup.html">Sign up</a></li>
             <li><a href="../index.html#portfolio">Gallery</a></li>
             <li><a href="../index.html#testimonials">Testimonials</a></li>
             <li><a href="../index.html#contact">Contact</a></li>
@@ -1351,32 +1379,152 @@
             </div>
           </article>
 
-          <article class="product-card">
+          <article class="product-card" id="basic-subscription">
             <div class="product-image-wrap">
               <span class="product-badge">Subscription</span>
-              <img src="../img/portfolio/06-small.jpg" alt="Pro Gaming Hub Subscription" />
+              <img src="../img/portfolio/06-small.jpg" alt="Basic Gaming Hub annual subscription" />
             </div>
             <div class="product-card-body">
               <div class="product-topline">
-                <span class="tag">Games</span>
-                <span class="rating">★★★★★ 4.9</span>
+                <span class="tag">Basic</span>
+                <span class="rating">Annual plan</span>
               </div>
-              <h3>Pro Gaming Hub Subscription</h3>
-              <p>Unlock a premium gaming library with competitive multiplayer access, ranked rewards, and a rotating lineup of the coolest playable games.</p>
+              <h3>Basic</h3>
+              <p>Get started with a year of Gaming Hub membership and access to member updates.</p>
+              <p class="included-games-label">Included games</p>
               <ul class="product-specs">
-                <li>Fortnite</li>
-                <li>Apex Legends</li>
-                <li>Rocket League</li>
+                <li>Pixel Patrol</li>
+                <li>Neon Kart</li>
+                <li>Orbital Puzzles</li>
               </ul>
               <div class="product-meta">
                 <div class="product-price">
-                  <span class="price">£100</span>
-                  <span class="old-price">£140</span>
+                  <span class="price">£1.99</span>
                 </div>
-                <span class="stock">Monthly access</span>
+                <span class="stock">Billed yearly</span>
               </div>
               <div style="margin-top: 18px;">
-                <button type="button" class="btn btn-custom add-to-cart" data-name="Pro Gaming Hub Subscription" data-price="100">Add to cart</button>
+                <button type="button" class="btn btn-custom add-to-cart" data-name="Basic Annual Subscription" data-price-pence="199">Choose Basic</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card" id="standard-subscription">
+            <div class="product-image-wrap">
+              <span class="product-badge">Subscription</span>
+              <img src="../img/portfolio/06-small.jpg" alt="Standard Gaming Hub annual subscription" />
+            </div>
+            <div class="product-card-body">
+              <div class="product-topline">
+                <span class="tag">Standard</span>
+                <span class="rating">Annual plan</span>
+              </div>
+              <h3>Standard</h3>
+              <p>Enjoy a full year of member benefits, curated picks, and community events.</p>
+              <p class="included-games-label">Included games</p>
+              <ul class="product-specs">
+                <li>Rift Runner</li>
+                <li>Mystic Market</li>
+                <li>Skyline Showdown</li>
+              </ul>
+              <div class="product-meta">
+                <div class="product-price">
+                  <span class="price">£10.99</span>
+                </div>
+                <span class="stock">Billed yearly</span>
+              </div>
+              <div style="margin-top: 18px;">
+                <button type="button" class="btn btn-custom add-to-cart" data-name="Standard Annual Subscription" data-price-pence="1099">Choose Standard</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card" id="premium-subscription">
+            <div class="product-image-wrap">
+              <span class="product-badge">Subscription</span>
+              <img src="../img/portfolio/06-small.jpg" alt="Premium Gaming Hub annual subscription" />
+            </div>
+            <div class="product-card-body">
+              <div class="product-topline">
+                <span class="tag">Premium</span>
+                <span class="rating">Annual plan</span>
+              </div>
+              <h3>Premium</h3>
+              <p>Step up to a year of premium member access, exclusive offers, and priority support.</p>
+              <p class="included-games-label">Included games</p>
+              <ul class="product-specs">
+                <li>Starforge Arena</li>
+                <li>Phantom Circuit</li>
+                <li>Wildlight Quest</li>
+              </ul>
+              <div class="product-meta">
+                <div class="product-price">
+                  <span class="price">£199</span>
+                </div>
+                <span class="stock">Billed yearly</span>
+              </div>
+              <div style="margin-top: 18px;">
+                <button type="button" class="btn btn-custom add-to-cart" data-name="Premium Annual Subscription" data-price-pence="19900">Choose Premium</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card" id="vip-subscription">
+            <div class="product-image-wrap">
+              <span class="product-badge">Subscription</span>
+              <img src="../img/portfolio/06-small.jpg" alt="VIP Gaming Hub annual subscription" />
+            </div>
+            <div class="product-card-body">
+              <div class="product-topline">
+                <span class="tag">VIP</span>
+                <span class="rating">Annual plan</span>
+              </div>
+              <h3>VIP</h3>
+              <p>Get the highest level of Gaming Hub membership for a full year.</p>
+              <p class="included-games-label">Included games</p>
+              <ul class="product-specs">
+                <li>Chrono Clash</li>
+                <li>Titan Tactics</li>
+                <li>Mythic League</li>
+              </ul>
+              <div class="product-meta">
+                <div class="product-price">
+                  <span class="price">£1,000</span>
+                </div>
+                <span class="stock">Billed yearly</span>
+              </div>
+              <div style="margin-top: 18px;">
+                <button type="button" class="btn btn-custom add-to-cart" data-name="VIP Annual Subscription" data-price-pence="100000">Choose VIP</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card" id="galactic-subscription">
+            <div class="product-image-wrap">
+              <span class="product-badge">Subscription</span>
+              <img src="../img/portfolio/07-small.jpg" alt="Galactic Gaming annual subscription" />
+            </div>
+            <div class="product-card-body">
+              <div class="product-topline">
+                <span class="tag">Galactic</span>
+                <span class="rating">Annual plan</span>
+              </div>
+              <h3>Galactic Gaming Subscription</h3>
+              <p>Get the highest level of Gaming Hub membership for a full year.</p>
+              <p class="included-games-label">Included games</p>
+              <ul class="product-specs">
+                <li>Nova Frontier</li>
+                <li>Eclipse Dominion</li>
+                <li>Infinite Odyssey</li>
+              </ul>
+              <div class="product-meta">
+                <div class="product-price">
+                  <span class="price price-galactic">£10,000,000,000,000,000,000,000,000</span>
+                </div>
+                <span class="stock">Billed yearly</span>
+              </div>
+              <div style="margin-top: 18px;">
+                <button type="button" class="btn btn-custom add-to-cart" data-name="Galactic Gaming Subscription" data-price-pence="1000000000000000000000000000">Choose Galactic</button>
               </div>
             </div>
           </article>
@@ -1510,37 +1658,42 @@
             <div class="payment-box">
               <div class="payment-header">
                 <span class="secure-badge">Secure checkout</span>
-                <span class="accepted-cards">Visa • Mastercard • Amex • PayPal • Apple Pay • Gold</span>
+                <span class="accepted-cards">Card • PayPal • Apple Pay • Instant Pay demo</span>
               </div>
 
               <div class="payment-methods" aria-label="Payment method">
                 <label class="payment-option selected">
-                  <input type="radio" name="payment-method" checked />
+                  <input type="radio" name="payment-method" value="card" checked />
                   <span>Credit / Debit Card</span>
                 </label>
                 <label class="payment-option">
-                  <input type="radio" name="payment-method" />
+                  <input type="radio" name="payment-method" value="paypal" />
                   <span>PayPal</span>
                 </label>
                 <label class="payment-option">
-                  <input type="radio" name="payment-method" />
+                  <input type="radio" name="payment-method" value="apple-pay" />
                   <span>Apple Pay</span>
                 </label>
                 <label class="payment-option">
-                  <input type="radio" name="payment-method" />
+                  <input type="radio" name="payment-method" value="gold" />
                   <span>Gold</span>
                 </label>
                 <label class="payment-option">
-                  <input type="radio" name="payment-method" />
+                  <input type="radio" name="payment-method" value="bank-transfer" />
                   <span>Bank Transfer</span>
                 </label>
                 <label class="payment-option">
-                  <input type="radio" name="payment-method" />
+                  <input type="radio" name="payment-method" value="installments" />
                   <span>Buy Now, Pay Later</span>
                 </label>
+                <label class="payment-option">
+                  <input type="radio" name="payment-method" value="instant" />
+                  <span>Instant Pay</span>
+                </label>
               </div>
+              <p class="payment-demo-note">Demo checkout only. No real payment is charged.</p>
 
-              <div class="form-grid payment-grid">
+              <div class="form-grid payment-grid" id="payment-card-fields">
                 <div class="form-field full">
                   <label for="card-name">Name on card</label>
                   <input id="card-name" name="card-name" type="text" placeholder="Adam Valani" autocomplete="cc-name" required />
@@ -1574,7 +1727,7 @@
                 </div>
               </div>
 
-              <label class="secure-check">
+              <label class="secure-check" id="secure-check">
                 <input type="checkbox" name="secure-auth" checked required />
                 I confirm this payment is protected by 3D Secure and encrypted checkout.
               </label>
@@ -1590,7 +1743,7 @@
 
             <div class="checkout-actions">
               <button type="button" class="btn-secondary" id="cancel-checkout">Cancel</button>
-              <button type="submit" class="btn btn-custom">Place order</button>
+              <button type="submit" class="btn btn-custom" id="place-order-button">Place order</button>
             </div>
 
             <div class="checkout-success" id="checkout-success">Your order has been placed successfully.</div>

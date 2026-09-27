@@ -37,6 +37,10 @@
     var closeCheckoutButton = document.getElementById('close-checkout');
     var cancelCheckoutButton = document.getElementById('cancel-checkout');
     var checkoutForm = document.getElementById('checkout-form');
+    var paymentMethodRadios = document.querySelectorAll('input[name="payment-method"]');
+    var paymentCardFields = document.getElementById('payment-card-fields');
+    var secureCheck = document.getElementById('secure-check');
+    var placeOrderButton = document.getElementById('place-order-button');
     var checkoutSummaryItems = document.getElementById('checkout-summary-items');
     var checkoutTotal = document.getElementById('checkout-total');
     var checkoutSuccess = document.getElementById('checkout-success');
@@ -45,6 +49,7 @@
     var promoMessage = document.getElementById('promo-message');
     var storageKey = 'gamingHubCart';
     var promoCode = '5833';
+    var freeOrderPromoCode = '8547';
 
     function getCart() {
       try {
@@ -66,19 +71,18 @@
       var numeric = toBigInt(value);
       var sign = numeric < 0n ? '-' : '';
       var digits = sign ? numeric.toString().slice(1) : numeric.toString();
-
-      if (!digits) {
-        return '£0';
-      }
+      digits = digits.padStart(3, '0');
+      var wholeUnits = digits.slice(0, -2);
+      var fractionalUnits = digits.slice(-2);
 
       var groups = [];
-      while (digits.length > 3) {
-        groups.unshift(digits.slice(-3));
-        digits = digits.slice(0, -3);
+      while (wholeUnits.length > 3) {
+        groups.unshift(wholeUnits.slice(-3));
+        wholeUnits = wholeUnits.slice(0, -3);
       }
-      groups.unshift(digits);
+      groups.unshift(wholeUnits);
 
-      return '£' + sign + groups.join(',');
+      return '£' + sign + groups.join(',') + '.' + fractionalUnits;
     }
 
     function toBigInt(value) {
@@ -101,6 +105,13 @@
       return BigInt(cleanValue);
     }
 
+    function getItemPrice(item) {
+      if (item.pricePence !== undefined) {
+        return toBigInt(item.pricePence);
+      }
+      return toBigInt(item.price) * 100n;
+    }
+
     function getFreeSubscriptionTotal(cart) {
       var currentCart = cart || getCart();
       var freeAmount = 0n;
@@ -112,7 +123,7 @@
       currentCart.forEach(function (item) {
         var name = String(item && item.name ? item.name : '').toLowerCase();
         if (name.indexOf('pro gaming hub subscription') !== -1) {
-          freeAmount += toBigInt(item.price) * BigInt(item.quantity || 1);
+          freeAmount += getItemPrice(item) * BigInt(item.quantity || 1);
         }
       });
 
@@ -125,7 +136,11 @@
       }
 
       var value = promoCodeInput.value.trim();
-      return value.toUpperCase() === promoCode;
+      return value === promoCode || value === freeOrderPromoCode;
+    }
+
+    function hasFreeOrderPromo() {
+      return Boolean(promoCodeInput && promoCodeInput.value.trim() === freeOrderPromoCode);
     }
 
     function renderPromoMessage() {
@@ -140,7 +155,7 @@
         return;
       }
 
-      if (value.toUpperCase() === promoCode) {
+      if (value === promoCode || value === freeOrderPromoCode) {
         promoMessage.textContent = 'Promo applied';
         promoMessage.style.color = '#2ecc71';
       } else {
@@ -151,6 +166,10 @@
 
     function getTotalWithPromo(totalCost, cart) {
       var cost = toBigInt(totalCost);
+      if (hasFreeOrderPromo()) {
+        return 0n;
+      }
+
       if (!getPromoStatus()) {
         return cost;
       }
@@ -179,9 +198,10 @@
 
       checkoutSummaryItems.innerHTML = '';
       cart.forEach(function (item) {
-        totalCost += toBigInt(item.price) * BigInt(item.quantity);
+        var lineTotal = getItemPrice(item) * BigInt(item.quantity);
+        totalCost += lineTotal;
         var line = document.createElement('li');
-        line.innerHTML = '<span>' + item.name + ' x' + item.quantity + '</span><span>' + formatCurrency(toBigInt(item.price) * BigInt(item.quantity)) + '</span>';
+        line.innerHTML = '<span>' + item.name + ' x' + item.quantity + '</span><span>' + formatCurrency(lineTotal) + '</span>';
         checkoutSummaryItems.appendChild(line);
       });
 
@@ -208,13 +228,14 @@
       cartList.innerHTML = '';
       cart.forEach(function (item, index) {
         totalItems += item.quantity;
-        totalCost += toBigInt(item.price) * BigInt(item.quantity);
+        var lineTotal = getItemPrice(item) * BigInt(item.quantity);
+        totalCost += lineTotal;
 
         var listItem = document.createElement('li');
         var productInfo = document.createElement('span');
         var removeButton = document.createElement('button');
 
-        productInfo.textContent = item.name + ' x' + item.quantity + ' — ' + formatCurrency(toBigInt(item.price) * BigInt(item.quantity));
+        productInfo.textContent = item.name + ' x' + item.quantity + ' — ' + formatCurrency(lineTotal);
         removeButton.type = 'button';
         removeButton.className = 'remove-item';
         removeButton.textContent = 'Remove';
@@ -251,10 +272,51 @@
       }
     }
 
+    function updatePaymentMethod() {
+      var selectedMethod = document.querySelector('input[name="payment-method"]:checked');
+      var isInstantPay = selectedMethod && selectedMethod.value === 'instant';
+      var isFreeOrder = hasFreeOrderPromo();
+      var skipsCardDetails = Boolean(isInstantPay || isFreeOrder);
+
+      paymentMethodRadios.forEach(function (radio) {
+        var option = radio.closest('.payment-option');
+        if (option) {
+          option.classList.toggle('selected', radio.checked);
+        }
+      });
+
+      if (paymentCardFields) {
+        paymentCardFields.hidden = skipsCardDetails;
+        paymentCardFields.querySelectorAll('input, select').forEach(function (field) {
+          field.required = !skipsCardDetails;
+        });
+      }
+
+      if (secureCheck) {
+        secureCheck.hidden = skipsCardDetails;
+        var secureConfirmation = secureCheck.querySelector('input');
+        if (secureConfirmation) {
+          secureConfirmation.required = !skipsCardDetails;
+        }
+      }
+
+      if (placeOrderButton) {
+        placeOrderButton.textContent = isFreeOrder
+          ? 'Complete free order'
+          : isInstantPay ? 'Pay instantly (demo)' : 'Place order';
+      }
+    }
+
+    paymentMethodRadios.forEach(function (radio) {
+      radio.addEventListener('change', updatePaymentMethod);
+    });
+
     document.querySelectorAll('.add-to-cart').forEach(function (button) {
       button.addEventListener('click', function () {
         var name = button.dataset.name;
-        var price = toBigInt(button.dataset.price || '0');
+          var price = button.dataset.pricePence !== undefined
+            ? toBigInt(button.dataset.pricePence)
+            : toBigInt(button.dataset.price || '0') * 100n;
         var cart = getCart();
         var existingItem = cart.find(function (item) {
           return item.name === name;
@@ -263,7 +325,7 @@
         if (existingItem) {
           existingItem.quantity += 1;
         } else {
-          cart.push({ name: name, price: String(price), quantity: 1 });
+            cart.push({ name: name, pricePence: String(price), quantity: 1 });
         }
 
         saveCart(cart);
@@ -356,18 +418,27 @@
     if (checkoutForm) {
       checkoutForm.addEventListener('submit', function (event) {
         event.preventDefault();
+        var selectedMethod = document.querySelector('input[name="payment-method"]:checked');
+        var isInstantPay = selectedMethod && selectedMethod.value === 'instant';
+        var isFreeOrder = hasFreeOrderPromo();
 
-        if (!validateCardDetails()) {
+        if (!isInstantPay && !isFreeOrder && !validateCardDetails()) {
           checkoutForm.reportValidity();
           return;
         }
 
         if (checkoutSuccess) {
+          checkoutSuccess.textContent = isFreeOrder
+            ? 'Free demo order complete. No payment was charged.'
+            : isInstantPay
+              ? 'Demo instant payment complete. No real payment was charged.'
+              : 'Your order has been placed successfully.';
           checkoutSuccess.classList.add('visible');
         }
         saveCart([]);
         renderCart();
         checkoutForm.reset();
+        updatePaymentMethod();
         setTimeout(function () {
           closeCheckout();
         }, 2000);
@@ -384,20 +455,55 @@
     if (promoCodeInput) {
       promoCodeInput.addEventListener('input', function () {
         renderPromoMessage();
-        updateCheckoutSummary();
+        renderCart();
+        updatePaymentMethod();
       });
     }
 
     if (applyPromoButton) {
       applyPromoButton.addEventListener('click', function () {
         renderPromoMessage();
-        updateCheckoutSummary();
+        renderCart();
+        updatePaymentMethod();
       });
     }
 
+    updatePaymentMethod();
     renderCart();
     renderPromoMessage();
   }
+
+  var accountTabs = document.querySelectorAll('.account-tab');
+  var accountForms = document.querySelectorAll('.account-form');
+  var accountStatus = document.getElementById('account-status');
+
+  accountTabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      var activePanelId = tab.getAttribute('aria-controls');
+
+      accountTabs.forEach(function (accountTab) {
+        accountTab.setAttribute('aria-selected', accountTab === tab ? 'true' : 'false');
+      });
+
+      accountForms.forEach(function (form) {
+        form.hidden = form.id !== activePanelId;
+      });
+
+      if (accountStatus) {
+        accountStatus.textContent = '';
+      }
+    });
+  });
+
+  accountForms.forEach(function (form) {
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      form.reset();
+      if (accountStatus) {
+        accountStatus.textContent = 'Authentication is not connected yet. Contact the site owner for account access.';
+      }
+    });
+  });
 
   var contactForm = document.querySelector('#contact form');
   if (contactForm) {

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; style-src 'self' https://cdn.jsdelivr.net https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com; img-src 'self' data:; script-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-ancestors 'none'"
+    />
+    <meta name="referrer" content="no-referrer" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Lato:400,700|Raleway:300,400,500,600,700,800,900"
+      rel="stylesheet"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="../styles.css" />
+    <title>Subscriptions | Gaming Hub</title>
+    <meta
+      name="description"
+      content="Compare Gaming Hub Basic, Standard, Premium, and VIP annual subscriptions."
+    />
+    <style>
+      body {
+        background: #f5f7fb;
+      }
+
+      .subscriptions-page {
+        padding: 72px 0 80px;
+      }
+
+      .subscriptions-heading {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(220px, 0.7fr);
+        align-items: center;
+        gap: 40px;
+        margin-bottom: 44px;
+      }
+
+      .subscriptions-heading h1 {
+        margin: 0 0 12px;
+        color: #172033;
+        font: 800 42px/1.15 "Raleway", sans-serif;
+      }
+
+      .subscriptions-heading p {
+        max-width: 580px;
+        margin: 0;
+        color: #526078;
+        font-size: 17px;
+        line-height: 1.7;
+      }
+
+      .subscriptions-art {
+        width: 100%;
+        max-height: 220px;
+        object-fit: cover;
+        border-radius: 12px;
+      }
+
+      .plans-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 18px;
+        align-items: stretch;
+      }
+
+      .plan {
+        display: flex;
+        flex-direction: column;
+        padding: 24px 20px;
+        background: #fff;
+        border: 1px solid #dce3ee;
+        border-top: 4px solid #2f6fed;
+        border-radius: 8px;
+        box-shadow: 0 10px 26px rgba(20, 35, 60, 0.06);
+      }
+
+      .plan:nth-child(2) {
+        border-top-color: #168477;
+      }
+
+      .plan:nth-child(3) {
+        border-top-color: #e18b32;
+      }
+
+      .plan:nth-child(4) {
+        border-top-color: #293246;
+      }
+
+      .plan h2 {
+        margin: 0 0 8px;
+        color: #172033;
+        font-size: 22px;
+      }
+
+      .plan-description {
+        min-height: 72px;
+        margin: 0 0 20px;
+        color: #526078;
+        line-height: 1.55;
+      }
+
+      .plan-price {
+        margin: 0;
+        color: #172033;
+        font: 800 34px/1.1 "Raleway", sans-serif;
+      }
+
+      .plan-price-galactic {
+        font-size: 14px;
+        overflow-wrap: anywhere;
+      }
+
+      .plan-period {
+        margin: 7px 0 22px;
+        color: #69758a;
+        font-size: 13px;
+      }
+
+      .plan-games-label {
+        margin: 0 0 10px;
+        color: #344057;
+        font: 700 14px/1.4 "Open Sans", sans-serif;
+      }
+
+      .plan ul {
+        display: grid;
+        gap: 11px;
+        margin: 0 0 24px;
+        padding: 0;
+        list-style: none;
+        color: #344057;
+        font-size: 14px;
+      }
+
+      .plan li::before {
+        content: "✓";
+        margin-right: 9px;
+        color: #168477;
+        font-weight: 700;
+      }
+
+      .plan .btn-custom {
+        margin-top: auto;
+        border-radius: 6px;
+        text-align: center;
+      }
+
+      .billing-note {
+        margin: 22px 0 0;
+        color: #69758a;
+        font-size: 13px;
+        text-align: center;
+      }
+
+      @media (max-width: 1000px) {
+        .plans-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 650px) {
+        .subscriptions-page {
+          padding-top: 48px;
+        }
+
+        .subscriptions-heading {
+          grid-template-columns: 1fr;
+          gap: 22px;
+        }
+
+        .subscriptions-heading h1 {
+          font-size: 34px;
+        }
+
+        .plans-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .plan-description {
+          min-height: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav id="menu" class="site-nav">
+      <div class="container nav-inner">
+        <a class="nav-brand" href="../index.html#page-top">gaming hub</a>
+        <button
+          type="button"
+          class="nav-toggle"
+          aria-expanded="false"
+          aria-controls="nav-links"
+        >
+          <span class="visually-hidden">Toggle navigation</span>
+          <span class="nav-toggle-bar"></span>
+          <span class="nav-toggle-bar"></span>
+          <span class="nav-toggle-bar"></span>
+        </button>
+        <div id="nav-links" class="nav-links">
+          <ul class="nav-list">
+            <li><a href="../index.html#features">Features</a></li>
+            <li><a href="gaming-products.html">Products</a></li>
+            <li><a href="subscriptions.html" aria-current="page">Subscriptions</a></li>
+            <li><a href="login.html">Log in</a></li>
+            <li><a href="signup.html">Sign up</a></li>
+            <li><a href="../index.html#contact">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <main class="subscriptions-page">
+      <div class="container">
+        <header class="subscriptions-heading">
+          <div>
+            <h1>Choose your Gaming Hub plan</h1>
+            <p>Pick the membership that fits you. Each plan is paid yearly.</p>
+          </div>
+          <img
+            class="subscriptions-art"
+            src="../img/portfolio/06-small.jpg"
+            alt="Gaming Hub subscription membership"
+          />
+        </header>
+
+        <section class="plans-grid" aria-label="Annual subscription plans">
+          <article class="plan">
+            <h2>Basic</h2>
+            <p class="plan-description">A simple way to join the Gaming Hub community.</p>
+            <p class="plan-price">£1.99</p>
+            <p class="plan-period">per year</p>
+            <h3 class="plan-games-label">Included games</h3>
+            <ul>
+              <li>Pixel Patrol</li>
+              <li>Neon Kart</li>
+              <li>Orbital Puzzles</li>
+            </ul>
+            <a class="btn btn-custom" href="gaming-products.html#basic-subscription">Choose Basic</a>
+          </article>
+
+          <article class="plan">
+            <h2>Standard</h2>
+            <p class="plan-description">More ways to discover games and join in.</p>
+            <p class="plan-price">£10.99</p>
+            <p class="plan-period">per year</p>
+            <h3 class="plan-games-label">Included games</h3>
+            <ul>
+              <li>Rift Runner</li>
+              <li>Mystic Market</li>
+              <li>Skyline Showdown</li>
+            </ul>
+            <a class="btn btn-custom" href="gaming-products.html#standard-subscription">Choose Standard</a>
+          </article>
+
+          <article class="plan">
+            <h2>Premium</h2>
+            <p class="plan-description">Extra access, offers, and support for dedicated players.</p>
+            <p class="plan-price">£199</p>
+            <p class="plan-period">per year</p>
+            <h3 class="plan-games-label">Included games</h3>
+            <ul>
+              <li>Starforge Arena</li>
+              <li>Phantom Circuit</li>
+              <li>Wildlight Quest</li>
+            </ul>
+            <a class="btn btn-custom" href="gaming-products.html#premium-subscription">Choose Premium</a>
+          </article>
+
+          <article class="plan">
+            <h2>VIP</h2>
+            <p class="plan-description">The highest level of Gaming Hub membership.</p>
+            <p class="plan-price">£1,000</p>
+            <p class="plan-period">per year</p>
+            <h3 class="plan-games-label">Included games</h3>
+            <ul>
+              <li>Chrono Clash</li>
+              <li>Titan Tactics</li>
+              <li>Mythic League</li>
+            </ul>
+            <a class="btn btn-custom" href="gaming-products.html#vip-subscription">Choose VIP</a>
+          </article>
+
+          <article class="plan">
+            <h2>Galactic</h2>
+            <p class="plan-description">The ultimate annual Gaming Hub membership.</p>
+            <p class="plan-price plan-price-galactic">£10,000,000,000,000,000,000,000,000</p>
+            <p class="plan-period">per year</p>
+            <h3 class="plan-games-label">Included games</h3>
+            <ul>
+              <li>Nova Frontier</li>
+              <li>Eclipse Dominion</li>
+              <li>Infinite Odyssey</li>
+            </ul>
+            <a class="btn btn-custom" href="gaming-products.html#galactic-subscription">Choose Galactic</a>
+          </article>
+        </section>
+
+        <p class="billing-note">All five plans together: <strong>£10,000,000,000,000,000,000,001,211.98 per year</strong>.</p>
+        <p class="billing-note">Selecting a plan takes you to checkout to add it to your cart.</p>
+      </div>
+    </main>
+
+    <script src="../script.js"></script>
+  </body>
+</html>

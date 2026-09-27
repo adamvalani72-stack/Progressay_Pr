@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; script-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-ancestors 'none'"
+    />
+    <meta name="referrer" content="no-referrer" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Raleway:400,500,600,700,800"
+      rel="stylesheet"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="../styles.css" />
+    <title>Sign Up | Gaming Hub</title>
+    <meta name="description" content="Create a Gaming Hub account." />
+  </head>
+  <body>
+    <nav id="menu" class="site-nav">
+      <div class="container nav-inner">
+        <a class="nav-brand" href="../index.html#page-top">gaming hub</a>
+        <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="nav-links">
+          <span class="visually-hidden">Toggle navigation</span>
+          <span class="nav-toggle-bar"></span>
+          <span class="nav-toggle-bar"></span>
+          <span class="nav-toggle-bar"></span>
+        </button>
+        <div id="nav-links" class="nav-links">
+          <ul class="nav-list">
+            <li><a href="../index.html#features">Features</a></li>
+            <li><a href="gaming-products.html">Products</a></li>
+            <li><a href="subscriptions.html">Subscriptions</a></li>
+            <li><a href="login.html">Log in</a></li>
+            <li><a href="signup.html" aria-current="page">Sign up</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <main class="auth-page">
+      <section class="auth-card" aria-labelledby="signup-title">
+        <span class="auth-eyebrow">GAMING HUB ACCOUNT</span>
+        <h1 id="signup-title">Join Gaming Hub</h1>
+        <p class="auth-intro">Create your account to get started.</p>
+        <form class="account-form auth-form" id="signup-panel">
+          <div class="auth-field">
+            <label for="signup-name">Display name</label>
+            <input id="signup-name" name="name" type="text" autocomplete="name" required />
+          </div>
+          <div class="auth-field">
+            <label for="signup-email">Email address</label>
+            <input id="signup-email" name="email" type="email" autocomplete="email" required />
+          </div>
+          <div class="auth-field">
+            <label for="signup-password">Password</label>
+            <input id="signup-password" name="password" type="password" autocomplete="new-password" minlength="8" required />
+          </div>
+          <button class="auth-submit" type="submit">Create account</button>
+        </form>
+        <p class="auth-switch">Already have an account? <a href="login.html">Log in</a></p>
+        <p class="auth-notice">Preview only: authentication is not connected. Details are not saved or sent.</p>
+        <p class="auth-status" id="account-status" role="status" aria-live="polite"></p>
+        <p class="auth-support">Account support: <a href="mailto:adamvalani72@gmail.com">adamvalani72@gmail.com</a></p>
+      </section>
+    </main>
+
+    <script src="../script.js"></script>
+  </body>
+</html>
