@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; script-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-ancestors 'none'"
+      content="default-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; script-src 'self' https://esm.sh; connect-src 'self' https://esm.sh https://*.supabase.co wss://*.supabase.co; base-uri 'self'; form-action 'self'; object-src 'none'; frame-ancestors 'none'"
     />
     <meta name="referrer" content="no-referrer" />
     <link
@@ -44,6 +44,11 @@
         <span class="auth-eyebrow">GAMING HUB ACCOUNT</span>
         <h1 id="login-title">Welcome back</h1>
         <p class="auth-intro">Log in to continue to your Gaming Hub account.</p>
+        <button class="auth-google-button" type="button" data-google-auth>
+          <span class="google-auth-mark" aria-hidden="true">G</span>
+          Continue with Google
+        </button>
+        <div class="auth-divider"><span>or continue with email</span></div>
         <form class="account-form auth-form" id="login-panel">
           <div class="auth-field">
             <label for="login-email">Email address</label>
@@ -51,17 +56,42 @@
           </div>
           <div class="auth-field">
             <label for="login-password">Password</label>
-            <input id="login-password" name="password" type="password" autocomplete="current-password" required />
+            <div class="auth-password-input">
+              <input id="login-password" name="password" type="password" autocomplete="current-password" required />
+              <button class="auth-password-toggle" type="button" aria-label="Show password" aria-pressed="false">Show</button>
+            </div>
+          </div>
+          <div class="auth-options">
+            <button class="auth-text-button" type="button" data-forgot-password>Forgot password?</button>
           </div>
           <button class="auth-submit" type="submit">Log in</button>
         </form>
+        <form class="account-form auth-form auth-reset-form" id="reset-password-form" hidden>
+          <h2>Choose a new password</h2>
+          <div class="auth-field">
+            <label for="reset-password">New password</label>
+            <input id="reset-password" name="password" type="password" autocomplete="new-password" minlength="8" required />
+          </div>
+          <div class="auth-field">
+            <label for="reset-confirm-password">Confirm new password</label>
+            <input id="reset-confirm-password" name="confirm-password" type="password" autocomplete="new-password" required />
+          </div>
+          <button class="auth-submit" type="submit">Update password</button>
+        </form>
+        <div class="auth-session" id="auth-session" hidden>
+          <p>Signed in as <strong data-auth-email></strong></p>
+          <a class="auth-continue" href="../index.html">Continue to Gaming Hub</a>
+          <button class="auth-text-button" type="button" data-sign-out>Sign out</button>
+        </div>
         <p class="auth-switch">New to Gaming Hub? <a href="signup.html">Create an account</a></p>
-        <p class="auth-notice">Preview only: authentication is not connected. Details are not saved or sent.</p>
+        <p class="auth-notice" id="auth-setup-notice">Secure authentication is provided by Supabase.</p>
         <p class="auth-status" id="account-status" role="status" aria-live="polite"></p>
         <p class="auth-support">Account support: <a href="mailto:adamvalani72@gmail.com">adamvalani72@gmail.com</a></p>
       </section>
     </main>
 
     <script src="../script.js"></script>
+    <script src="../auth-config.js"></script>
+    <script type="module" src="../auth.js"></script>
   </body>
 </html>

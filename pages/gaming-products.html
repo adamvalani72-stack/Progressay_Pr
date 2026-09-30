@@ -460,13 +460,35 @@
 
       .cart-actions {
         display: flex;
+        flex-direction: column;
         gap: 10px;
         margin-top: 20px;
       }
 
-      .cart-actions .btn-custom {
-        flex: 1;
+      .cart-checkout-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .cart-checkout-actions button {
+        min-height: 44px;
+        padding: 8px;
         text-align: center;
+        line-height: 1.35;
+      }
+
+      .cart-actions button:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+
+      .cart-checkout-actions [hidden] {
+        display: none;
+      }
+
+      .subscription-shipping-field[hidden] {
+        display: none;
       }
 
       .btn-secondary {
@@ -1404,7 +1426,7 @@
                 <span class="stock">Billed yearly</span>
               </div>
               <div style="margin-top: 18px;">
-                <button type="button" class="btn btn-custom add-to-cart" data-name="Basic Annual Subscription" data-price-pence="199">Choose Basic</button>
+                <a class="btn btn-custom" href="subscriptions.html?plan=basic">Choose Basic</a>
               </div>
             </div>
           </article>
@@ -1434,7 +1456,7 @@
                 <span class="stock">Billed yearly</span>
               </div>
               <div style="margin-top: 18px;">
-                <button type="button" class="btn btn-custom add-to-cart" data-name="Standard Annual Subscription" data-price-pence="1099">Choose Standard</button>
+                <a class="btn btn-custom" href="subscriptions.html?plan=standard">Choose Standard</a>
               </div>
             </div>
           </article>
@@ -1464,7 +1486,7 @@
                 <span class="stock">Billed yearly</span>
               </div>
               <div style="margin-top: 18px;">
-                <button type="button" class="btn btn-custom add-to-cart" data-name="Premium Annual Subscription" data-price-pence="19900">Choose Premium</button>
+                <a class="btn btn-custom" href="subscriptions.html?plan=premium">Choose Premium</a>
               </div>
             </div>
           </article>
@@ -1494,7 +1516,7 @@
                 <span class="stock">Billed yearly</span>
               </div>
               <div style="margin-top: 18px;">
-                <button type="button" class="btn btn-custom add-to-cart" data-name="VIP Annual Subscription" data-price-pence="100000">Choose VIP</button>
+                <a class="btn btn-custom" href="subscriptions.html?plan=vip">Choose VIP</a>
               </div>
             </div>
           </article>
@@ -1519,12 +1541,12 @@
               </ul>
               <div class="product-meta">
                 <div class="product-price">
-                  <span class="price price-galactic">£10,000,000,000,000,000,000,000,000</span>
+                  <span class="price price-galactic">Custom annual pricing</span>
                 </div>
-                <span class="stock">Billed yearly</span>
+                <span class="stock">Contact sales</span>
               </div>
               <div style="margin-top: 18px;">
-                <button type="button" class="btn btn-custom add-to-cart" data-name="Galactic Gaming Subscription" data-price-pence="1000000000000000000000000000">Choose Galactic</button>
+                <a class="btn btn-custom" href="subscriptions.html#galactic-plan">Contact sales</a>
               </div>
             </div>
           </article>
@@ -1576,7 +1598,10 @@
             </div>
             <div class="cart-actions">
               <button type="button" class="btn-secondary" id="clear-cart">Clear</button>
-              <button type="button" class="btn btn-custom" id="checkout-button">Checkout</button>
+              <div class="cart-checkout-actions">
+                <button type="button" class="btn btn-custom" id="checkout-products-button">Checkout products</button>
+                <button type="button" class="btn btn-custom" id="checkout-subscriptions-button" hidden>Checkout subscriptions</button>
+              </div>
             </div>
           </aside>
         </div>
@@ -1625,15 +1650,15 @@
                 <label for="checkout-email">Email</label>
                 <input id="checkout-email" name="checkout-email" type="email" required />
               </div>
-              <div class="form-field full">
+              <div class="form-field full subscription-shipping-field">
                 <label for="checkout-address">Address</label>
                 <input id="checkout-address" name="checkout-address" type="text" required />
               </div>
-              <div class="form-field">
+              <div class="form-field subscription-shipping-field">
                 <label for="checkout-city">City</label>
                 <input id="checkout-city" name="checkout-city" type="text" required />
               </div>
-              <div class="form-field">
+              <div class="form-field subscription-shipping-field">
                 <label for="checkout-country">Country</label>
                 <select id="checkout-country" name="checkout-country" required>
                   <option value="">Select</option>
@@ -1691,7 +1716,7 @@
                   <span>Instant Pay</span>
                 </label>
               </div>
-              <p class="payment-demo-note">Demo checkout only. No real payment is charged.</p>
+              <p class="payment-demo-note" id="payment-demo-note">Demo checkout only. No real payment is charged.</p>
 
               <div class="form-grid payment-grid" id="payment-card-fields">
                 <div class="form-field full">
@@ -1750,7 +1775,7 @@
           </form>
 
           <div class="checkout-summary">
-            <h4>Order Summary</h4>
+            <h4 id="checkout-summary-title">Order Summary</h4>
             <ul class="summary-items" id="checkout-summary-items">
               <li><span>Cart empty</span><span>£0</span></li>
             </ul>

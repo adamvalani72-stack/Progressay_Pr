@@ -144,6 +144,7 @@
         margin-top: auto;
         border-radius: 6px;
         text-align: center;
+        cursor: pointer;
       }
 
       .billing-note {
@@ -151,6 +152,237 @@
         color: #69758a;
         font-size: 13px;
         text-align: center;
+      }
+
+      .membership-checkout[hidden],
+      .membership-step[hidden],
+      .membership-complete[hidden] {
+        display: none;
+      }
+
+      .membership-checkout:not([hidden]) {
+        position: fixed;
+        inset: 0;
+        z-index: 1200;
+        display: grid;
+        place-items: center;
+        overflow-y: auto;
+        padding: 24px;
+        background: rgba(17, 24, 39, 0.72);
+      }
+
+      .membership-dialog {
+        width: min(100%, 560px);
+        max-height: calc(100vh - 48px);
+        overflow-y: auto;
+        padding: 28px;
+        border-radius: 8px;
+        background: #fff;
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.25);
+      }
+
+      .membership-dialog-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .membership-dialog h2 {
+        margin: 0 0 8px;
+        color: #172033;
+        font-size: 25px;
+        text-transform: none;
+      }
+
+      .membership-close {
+        width: 36px;
+        height: 36px;
+        flex: 0 0 36px;
+        border: 1px solid #dce3ee;
+        border-radius: 50%;
+        background: #fff;
+        color: #344057;
+        font-size: 22px;
+        cursor: pointer;
+      }
+
+      .membership-steps {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin: 18px 0 22px;
+        padding: 0;
+        list-style: none;
+      }
+
+      .membership-steps li {
+        padding: 10px 12px;
+        border-bottom: 3px solid #dce3ee;
+        color: #69758a;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .membership-steps li[aria-current="step"] {
+        border-color: #2f6fed;
+        color: #172033;
+      }
+
+      .membership-selected-plan,
+      .membership-price-summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin: 0 0 20px;
+        padding: 16px;
+        border: 1px solid #dce3ee;
+        border-radius: 6px;
+        background: #f7f9fc;
+      }
+
+      .membership-selected-plan p,
+      .membership-price-summary p {
+        margin: 0;
+        color: #526078;
+        font-size: 13px;
+      }
+
+      .membership-selected-plan strong,
+      .membership-price-summary strong {
+        display: block;
+        margin-bottom: 4px;
+        color: #172033;
+        font-size: 16px;
+      }
+
+      .membership-price-summary > strong {
+        margin: 0;
+        text-align: right;
+      }
+
+      .membership-field {
+        display: grid;
+        gap: 7px;
+        margin-bottom: 18px;
+      }
+
+      .membership-field label,
+      .membership-payment legend {
+        color: #344057;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .membership-field input {
+        min-height: 46px;
+        padding: 11px 12px;
+        border: 1px solid #b9c5d7;
+        border-radius: 5px;
+        color: #172033;
+        font: inherit;
+      }
+
+      .membership-field input:focus {
+        border-color: #2f6fed;
+        outline: 3px solid rgba(47, 111, 237, 0.14);
+      }
+
+      .membership-payment {
+        display: grid;
+        gap: 10px;
+        margin: 0 0 18px;
+        padding: 0;
+        border: 0;
+      }
+
+      .membership-payment legend {
+        margin-bottom: 8px;
+      }
+
+      .membership-payment label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 48px;
+        padding: 10px 12px;
+        border: 1px solid #dce3ee;
+        border-radius: 5px;
+        color: #344057;
+        font-size: 13px;
+        cursor: pointer;
+      }
+
+      .membership-payment input {
+        accent-color: #2f6fed;
+      }
+
+      .membership-renewal-note {
+        margin: 0 0 18px;
+        color: #69758a;
+        font-size: 12px;
+        line-height: 1.6;
+      }
+
+      .membership-actions {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .membership-actions button {
+        min-height: 46px;
+        padding: 10px 16px;
+        border-radius: 5px;
+        font: 700 13px "Open Sans", sans-serif;
+        cursor: pointer;
+      }
+
+      .membership-back {
+        border: 1px solid #cbd5e1;
+        background: #fff;
+        color: #344057;
+      }
+
+      .membership-continue {
+        flex: 1;
+        border: 0;
+        background: #2f6fed;
+        color: #fff;
+      }
+
+      .membership-continue:hover,
+      .membership-continue:focus {
+        background: #2459c5;
+      }
+
+      .membership-demo-note,
+      .membership-status {
+        margin: 14px 0 0;
+        color: #69758a;
+        font-size: 12px;
+        line-height: 1.6;
+      }
+
+      .membership-status {
+        color: #166534;
+        font-weight: 700;
+      }
+
+      .membership-error[hidden] {
+        display: none;
+      }
+
+      .membership-error {
+        margin: 14px 0 0;
+        color: #a33232;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      body.membership-checkout-open {
+        overflow: hidden;
       }
 
       @media (max-width: 1000px) {
@@ -237,7 +469,7 @@
               <li>Neon Kart</li>
               <li>Orbital Puzzles</li>
             </ul>
-            <a class="btn btn-custom" href="gaming-products.html#basic-subscription">Choose Basic</a>
+            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="basic" data-plan-name="Basic" data-plan-price="£1.99">Choose Basic</button>
           </article>
 
           <article class="plan">
@@ -251,7 +483,7 @@
               <li>Mystic Market</li>
               <li>Skyline Showdown</li>
             </ul>
-            <a class="btn btn-custom" href="gaming-products.html#standard-subscription">Choose Standard</a>
+            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="standard" data-plan-name="Standard" data-plan-price="£10.99">Choose Standard</button>
           </article>
 
           <article class="plan">
@@ -265,7 +497,7 @@
               <li>Phantom Circuit</li>
               <li>Wildlight Quest</li>
             </ul>
-            <a class="btn btn-custom" href="gaming-products.html#premium-subscription">Choose Premium</a>
+            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="premium" data-plan-name="Premium" data-plan-price="£199">Choose Premium</button>
           </article>
 
           <article class="plan">
@@ -276,31 +508,109 @@
             <h3 class="plan-games-label">Included games</h3>
             <ul>
               <li>Chrono Clash</li>
-              <li>Titan Tactics</li>
-              <li>Mythic League</li>
-            </ul>
-            <a class="btn btn-custom" href="gaming-products.html#vip-subscription">Choose VIP</a>
-          </article>
+                <h2>Galactic</h2>
+                <p class="plan-description">The ultimate annual Gaming Hub membership.</p>
+                <p class="plan-price plan-price-galactic">Custom pricing</p>
+                <p class="plan-period">Contact us for a quote</p>
+                <h3 class="plan-games-label">Included games</h3>
+                <ul>
+                  <li>Nova Frontier</li>
+                  <li>Eclipse Dominion</li>
+                  <li>Infinite Odyssey</li>
+                </ul>
+                <a class="btn btn-custom" href="mailto:adamvalani72@gmail.com?subject=Galactic%20Gaming%20membership">Contact sales</a>
+              </article>
+            </section>
 
-          <article class="plan">
-            <h2>Galactic</h2>
-            <p class="plan-description">The ultimate annual Gaming Hub membership.</p>
-            <p class="plan-price plan-price-galactic">£10,000,000,000,000,000,000,000,000</p>
-            <p class="plan-period">per year</p>
-            <h3 class="plan-games-label">Included games</h3>
-            <ul>
-              <li>Nova Frontier</li>
-              <li>Eclipse Dominion</li>
-              <li>Infinite Odyssey</li>
-            </ul>
-            <a class="btn btn-custom" href="gaming-products.html#galactic-subscription">Choose Galactic</a>
-          </article>
+            <p class="billing-note">Choose a plan to review your annual billing and payment options.</p>
+          </div>
+        </main>
+
+        <div class="membership-checkout" id="membership-checkout" hidden>
+          <section class="membership-dialog" role="dialog" aria-modal="true" aria-labelledby="membership-title" tabindex="-1">
+            <div class="membership-dialog-header">
+              <div>
+                <span class="auth-eyebrow">GAMING HUB MEMBERSHIP</span>
+                <h2 id="membership-title">Start your membership</h2>
+              </div>
+              <button class="membership-close" type="button" data-close-membership aria-label="Close membership checkout">×</button>
+            </div>
+            <ol class="membership-steps" aria-label="Checkout steps">
+              <li data-membership-step="account" aria-current="step">1. Your details</li>
+              <li data-membership-step="payment">2. Review and pay</li>
+            </ol>
+            <p class="membership-error" id="membership-error" role="alert" hidden></p>
+
+            <section class="membership-step" id="membership-account-step" aria-labelledby="membership-account-title">
+              <h3 id="membership-account-title">Where should we send your membership details?</h3>
+              <div class="membership-selected-plan">
+                <p><strong data-selected-plan-name></strong><span>Annual membership</span></p>
+                <strong><span data-selected-plan-price></span> / year</strong>
+              </div>
+              <form id="membership-account-form">
+                <div class="membership-field">
+                  <label for="membership-email">Email address</label>
+                  <input id="membership-email" name="email" type="email" autocomplete="email" required />
+                </div>
+                <div class="membership-actions">
+                  <button class="membership-back" type="button" data-close-membership>Cancel</button>
+                  <button class="membership-continue" type="submit">Continue to payment</button>
+                </div>
+              </form>
+              <p class="membership-demo-note">Already have an account? <a href="login.html">Log in</a>. Checkout bills the email above; it does not create a Gaming Hub login.</p>
+            </section>
+
+            <section class="membership-step" id="membership-payment-step" aria-labelledby="membership-payment-title" hidden>
+              <h3 id="membership-payment-title">Review your membership</h3>
+              <div class="membership-price-summary">
+                <p><strong><span data-selected-plan-name></span> plan</strong><span>Renews yearly</span></p>
+                <strong><span data-selected-plan-price></span> / year</strong>
+              </div>
+              <p class="membership-renewal-note">Due today: <strong data-selected-plan-price></strong>. Your plan bills annually and renews yearly until canceled. Secure payment is handled by Stripe.</p>
+              <form id="membership-payment-form">
+                <fieldset class="membership-payment">
+                  <legend>Payment</legend>
+                  <p class="membership-demo-note">Enter your payment details on Stripe's secure hosted checkout. Eligible wallets may also be offered there.</p>
+                </fieldset>
+                <div class="membership-actions">
+                  <button class="membership-back" type="button" data-membership-back>Back</button>
+                  <button class="membership-continue" type="submit">Continue to secure payment</button>
+                </div>
+              </form>
+            </section>
+
+            <section class="membership-complete" id="membership-complete" aria-live="polite" hidden>
+              <h3>Membership checkout</h3>
+              <p class="membership-status" id="membership-status"></p>
+              <div class="membership-actions">
+                <button class="membership-continue" type="button" data-close-membership>Back to plans</button>
+              </div>
+            </section>
+          </section>
+        </div>
+
+        <script src="../script.js"></script>
+      </body>
+    </html>
+    *** Update File: /workspaces/Progressay_Pr/pages/subscriptions.html
+    @@
+              <article class="plan" id="galactic-plan">
+                <h2>Galactic</h2>
+                <p class="plan-description">The ultimate annual Gaming Hub membership.</p>
+                <p class="plan-price plan-price-galactic">Custom pricing</p>
+                <p class="plan-period">Contact us for a quote</p>
+                <h3 class="plan-games-label">Included games</h3>
+                <ul>
+                  <li>Nova Frontier</li>
+                  <li>Eclipse Dominion</li>
+                  <li>Infinite Odyssey</li>
+                </ul>
+                <a class="btn btn-custom" href="mailto:adamvalani72@gmail.com?subject=Galactic%20Gaming%20membership">Contact sales</a>
+              </article>
+          </div>
         </section>
-
-        <p class="billing-note">All five plans together: <strong>£10,000,000,000,000,000,000,001,211.98 per year</strong>.</p>
-        <p class="billing-note">Selecting a plan takes you to checkout to add it to your cart.</p>
-      </div>
-    </main>
+      </section>
+    </div>
 
     <script src="../script.js"></script>
   </body>

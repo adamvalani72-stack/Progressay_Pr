@@ -32,8 +32,12 @@
     var cartCount = document.getElementById('cart-count');
     var cartTotal = document.getElementById('cart-total');
     var clearCartButton = document.getElementById('clear-cart');
-    var checkoutButton = document.getElementById('checkout-button');
+    var checkoutProductsButton = document.getElementById('checkout-products-button');
+    var checkoutSubscriptionsButton = document.getElementById('checkout-subscriptions-button');
     var checkoutModal = document.getElementById('checkout-modal');
+    var checkoutTitle = document.getElementById('checkout-title');
+    var checkoutSummaryTitle = document.getElementById('checkout-summary-title');
+    var paymentDemoNote = document.getElementById('payment-demo-note');
     var closeCheckoutButton = document.getElementById('close-checkout');
     var cancelCheckoutButton = document.getElementById('cancel-checkout');
     var checkoutForm = document.getElementById('checkout-form');
@@ -50,6 +54,7 @@
     var storageKey = 'gamingHubCart';
     var promoCode = '5833';
     var freeOrderPromoCode = '8547';
+    var checkoutType = 'product';
 
     function getCart() {
       try {
@@ -110,6 +115,21 @@
         return toBigInt(item.pricePence);
       }
       return toBigInt(item.price) * 100n;
+    }
+
+    function getItemType(item) {
+      if (item.type === 'subscription' || item.type === 'product') {
+        return item.type;
+      }
+      return String(item.name || '').toLowerCase().indexOf('subscription') !== -1
+        ? 'subscription'
+        : 'product';
+    }
+
+    function getCheckoutCart(cart) {
+      return (cart || getCart()).filter(function (item) {
+        return getItemType(item) === checkoutType;
+      });
     }
 
     function getFreeSubscriptionTotal(cart) {
@@ -183,7 +203,7 @@
     }
 
     function updateCheckoutSummary() {
-      var cart = getCart();
+      var cart = getCheckoutCart();
       var totalCost = 0n;
 
       if (!checkoutSummaryItems || !checkoutTotal) {
@@ -191,8 +211,8 @@
       }
 
       if (!cart.length) {
-        checkoutSummaryItems.innerHTML = '<li><span>Cart empty</span><span>£0</span></li>';
-        checkoutTotal.textContent = '£0';
+        checkoutSummaryItems.innerHTML = '<li><span>No ' + (checkoutType === 'subscription' ? 'subscriptions' : 'products') + ' selected</span><span>£0.00</span></li>';
+        checkoutTotal.textContent = '£0.00';
         return;
       }
 
@@ -221,6 +241,8 @@
         cartList.innerHTML = '<li>Your cart is empty.</li>';
         cartCount.textContent = '0 items';
         cartTotal.textContent = '£0.00';
+        if (checkoutProductsButton) checkoutProductsButton.disabled = true;
+        if (checkoutSubscriptionsButton) checkoutSubscriptionsButton.hidden = true;
         updateCheckoutSummary();
         return;
       }
@@ -235,7 +257,7 @@
         var productInfo = document.createElement('span');
         var removeButton = document.createElement('button');
 
-        productInfo.textContent = item.name + ' x' + item.quantity + ' — ' + formatCurrency(lineTotal);
+        productInfo.textContent = (getItemType(item) === 'subscription' ? 'Subscription: ' : 'Product: ') + item.name + ' x' + item.quantity + ' — ' + formatCurrency(lineTotal);
         removeButton.type = 'button';
         removeButton.className = 'remove-item';
         removeButton.textContent = 'Remove';
@@ -252,12 +274,36 @@
       });
 
       cartCount.textContent = totalItems + (totalItems === 1 ? ' item' : ' items');
-      cartTotal.textContent = formatCurrency(getTotalWithPromo(totalCost, cart));
+      cartTotal.textContent = formatCurrency(totalCost);
+      if (checkoutProductsButton) {
+        checkoutProductsButton.disabled = !cart.some(function (item) { return getItemType(item) === 'product'; });
+      }
+      if (checkoutSubscriptionsButton) {
+        var hasSubscriptions = cart.some(function (item) { return getItemType(item) === 'subscription'; });
+        checkoutSubscriptionsButton.hidden = !hasSubscriptions;
+        checkoutSubscriptionsButton.disabled = !hasSubscriptions;
+      }
       updateCheckoutSummary();
     }
 
-    function openCheckout() {
+    function openCheckout(type) {
       if (!checkoutModal) return;
+      checkoutType = type;
+      var isSubscription = checkoutType === 'subscription';
+      if (checkoutTitle) checkoutTitle.textContent = isSubscription ? 'Subscription checkout' : 'Product checkout';
+      if (checkoutSummaryTitle) checkoutSummaryTitle.textContent = isSubscription ? 'Subscription Summary' : 'Product Summary';
+      if (paymentDemoNote) {
+        paymentDemoNote.textContent = isSubscription
+          ? 'Annual subscription demo. No recurring payment will be charged.'
+          : 'Product checkout demo. No real payment will be charged.';
+      }
+      document.querySelectorAll('.subscription-shipping-field').forEach(function (field) {
+        field.hidden = isSubscription;
+        field.querySelectorAll('input, select').forEach(function (input) {
+          input.required = !isSubscription;
+        });
+      });
+      updatePaymentMethod();
       updateCheckoutSummary();
       checkoutModal.classList.add('open');
       checkoutModal.setAttribute('aria-hidden', 'false');
@@ -303,7 +349,7 @@
       if (placeOrderButton) {
         placeOrderButton.textContent = isFreeOrder
           ? 'Complete free order'
-          : isInstantPay ? 'Pay instantly (demo)' : 'Place order';
+          : isInstantPay ? 'Pay instantly (demo)' : checkoutType === 'subscription' ? 'Start subscription (demo)' : 'Place order';
       }
     }
 
@@ -314,18 +360,19 @@
     document.querySelectorAll('.add-to-cart').forEach(function (button) {
       button.addEventListener('click', function () {
         var name = button.dataset.name;
+          var itemType = button.dataset.itemType || 'product';
           var price = button.dataset.pricePence !== undefined
             ? toBigInt(button.dataset.pricePence)
             : toBigInt(button.dataset.price || '0') * 100n;
         var cart = getCart();
         var existingItem = cart.find(function (item) {
-          return item.name === name;
+            return item.name === name && getItemType(item) === itemType;
         });
 
         if (existingItem) {
           existingItem.quantity += 1;
         } else {
-            cart.push({ name: name, pricePence: String(price), quantity: 1 });
+            cart.push({ name: name, type: itemType, pricePence: String(price), quantity: 1 });
         }
 
         saveCart(cart);
@@ -333,18 +380,15 @@
       });
     });
 
-    if (checkoutButton) {
-      checkoutButton.addEventListener('click', function () {
-        if (!getCart().length) {
-          if (checkoutSummaryItems) {
-            checkoutSummaryItems.innerHTML = '<li><span>Cart empty</span><span>£0</span></li>';
-          }
-          if (checkoutTotal) {
-            checkoutTotal.textContent = '£0';
-          }
-          return;
-        }
-        openCheckout();
+    if (checkoutProductsButton) {
+      checkoutProductsButton.addEventListener('click', function () {
+        if (!checkoutProductsButton.disabled) openCheckout('product');
+      });
+    }
+
+    if (checkoutSubscriptionsButton) {
+      checkoutSubscriptionsButton.addEventListener('click', function () {
+        if (!checkoutSubscriptionsButton.disabled) openCheckout('subscription');
       });
     }
 
@@ -429,13 +473,17 @@
 
         if (checkoutSuccess) {
           checkoutSuccess.textContent = isFreeOrder
-            ? 'Free demo order complete. No payment was charged.'
+            ? 'Free demo checkout complete. No payment was charged.'
             : isInstantPay
               ? 'Demo instant payment complete. No real payment was charged.'
-              : 'Your order has been placed successfully.';
+              : checkoutType === 'subscription'
+                ? 'Demo subscription started. No recurring payment was charged.'
+                : 'Demo product order complete. No real payment was charged.';
           checkoutSuccess.classList.add('visible');
         }
-        saveCart([]);
+        saveCart(getCart().filter(function (item) {
+          return getItemType(item) !== checkoutType;
+        }));
         renderCart();
         checkoutForm.reset();
         updatePaymentMethod();
@@ -473,6 +521,192 @@
     renderPromoMessage();
   }
 
+  var planButtons = document.querySelectorAll('[data-start-plan]');
+  var membershipCheckout = document.getElementById('membership-checkout');
+  var membershipDialog = membershipCheckout && membershipCheckout.querySelector('.membership-dialog');
+  var accountStep = document.getElementById('membership-account-step');
+  var paymentStep = document.getElementById('membership-payment-step');
+  var membershipComplete = document.getElementById('membership-complete');
+  var accountStepForm = document.getElementById('membership-account-form');
+  var paymentStepForm = document.getElementById('membership-payment-form');
+  var membershipEmail = document.getElementById('membership-email');
+  var membershipStatus = document.getElementById('membership-status');
+  var membershipError = document.getElementById('membership-error');
+  var selectedPlan = null;
+  var previousPlanButton = null;
+
+  function setMembershipStep(step) {
+    if (!accountStep || !paymentStep || !membershipComplete) return;
+    accountStep.hidden = step !== 'account';
+    paymentStep.hidden = step !== 'payment';
+    membershipComplete.hidden = step !== 'complete';
+    document.querySelectorAll('[data-membership-step]').forEach(function (label) {
+      if (step === 'complete') {
+        label.removeAttribute('aria-current');
+      } else if (label.dataset.membershipStep === step) {
+        label.setAttribute('aria-current', 'step');
+      } else {
+        label.removeAttribute('aria-current');
+      }
+    });
+  }
+
+  function closeMembershipCheckout() {
+    if (!membershipCheckout) return;
+    membershipCheckout.hidden = true;
+    document.body.classList.remove('membership-checkout-open');
+    if (previousPlanButton) previousPlanButton.focus();
+  }
+
+  function openMembershipCheckout(button) {
+    if (!membershipCheckout || !button) return;
+    previousPlanButton = button;
+    selectedPlan = {
+      id: button.dataset.planId,
+      name: button.dataset.planName,
+      price: button.dataset.planPrice
+    };
+
+    document.querySelectorAll('[data-selected-plan-name]').forEach(function (element) {
+      element.textContent = selectedPlan.name;
+    });
+    document.querySelectorAll('[data-selected-plan-price]').forEach(function (element) {
+      element.textContent = selectedPlan.price;
+    });
+    accountStepForm.reset();
+    paymentStepForm.reset();
+    if (membershipStatus) membershipStatus.textContent = '';
+    if (membershipError) {
+      membershipError.hidden = true;
+      membershipError.textContent = '';
+    }
+    setMembershipStep('account');
+    membershipCheckout.hidden = false;
+    document.body.classList.add('membership-checkout-open');
+    membershipEmail.focus();
+  }
+
+  planButtons.forEach(function (button) {
+    button.addEventListener('click', function () {
+      openMembershipCheckout(button);
+    });
+  });
+
+  var checkoutParams = new URLSearchParams(window.location.search);
+  var selectedPlanFromUrl = checkoutParams.get('plan');
+  if (selectedPlanFromUrl) {
+    var selectedPlanButton = Array.prototype.find.call(planButtons, function (button) {
+      return button.dataset.planId === selectedPlanFromUrl;
+    });
+    if (selectedPlanButton) {
+      openMembershipCheckout(selectedPlanButton);
+      if (checkoutParams.get('checkout') === 'success') {
+        setMembershipStep('complete');
+        if (membershipStatus) membershipStatus.textContent = 'Verifying your Stripe checkout…';
+        var sessionId = checkoutParams.get('session_id');
+        fetch('/api/checkout-session?session_id=' + encodeURIComponent(sessionId || ''))
+          .then(function (response) {
+            return response.json().then(function (result) {
+              if (!response.ok) throw new Error(result.error || 'Could not verify payment.');
+              return result;
+            });
+          })
+          .then(function (result) {
+            membershipStatus.textContent = result.active
+              ? selectedPlanButton.dataset.planName + ' membership is active.'
+              : 'Stripe has not confirmed an active membership for this checkout.';
+          })
+          .catch(function (error) {
+            if (membershipError) {
+              membershipError.hidden = false;
+              membershipError.textContent = error.message || 'Could not verify the checkout session.';
+            }
+            if (membershipStatus) membershipStatus.textContent = '';
+          })
+          .finally(function () {
+            var cleanUrl = new URL(window.location.href);
+            cleanUrl.searchParams.delete('plan');
+            cleanUrl.searchParams.delete('checkout');
+            cleanUrl.searchParams.delete('session_id');
+            window.history.replaceState({}, document.title, cleanUrl.pathname + cleanUrl.hash);
+          });
+      } else if (checkoutParams.get('checkout') === 'cancelled') {
+        if (membershipError) {
+          membershipError.hidden = false;
+          membershipError.textContent = 'Checkout was canceled. You have not been charged.';
+        }
+        var canceledUrl = new URL(window.location.href);
+        canceledUrl.searchParams.delete('plan');
+        canceledUrl.searchParams.delete('checkout');
+        window.history.replaceState({}, document.title, canceledUrl.pathname + canceledUrl.hash);
+      }
+    }
+  }
+
+  if (accountStepForm) {
+    accountStepForm.addEventListener('submit', function (event) {
+      event.preventDefault();
+      setMembershipStep('payment');
+      document.querySelector('[name="membership-payment-method"]').focus();
+    });
+  }
+
+  var membershipBackButton = document.querySelector('[data-membership-back]');
+  if (membershipBackButton) {
+    membershipBackButton.addEventListener('click', function () {
+      setMembershipStep('account');
+      membershipEmail.focus();
+    });
+  }
+
+  if (paymentStepForm) {
+    paymentStepForm.addEventListener('submit', async function (event) {
+      event.preventDefault();
+      if (!selectedPlan || !membershipEmail) return;
+
+      var submitButton = paymentStepForm.querySelector('[type="submit"]');
+      var submitLabel = submitButton.textContent;
+      submitButton.disabled = true;
+      submitButton.textContent = 'Connecting to Stripe…';
+      if (membershipError) {
+        membershipError.hidden = true;
+        membershipError.textContent = '';
+      }
+
+      try {
+        var response = await fetch('/api/create-checkout-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ plan: selectedPlan.id, email: membershipEmail.value.trim() })
+        });
+        var result = await response.json().catch(function () { return {}; });
+        if (!response.ok) throw new Error(result.error || 'Secure checkout could not be started.');
+        if (!result.url) throw new Error('Stripe did not return a checkout link.');
+        window.location.assign(result.url);
+      } catch (error) {
+        if (membershipError) {
+          membershipError.hidden = false;
+          membershipError.textContent = error.message || 'Could not connect to secure checkout.';
+        }
+        submitButton.disabled = false;
+        submitButton.textContent = submitLabel;
+      }
+    });
+  }
+
+  document.querySelectorAll('[data-close-membership]').forEach(function (button) {
+    button.addEventListener('click', closeMembershipCheckout);
+  });
+
+  if (membershipCheckout) {
+    membershipCheckout.addEventListener('click', function (event) {
+      if (event.target === membershipCheckout) closeMembershipCheckout();
+    });
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && !membershipCheckout.hidden) closeMembershipCheckout();
+    });
+  }
+
   var accountTabs = document.querySelectorAll('.account-tab');
   var accountForms = document.querySelectorAll('.account-form');
   var accountStatus = document.getElementById('account-status');
@@ -496,6 +730,10 @@
   });
 
   accountForms.forEach(function (form) {
+    if (form.classList.contains('auth-form')) {
+      return;
+    }
+
     form.addEventListener('submit', function (event) {
       event.preventDefault();
       form.reset();
@@ -504,6 +742,50 @@
       }
     });
   });
+
+  document.querySelectorAll('.auth-password-toggle').forEach(function (button) {
+    button.addEventListener('click', function () {
+      var field = button.closest('.auth-password-input').querySelector('input');
+      var showPassword = field.type === 'password';
+      field.type = showPassword ? 'text' : 'password';
+      button.textContent = showPassword ? 'Hide' : 'Show';
+      button.setAttribute('aria-label', showPassword ? 'Hide password' : 'Show password');
+      button.setAttribute('aria-pressed', showPassword ? 'true' : 'false');
+      field.focus();
+    });
+  });
+
+  var signupPassword = document.getElementById('signup-password');
+  var confirmPassword = document.getElementById('signup-confirm-password');
+  var passwordStrength = document.getElementById('password-strength');
+
+  function updatePasswordFeedback() {
+    if (signupPassword && passwordStrength) {
+      var value = signupPassword.value;
+      var score = 0;
+      if (value.length >= 8) score += 1;
+      if (/[a-z]/.test(value) && /[A-Z]/.test(value)) score += 1;
+      if (/\d/.test(value)) score += 1;
+      if (/[^A-Za-z0-9]/.test(value)) score += 1;
+
+      var strength = value.length === 0 ? '' : score <= 1 ? 'weak' : score <= 2 ? 'fair' : 'strong';
+      passwordStrength.dataset.strength = strength;
+      passwordStrength.querySelector('.auth-strength-label').textContent = value.length === 0
+        ? 'Password strength'
+        : strength.charAt(0).toUpperCase() + strength.slice(1);
+    }
+
+    if (signupPassword && confirmPassword) {
+      confirmPassword.setCustomValidity(confirmPassword.value && confirmPassword.value !== signupPassword.value
+        ? 'Passwords do not match.'
+        : '');
+    }
+  }
+
+  if (signupPassword && confirmPassword) {
+    signupPassword.addEventListener('input', updatePasswordFeedback);
+    confirmPassword.addEventListener('input', updatePasswordFeedback);
+  }
 
   var contactForm = document.querySelector('#contact form');
   if (contactForm) {
