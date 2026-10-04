@@ -318,6 +318,12 @@
         accent-color: #2f6fed;
       }
 
+      .membership-payment label.selected {
+        border-color: #2f6fed;
+        background: rgba(47, 111, 237, 0.05);
+        box-shadow: 0 0 0 2px rgba(47, 111, 237, 0.08);
+      }
+
       .membership-renewal-note {
         margin: 0 0 18px;
         color: #69758a;
@@ -461,7 +467,7 @@
           <article class="plan">
             <h2>Basic</h2>
             <p class="plan-description">A simple way to join the Gaming Hub community.</p>
-            <p class="plan-price">£1.99</p>
+            <p class="plan-price">£9.99</p>
             <p class="plan-period">per year</p>
             <h3 class="plan-games-label">Included games</h3>
             <ul>
@@ -469,13 +475,13 @@
               <li>Neon Kart</li>
               <li>Orbital Puzzles</li>
             </ul>
-            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="basic" data-plan-name="Basic" data-plan-price="£1.99">Choose Basic</button>
+            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="basic" data-plan-name="Basic" data-plan-price="£9.99">Choose Basic</button>
           </article>
 
           <article class="plan">
             <h2>Standard</h2>
             <p class="plan-description">More ways to discover games and join in.</p>
-            <p class="plan-price">£10.99</p>
+            <p class="plan-price">£29.99</p>
             <p class="plan-period">per year</p>
             <h3 class="plan-games-label">Included games</h3>
             <ul>
@@ -483,13 +489,13 @@
               <li>Mystic Market</li>
               <li>Skyline Showdown</li>
             </ul>
-            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="standard" data-plan-name="Standard" data-plan-price="£10.99">Choose Standard</button>
+            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="standard" data-plan-name="Standard" data-plan-price="£29.99">Choose Standard</button>
           </article>
 
           <article class="plan">
             <h2>Premium</h2>
             <p class="plan-description">Extra access, offers, and support for dedicated players.</p>
-            <p class="plan-price">£199</p>
+            <p class="plan-price">£79.99</p>
             <p class="plan-period">per year</p>
             <h3 class="plan-games-label">Included games</h3>
             <ul>
@@ -497,29 +503,34 @@
               <li>Phantom Circuit</li>
               <li>Wildlight Quest</li>
             </ul>
-            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="premium" data-plan-name="Premium" data-plan-price="£199">Choose Premium</button>
+            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="premium" data-plan-name="Premium" data-plan-price="£79.99">Choose Premium</button>
           </article>
 
           <article class="plan">
             <h2>VIP</h2>
             <p class="plan-description">The highest level of Gaming Hub membership.</p>
-            <p class="plan-price">£1,000</p>
+            <p class="plan-price">£149.99</p>
             <p class="plan-period">per year</p>
             <h3 class="plan-games-label">Included games</h3>
             <ul>
               <li>Chrono Clash</li>
-                <h2>Galactic</h2>
-                <p class="plan-description">The ultimate annual Gaming Hub membership.</p>
-                <p class="plan-price plan-price-galactic">Custom pricing</p>
-                <p class="plan-period">Contact us for a quote</p>
-                <h3 class="plan-games-label">Included games</h3>
-                <ul>
-                  <li>Nova Frontier</li>
-                  <li>Eclipse Dominion</li>
-                  <li>Infinite Odyssey</li>
-                </ul>
-                <a class="btn btn-custom" href="mailto:adamvalani72@gmail.com?subject=Galactic%20Gaming%20membership">Contact sales</a>
-              </article>
+            </ul>
+            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="vip" data-plan-name="VIP" data-plan-price="£149.99">Choose VIP</button>
+          </article>
+
+          <article class="plan" id="galactic-plan">
+            <h2>Galactic</h2>
+            <p class="plan-description">The ultimate annual Gaming Hub membership.</p>
+            <p class="plan-price plan-price-galactic">£299.99</p>
+            <p class="plan-period">per year</p>
+            <h3 class="plan-games-label">Included games</h3>
+            <ul>
+              <li>Nova Frontier</li>
+              <li>Eclipse Dominion</li>
+              <li>Infinite Odyssey</li>
+            </ul>
+            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="galactic" data-plan-name="Galactic" data-plan-price="£299.99">Choose Galactic</button>
+          </article>
             </section>
 
             <p class="billing-note">Choose a plan to review your annual billing and payment options.</p>
@@ -566,11 +577,35 @@
                 <p><strong><span data-selected-plan-name></span> plan</strong><span>Renews yearly</span></p>
                 <strong><span data-selected-plan-price></span> / year</strong>
               </div>
-              <p class="membership-renewal-note">Due today: <strong data-selected-plan-price></strong>. Your plan bills annually and renews yearly until canceled. Secure payment is handled by Stripe.</p>
+              <p class="membership-renewal-note">Due today: <strong data-selected-plan-price></strong>. Your plan bills annually and renews yearly until canceled.</p>
               <form id="membership-payment-form">
                 <fieldset class="membership-payment">
-                  <legend>Payment</legend>
-                  <p class="membership-demo-note">Enter your payment details on Stripe's secure hosted checkout. Eligible wallets may also be offered there.</p>
+                  <legend>Payment method</legend>
+                  <label>
+                    <input type="radio" name="membership-payment-method" value="Visa / Mastercard" checked />
+                    Visa / Mastercard
+                  </label>
+                  <label>
+                    <input type="radio" name="membership-payment-method" value="Apple Pay" />
+                    Apple Pay
+                  </label>
+                  <label>
+                    <input type="radio" name="membership-payment-method" value="PayPal" />
+                    PayPal
+                  </label>
+                  <label>
+                    <input type="radio" name="membership-payment-method" value="Bank transfer" />
+                    Bank transfer
+                  </label>
+                  <label>
+                    <input type="radio" name="membership-payment-method" value="Mobile wallet" />
+                    Mobile wallet
+                  </label>
+                  <label>
+                    <input type="radio" name="membership-payment-method" value="Gift card" />
+                    Gift card
+                  </label>
+                  <p class="membership-demo-note">This is a demo membership flow. No real payment provider is connected.</p>
                 </fieldset>
                 <div class="membership-actions">
                   <button class="membership-back" type="button" data-membership-back>Back</button>
@@ -592,25 +627,7 @@
         <script src="../script.js"></script>
       </body>
     </html>
-    *** Update File: /workspaces/Progressay_Pr/pages/subscriptions.html
-    @@
-              <article class="plan" id="galactic-plan">
-                <h2>Galactic</h2>
-                <p class="plan-description">The ultimate annual Gaming Hub membership.</p>
-                <p class="plan-price plan-price-galactic">Custom pricing</p>
-                <p class="plan-period">Contact us for a quote</p>
-                <h3 class="plan-games-label">Included games</h3>
-                <ul>
-                  <li>Nova Frontier</li>
-                  <li>Eclipse Dominion</li>
-                  <li>Infinite Odyssey</li>
-                </ul>
-                <a class="btn btn-custom" href="mailto:adamvalani72@gmail.com?subject=Galactic%20Gaming%20membership">Contact sales</a>
-              </article>
-          </div>
-        </section>
-      </section>
-    </div>
+
 
     <script src="../script.js"></script>
   </body>

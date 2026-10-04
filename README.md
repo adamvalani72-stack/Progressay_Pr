@@ -11,8 +11,8 @@ The login and signup pages use Supabase Auth for email/password accounts and Goo
 3. Add the local site URL and deployed login/signup URLs to Supabase's allowed redirect URLs. For local testing, run the server above and open `http://localhost:3000/pages/login.html` or `http://localhost:3000/pages/signup.html`.
 4. For Google OAuth, configure the deployed site domain in Google OAuth and Supabase before testing. Supabase email confirmation and password reset links return to the page that initiated the request.
 
-## Subscription checkout setup
+## Subscription setup
 
-Subscription checkout uses Stripe Checkout in subscription mode. Copy `.env.example` to `.env`, replace `STRIPE_SECRET_KEY` with a Stripe test-mode secret key, then run `npm install` and `npm start`. Open `http://localhost:3001/pages/subscriptions.html`. The secret key stays on the server and must never be added to browser JavaScript or committed. Set `SITE_URL` to the deployed site origin for production. Switch to a live Stripe key only after configuring and testing the live account.
+This project uses a front-end demo subscription flow and does not integrate with Stripe or any payment gateway. Open `http://localhost:3001/pages/subscriptions.html` after starting the site to review the annual plans.
 
-The Basic, Standard, Premium, and VIP plans are annual Stripe subscriptions. Galactic is offered as custom pricing because its displayed amount exceeds Stripe's supported checkout amount. Successful checkout is verified against Stripe when the customer returns to the site.
+The Basic, Standard, Premium, VIP, and Galactic plans are annual membership tiers. The current demo pricing ladder runs from £9.99 for Basic to £299.99 for Galactic per year.

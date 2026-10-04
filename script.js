@@ -26,6 +26,488 @@
     });
   }
 
+  var reviewForm = document.getElementById('review-form');
+  var reviewList = document.getElementById('review-list');
+  var reviewStatus = document.getElementById('review-status');
+  var reviewStorageKey = 'gamingHubReviews';
+
+  function getSavedReviews() {
+    try {
+      var reviews = JSON.parse(localStorage.getItem(reviewStorageKey) || '[]');
+      if (!Array.isArray(reviews)) return [];
+      return reviews.filter(function (review) {
+        return review && typeof review.name === 'string' && typeof review.text === 'string' &&
+          Number.isInteger(Number(review.rating)) && Number(review.rating) >= 1 && Number(review.rating) <= 5;
+      }).slice(0, 30);
+    } catch (error) {
+      return [];
+    }
+  }
+
+  function createReviewCard(review) {
+    var column = document.createElement('div');
+    column.className = 'col-4';
+
+    var card = document.createElement('article');
+    card.className = 'testimonial google-review';
+
+    var header = document.createElement('div');
+    header.className = 'review-header';
+
+    var stars = document.createElement('div');
+    stars.className = 'review-stars';
+    stars.setAttribute('aria-label', Number(review.rating) + ' out of 5 stars');
+    stars.textContent = '★'.repeat(Number(review.rating)) + '☆'.repeat(5 - Number(review.rating));
+
+    var badge = document.createElement('span');
+    badge.className = 'review-badge';
+    badge.textContent = 'Verified';
+
+    var content = document.createElement('div');
+    content.className = 'testimonial-content';
+
+    var text = document.createElement('p');
+    text.className = 'review-copy';
+    text.textContent = review.text;
+
+    var meta = document.createElement('div');
+    meta.className = 'review-meta-row';
+
+    var name = document.createElement('span');
+    name.className = 'review-author';
+    name.textContent = review.name;
+
+    var source = document.createElement('span');
+    source.className = 'review-source';
+    source.textContent = 'Google review';
+
+    header.appendChild(stars);
+    header.appendChild(badge);
+
+    meta.appendChild(name);
+    meta.appendChild(source);
+
+    content.appendChild(text);
+    content.appendChild(meta);
+    card.appendChild(header);
+    card.appendChild(content);
+    column.appendChild(card);
+    return column;
+  }
+
+  if (reviewForm && reviewList) {
+    getSavedReviews().reverse().forEach(function (review) {
+      reviewList.insertBefore(createReviewCard(review), reviewList.firstChild);
+    });
+
+    reviewForm.addEventListener('submit', function (event) {
+      event.preventDefault();
+      var name = reviewForm.elements.namedItem('name').value.trim();
+      var rating = Number(reviewForm.elements.namedItem('rating').value);
+      var text = reviewForm.elements.namedItem('review').value.trim();
+      if (!name || !text || rating < 1 || rating > 5) {
+        if (reviewStatus) {
+          reviewStatus.textContent = 'Enter your name, choose a rating, and write a review before posting.';
+        }
+        return;
+      }
+      var review = { name: name, rating: rating, text: text };
+      var reviews = getSavedReviews();
+      reviews.unshift(review);
+      reviews = reviews.slice(0, 30);
+
+      var saved = false;
+      try {
+        localStorage.setItem(reviewStorageKey, JSON.stringify(reviews));
+        saved = true;
+      } catch (error) {
+        saved = false;
+      }
+
+      reviewList.insertBefore(createReviewCard(review), reviewList.firstChild);
+      reviewForm.reset();
+      if (reviewStatus) {
+        reviewStatus.textContent = saved
+          ? 'Thanks, your review has been added.'
+          : 'Your review was added for this visit, but browser storage is unavailable.';
+      }
+    });
+  }
+
+  var gameModal = document.getElementById('game-modal');
+  var gameShell = document.getElementById('game-shell');
+  var gameTitle = document.getElementById('game-title');
+  var closeGameButton = document.getElementById('close-game');
+  var restartGameButton = document.getElementById('restart-game');
+  var freeGameButtons = document.querySelectorAll('[data-game]');
+  var activeGameInterval = null;
+  var activeKeyHandler = null;
+  var activeGameState = null;
+
+  function clearActiveGame() {
+    if (activeGameInterval) {
+      clearInterval(activeGameInterval);
+      activeGameInterval = null;
+    }
+    if (activeKeyHandler) {
+      window.removeEventListener('keydown', activeKeyHandler);
+      activeKeyHandler = null;
+    }
+    activeGameState = null;
+    if (gameShell) {
+      gameShell.innerHTML = '';
+    }
+  }
+
+  function showGameOver(finalScore, message) {
+    if (!gameShell) return;
+    clearInterval(activeGameInterval);
+    activeGameInterval = null;
+    gameShell.innerHTML = '<div class="game-over-box"><div><h4>Game over</h4><p>' + message + '<br>Final score: ' + finalScore + '</p></div></div>';
+  }
+
+  function getGameTitle(key) {
+    var titles = {
+      'pixel-patrol': 'Pixel Patrol',
+      'neon-kart': 'Neon Kart',
+      'orbital-puzzles': 'Orbital Puzzles',
+      'skyline-showdown': 'Skyline Showdown'
+    };
+    return titles[key] || 'Game';
+  }
+
+  function renderPixelPatrol() {
+    if (!gameShell) return;
+    var state = { score: 0, lives: 3, enemies: [] };
+    activeGameState = state;
+    gameShell.innerHTML = '<div class="game-panel"><div class="game-stats"><span>Score: <strong id="pixel-score">0</strong></span><span>Lives: <strong id="pixel-lives">3</strong></span></div><div class="game-scene"><div id="pixel-arena" class="pixel-arena"></div></div><p class="game-message">Click the glowing targets before they reach the bottom.</p></div>';
+    var arena = document.getElementById('pixel-arena');
+    var scoreLabel = document.getElementById('pixel-score');
+    var livesLabel = document.getElementById('pixel-lives');
+
+    function updateStats() {
+      scoreLabel.textContent = String(state.score);
+      livesLabel.textContent = String(state.lives);
+    }
+
+    function spawnEnemy() {
+      var enemy = document.createElement('button');
+      enemy.type = 'button';
+      enemy.className = 'enemy-target';
+      enemy.style.left = Math.random() * 82 + '%';
+      enemy.style.top = '-16px';
+      enemy.setAttribute('aria-label', 'Target');
+      enemy.addEventListener('click', function () {
+        state.score += 1;
+        enemy.remove();
+        var index = state.enemies.indexOf(enemy);
+        if (index !== -1) {
+          state.enemies.splice(index, 1);
+        }
+        updateStats();
+        spawnEnemy();
+      });
+      arena.appendChild(enemy);
+      state.enemies.push(enemy);
+    }
+
+    function tick() {
+      var remaining = [];
+      state.enemies.forEach(function (enemy) {
+        var currentTop = parseFloat(enemy.style.top || '0');
+        var nextTop = currentTop + 8;
+        enemy.style.top = nextTop + 'px';
+        if (nextTop >= 270) {
+          state.lives -= 1;
+          enemy.remove();
+          if (state.lives <= 0) {
+            showGameOver(state.score, 'The signal was lost. Try another run.');
+            return;
+          }
+          updateStats();
+        } else {
+          remaining.push(enemy);
+        }
+      });
+      state.enemies = remaining;
+      if (state.lives > 0 && state.enemies.length < 5) {
+        spawnEnemy();
+      }
+    }
+
+    spawnEnemy();
+    updateStats();
+    activeGameInterval = setInterval(tick, 180);
+  }
+
+  function renderNeonKart() {
+    if (!gameShell) return;
+    var state = { score: 0, lives: 3, lane: 1, obstacles: [], laneWidth: 33.333 };
+    activeGameState = state;
+    gameShell.innerHTML = '<div class="game-panel"><div class="game-stats"><span>Score: <strong id="kart-score">0</strong></span><span>Lives: <strong id="kart-lives">3</strong></span></div><div class="game-scene"><div id="kart-track" class="kart-track"></div></div><p class="game-message">Use left and right arrow keys to dodge the red obstacles.</p></div>';
+    var track = document.getElementById('kart-track');
+    var scoreLabel = document.getElementById('kart-score');
+    var livesLabel = document.getElementById('kart-lives');
+
+    var laneEls = [0, 1, 2].map(function () {
+      var lane = document.createElement('div');
+      lane.className = 'kart-lane';
+      track.appendChild(lane);
+      return lane;
+    });
+
+    var kart = document.createElement('div');
+    kart.className = 'kart';
+    track.appendChild(kart);
+
+    function updateKart() {
+      var laneLeft = (state.lane * 33.333) + 17.5;
+      kart.style.left = laneLeft + '%';
+      scoreLabel.textContent = String(state.score);
+      livesLabel.textContent = String(state.lives);
+    }
+
+    function addObstacle() {
+      var obstacle = document.createElement('div');
+      obstacle.className = 'kart-obstacle';
+      var lane = Math.floor(Math.random() * 3);
+      obstacle.style.left = (lane * 33.333 + 18) + '%';
+      obstacle.style.top = '-20px';
+      obstacle.dataset.lane = String(lane);
+      track.appendChild(obstacle);
+      state.obstacles.push({ lane: lane, element: obstacle, top: -20 });
+    }
+
+    function tick() {
+      var nextObstacles = [];
+      state.obstacles.forEach(function (obstacle) {
+        obstacle.top += 14;
+        obstacle.element.style.top = obstacle.top + 'px';
+        if (obstacle.top > 250) {
+          obstacle.element.remove();
+          if (obstacle.lane === state.lane) {
+            state.lives -= 1;
+            if (state.lives <= 0) {
+              showGameOver(state.score, 'You clipped the traffic. Hit restart to try again.');
+              return;
+            }
+            livesLabel.textContent = String(state.lives);
+          }
+        } else {
+          nextObstacles.push(obstacle);
+        }
+      });
+      state.obstacles = nextObstacles;
+      state.score += 1;
+      scoreLabel.textContent = String(state.score);
+      if (Math.random() < 0.28) {
+        addObstacle();
+      }
+      if (Math.random() < 0.5) {
+        laneEls.forEach(function (laneEl) {
+          laneEl.style.opacity = '0.6';
+        });
+      }
+    }
+
+    activeKeyHandler = function (event) {
+      if (event.key === 'ArrowLeft' || event.key.toLowerCase() === 'a') {
+        state.lane = Math.max(0, state.lane - 1);
+      }
+      if (event.key === 'ArrowRight' || event.key.toLowerCase() === 'd') {
+        state.lane = Math.min(2, state.lane + 1);
+      }
+      updateKart();
+    };
+    window.addEventListener('keydown', activeKeyHandler);
+    updateKart();
+    activeGameInterval = setInterval(tick, 160);
+  }
+
+  function renderOrbitalPuzzles() {
+    if (!gameShell) return;
+    var state = { sequence: [], userIndex: 0, activeFlash: null, score: 0 };
+    activeGameState = state;
+    gameShell.innerHTML = '<div class="game-panel"><div class="game-stats"><span>Score: <strong id="orbital-score">0</strong></span><span>Pattern length: <strong id="orbital-length">0</strong></span></div><div class="puzzle-grid" id="puzzle-grid"></div><p class="game-message">Watch the sequence, then repeat it by clicking the glowing nodes.</p></div>';
+    var grid = document.getElementById('puzzle-grid');
+    var scoreLabel = document.getElementById('orbital-score');
+    var lengthLabel = document.getElementById('orbital-length');
+    var buttons = [];
+
+    for (var i = 0; i < 9; i += 1) {
+      var button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'sequence-orb';
+      button.dataset.index = String(i);
+      button.addEventListener('click', function () {
+        if (!state.sequence.length) {
+          return;
+        }
+        var selected = Number(this.dataset.index);
+        if (selected !== state.sequence[state.userIndex]) {
+          showGameOver(state.score, 'The orbit broke. Try the pattern again.');
+          return;
+        }
+        this.classList.add('active');
+        setTimeout(function () {
+          button.classList.remove('active');
+        }, 180);
+        state.userIndex += 1;
+        if (state.userIndex === state.sequence.length) {
+          state.score += 1;
+          scoreLabel.textContent = String(state.score);
+          setTimeout(function () {
+            state.userIndex = 0;
+            addRound();
+          }, 350);
+        }
+      });
+      buttons.push(button);
+      grid.appendChild(button);
+    }
+
+    function flashNode(index) {
+      var node = buttons[index];
+      node.classList.add('active');
+      setTimeout(function () {
+        node.classList.remove('active');
+      }, 350);
+    }
+
+    function addRound() {
+      var next = Math.floor(Math.random() * 9);
+      state.sequence.push(next);
+      lengthLabel.textContent = String(state.sequence.length);
+      var stepIndex = 0;
+      if (state.activeFlash) {
+        clearInterval(state.activeFlash);
+      }
+      state.activeFlash = setInterval(function () {
+        if (stepIndex >= state.sequence.length) {
+          clearInterval(state.activeFlash);
+          state.activeFlash = null;
+          return;
+        }
+        flashNode(state.sequence[stepIndex]);
+        stepIndex += 1;
+      }, 500);
+    }
+
+    addRound();
+    scoreLabel.textContent = '0';
+    lengthLabel.textContent = '1';
+  }
+
+  function renderSkylineShowdown() {
+    if (!gameShell) return;
+    var state = { score: 0, lives: 3 };
+    activeGameState = state;
+    gameShell.innerHTML = '<div class="game-panel"><div class="game-stats"><span>Score: <strong id="skyline-score">0</strong></span><span>Lives: <strong id="skyline-lives">3</strong></span></div><div class="game-scene"><div id="skyline-scene" class="skyline-scene"></div></div><p class="game-message">Click the moving skyline target before it jumps to a new spot.</p></div>';
+    var scene = document.getElementById('skyline-scene');
+    var scoreLabel = document.getElementById('skyline-score');
+    var livesLabel = document.getElementById('skyline-lives');
+
+    var target = document.createElement('button');
+    target.type = 'button';
+    target.className = 'skyline-target';
+    target.setAttribute('aria-label', 'Skyline target');
+    target.addEventListener('click', function () {
+      state.score += 1;
+      scoreLabel.textContent = String(state.score);
+      moveTarget();
+    });
+    scene.appendChild(target);
+
+    function moveTarget() {
+      var x = Math.random() * 72 + 6;
+      target.style.left = x + '%';
+      target.style.top = 'auto';
+      target.style.bottom = '20px';
+    }
+
+    function tick() {
+      state.lives -= 1;
+      livesLabel.textContent = String(state.lives);
+      if (state.lives <= 0) {
+        showGameOver(state.score, 'The skyline slipped away. Try a fresh start.');
+      } else {
+        moveTarget();
+      }
+    }
+
+    scoreLabel.textContent = '0';
+    livesLabel.textContent = '3';
+    moveTarget();
+    activeGameInterval = setInterval(tick, 1800);
+  }
+
+  function startGame(gameKey) {
+    clearActiveGame();
+    if (gameModal) {
+      gameModal.classList.add('is-open');
+      gameModal.setAttribute('aria-hidden', 'false');
+    }
+    if (gameTitle) {
+      gameTitle.textContent = getGameTitle(gameKey);
+    }
+
+    switch (gameKey) {
+      case 'pixel-patrol':
+        renderPixelPatrol();
+        break;
+      case 'neon-kart':
+        renderNeonKart();
+        break;
+      case 'orbital-puzzles':
+        renderOrbitalPuzzles();
+        break;
+      case 'skyline-showdown':
+        renderSkylineShowdown();
+        break;
+      default:
+        if (gameShell) {
+          gameShell.innerHTML = '<div class="game-over-box"><div><h4>Coming soon</h4><p>This game is not available yet.</p></div></div>';
+        }
+    }
+  }
+
+  if (gameModal) {
+    closeGameButton.addEventListener('click', function () {
+      gameModal.classList.remove('is-open');
+      gameModal.setAttribute('aria-hidden', 'true');
+      clearActiveGame();
+    });
+
+    restartGameButton.addEventListener('click', function () {
+      var currentGame = gameTitle && gameTitle.textContent ? gameTitle.textContent : '';
+      var gameKeyMap = {
+        'Pixel Patrol': 'pixel-patrol',
+        'Neon Kart': 'neon-kart',
+        'Orbital Puzzles': 'orbital-puzzles',
+        'Skyline Showdown': 'skyline-showdown'
+      };
+      var gameKey = gameKeyMap[currentGame];
+      if (!gameKey) {
+        return;
+      }
+      startGame(gameKey);
+    });
+
+    gameModal.addEventListener('click', function (event) {
+      if (event.target === gameModal) {
+        gameModal.classList.remove('is-open');
+        gameModal.setAttribute('aria-hidden', 'true');
+        clearActiveGame();
+      }
+    });
+  }
+
+  freeGameButtons.forEach(function (button) {
+    button.addEventListener('click', function () {
+      startGame(button.dataset.game);
+    });
+  });
+
   var cartBlock = document.getElementById('shopping-cart');
   if (cartBlock) {
     var cartList = document.getElementById('cart-items');
@@ -602,38 +1084,18 @@
       openMembershipCheckout(selectedPlanButton);
       if (checkoutParams.get('checkout') === 'success') {
         setMembershipStep('complete');
-        if (membershipStatus) membershipStatus.textContent = 'Verifying your Stripe checkout…';
-        var sessionId = checkoutParams.get('session_id');
-        fetch('/api/checkout-session?session_id=' + encodeURIComponent(sessionId || ''))
-          .then(function (response) {
-            return response.json().then(function (result) {
-              if (!response.ok) throw new Error(result.error || 'Could not verify payment.');
-              return result;
-            });
-          })
-          .then(function (result) {
-            membershipStatus.textContent = result.active
-              ? selectedPlanButton.dataset.planName + ' membership is active.'
-              : 'Stripe has not confirmed an active membership for this checkout.';
-          })
-          .catch(function (error) {
-            if (membershipError) {
-              membershipError.hidden = false;
-              membershipError.textContent = error.message || 'Could not verify the checkout session.';
-            }
-            if (membershipStatus) membershipStatus.textContent = '';
-          })
-          .finally(function () {
-            var cleanUrl = new URL(window.location.href);
-            cleanUrl.searchParams.delete('plan');
-            cleanUrl.searchParams.delete('checkout');
-            cleanUrl.searchParams.delete('session_id');
-            window.history.replaceState({}, document.title, cleanUrl.pathname + cleanUrl.hash);
-          });
+        if (membershipStatus) {
+          membershipStatus.textContent = selectedPlanButton.dataset.planName + ' membership is active in this demo.';
+        }
+        var cleanUrl = new URL(window.location.href);
+        cleanUrl.searchParams.delete('plan');
+        cleanUrl.searchParams.delete('checkout');
+        cleanUrl.searchParams.delete('session_id');
+        window.history.replaceState({}, document.title, cleanUrl.pathname + cleanUrl.hash);
       } else if (checkoutParams.get('checkout') === 'cancelled') {
         if (membershipError) {
           membershipError.hidden = false;
-          membershipError.textContent = 'Checkout was canceled. You have not been charged.';
+          membershipError.textContent = 'Checkout was canceled. No payment was processed.';
         }
         var canceledUrl = new URL(window.location.href);
         canceledUrl.searchParams.delete('plan');
@@ -660,36 +1122,37 @@
   }
 
   if (paymentStepForm) {
-    paymentStepForm.addEventListener('submit', async function (event) {
+    var paymentMethodInputs = paymentStepForm.querySelectorAll('input[name="membership-payment-method"]');
+
+    function updateSelectedPaymentMethod() {
+      paymentMethodInputs.forEach(function (radio) {
+        var label = radio.closest('label');
+        if (label) {
+          label.classList.toggle('selected', radio.checked);
+        }
+      });
+    }
+
+    paymentMethodInputs.forEach(function (radio) {
+      radio.addEventListener('change', updateSelectedPaymentMethod);
+    });
+
+    updateSelectedPaymentMethod();
+
+    paymentStepForm.addEventListener('submit', function (event) {
       event.preventDefault();
       if (!selectedPlan || !membershipEmail) return;
 
-      var submitButton = paymentStepForm.querySelector('[type="submit"]');
-      var submitLabel = submitButton.textContent;
-      submitButton.disabled = true;
-      submitButton.textContent = 'Connecting to Stripe…';
+      var selectedMethod = paymentStepForm.querySelector('input[name="membership-payment-method"]:checked');
+      var selectedMethodName = selectedMethod ? selectedMethod.value : 'payment method';
+
+      setMembershipStep('complete');
+      if (membershipStatus) {
+        membershipStatus.textContent = selectedPlan.name + ' membership is active in this demo using ' + selectedMethodName + '.';
+      }
       if (membershipError) {
         membershipError.hidden = true;
         membershipError.textContent = '';
-      }
-
-      try {
-        var response = await fetch('/api/create-checkout-session', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ plan: selectedPlan.id, email: membershipEmail.value.trim() })
-        });
-        var result = await response.json().catch(function () { return {}; });
-        if (!response.ok) throw new Error(result.error || 'Secure checkout could not be started.');
-        if (!result.url) throw new Error('Stripe did not return a checkout link.');
-        window.location.assign(result.url);
-      } catch (error) {
-        if (membershipError) {
-          membershipError.hidden = false;
-          membershipError.textContent = error.message || 'Could not connect to secure checkout.';
-        }
-        submitButton.disabled = false;
-        submitButton.textContent = submitLabel;
       }
     });
   }

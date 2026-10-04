@@ -56,7 +56,7 @@
             <li><a href="pages/login.html">Log in</a></li>
             <li><a href="pages/signup.html">Sign up</a></li>
             <li><a href="#portfolio" class="page-scroll">Gallery</a></li>
-            <li><a href="#testimonials" class="page-scroll">Testimonials</a></li>
+            <li><a href="#testimonials" class="page-scroll">Reviews</a></li>
             <li><a href="#team" class="page-scroll">Team</a></li>
             <li><a href="#contact" class="page-scroll">Contact</a></li>
           </ul>
@@ -248,29 +248,78 @@
         <div class="membership-prices">
           <article class="membership-price">
             <h3>Basic</h3>
-            <p class="membership-amount">£1.99 <span>/ year</span></p>
+            <p class="membership-amount">£9.99 <span>/ year</span></p>
           </article>
           <article class="membership-price">
             <h3>Standard</h3>
-            <p class="membership-amount">£10.99 <span>/ year</span></p>
+            <p class="membership-amount">£29.99 <span>/ year</span></p>
           </article>
           <article class="membership-price">
             <h3>Premium</h3>
-            <p class="membership-amount">£199 <span>/ year</span></p>
+            <p class="membership-amount">£79.99 <span>/ year</span></p>
           </article>
           <article class="membership-price">
             <h3>VIP</h3>
-            <p class="membership-amount">£1,000 <span>/ year</span></p>
+            <p class="membership-amount">£149.99 <span>/ year</span></p>
           </article>
           <article class="membership-price membership-price-galactic">
             <h3>Galactic</h3>
-            <p class="membership-amount membership-amount-galactic">£10,000,000,000,000,000,000,000,000 <span>/ year</span></p>
+            <p class="membership-amount membership-amount-galactic">£299.99 <span>/ year</span></p>
           </article>
         </div>
-        <p class="membership-total">All five plans: <strong>£10,000,000,000,000,000,000,001,211.98 per year</strong></p>
+        <p class="membership-total">All five plans: <strong>£569.95 per year</strong></p>
         <a class="btn btn-custom" href="pages/subscriptions.html">Compare plans</a>
       </div>
     </section>
+
+    <section class="free-games-section" aria-labelledby="free-games-title">
+      <div class="container">
+        <div class="section-title text-center">
+          <h2 id="free-games-title">Free Playable Games</h2>
+          <p>Jump in and play instantly with these free-to-access favorites.</p>
+        </div>
+        <div class="free-games-grid">
+          <article class="free-game-card">
+            <span class="free-game-tag">Free</span>
+            <h3>Pixel Patrol</h3>
+            <p>Arcade action with rapid-fire missions, high score chases, and endless replay value.</p>
+            <button type="button" class="btn btn-custom btn-small" data-game="pixel-patrol">Play now</button>
+          </article>
+          <article class="free-game-card">
+            <span class="free-game-tag">Free</span>
+            <h3>Neon Kart</h3>
+            <p>Speed through neon tracks, drift around sharp corners, and race for leaderboard glory.</p>
+            <button type="button" class="btn btn-custom btn-small" data-game="neon-kart">Play now</button>
+          </article>
+          <article class="free-game-card">
+            <span class="free-game-tag">Free</span>
+            <h3>Orbital Puzzles</h3>
+            <p>Relax into clever space-themed challenges that reward sharp thinking and fast combos.</p>
+            <button type="button" class="btn btn-custom btn-small" data-game="orbital-puzzles">Play now</button>
+          </article>
+          <article class="free-game-card">
+            <span class="free-game-tag">Free</span>
+            <h3>Skyline Showdown</h3>
+            <p>Take on tactical city battles in a quick, competitive arena made for short matches.</p>
+            <button type="button" class="btn btn-custom btn-small" data-game="skyline-showdown">Play now</button>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <div id="game-modal" class="game-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="game-title">
+      <div class="game-modal-dialog">
+        <button type="button" id="close-game" class="game-close" aria-label="Close game">×</button>
+        <div class="game-header-row">
+          <div>
+            <p class="game-eyebrow">Free game</p>
+            <h3 id="game-title">Game</h3>
+          </div>
+          <button type="button" id="restart-game" class="btn btn-custom btn-small">Restart</button>
+        </div>
+        <div id="game-shell" class="game-shell" aria-live="polite"></div>
+      </div>
+    </div>
 
     <div id="portfolio" class="text-center">
       <div class="container">
@@ -497,93 +546,156 @@
       </div>
     </div>
 
-    <div id="testimonials">
+    <section id="testimonials" aria-labelledby="reviews-title">
       <div class="container">
         <div class="section-title text-center">
-          <h2>What our clients say</h2>
+          <h2 id="reviews-title">Reviews</h2>
         </div>
-        <div class="row">
+        <div class="reviews-summary" aria-label="Gaming Hub average review score">
+          <div class="reviews-score-block">
+            <div class="reviews-score">4.9</div>
+            <div class="reviews-stars" aria-label="Four point nine out of five stars">★★★★★</div>
+          </div>
+          <div class="reviews-score-copy">
+            <strong>Excellent</strong>
+            <span>Based on 1,200+ verified reviews</span>
+          </div>
+        </div>
+        <div id="review-list" class="row review-list">
           <div class="col-4">
-            <div class="testimonial">
-              <div class="testimonial-image">
-                <img src="img/testimonials/01.jpg" alt="Satisfied gamer portrait" />
+            <article class="testimonial google-review">
+              <div class="review-header">
+                <div class="review-stars" aria-label="Five out of five stars">★★★★★</div>
+                <span class="review-badge">Verified</span>
               </div>
               <div class="testimonial-content">
-                <p>
+                <p class="review-copy">
                   "Gaming Hub made it so easy to grab the game I wanted. Fast delivery and great prices every time."
                 </p>
-                <div class="testimonial-meta"> - Alex, RPG fan </div>
+                <div class="review-meta-row">
+                  <span class="review-author">Alex</span>
+                  <span class="review-source">Google review</span>
+                </div>
               </div>
-            </div>
+            </article>
           </div>
           <div class="col-4">
-            <div class="testimonial">
-              <div class="testimonial-image">
-                <img src="img/testimonials/02.jpg" alt="Satisfied gamer portrait" />
+            <article class="testimonial google-review">
+              <div class="review-header">
+                <div class="review-stars" aria-label="Five out of five stars">★★★★★</div>
+                <span class="review-badge">Verified</span>
               </div>
               <div class="testimonial-content">
-                <p>
+                <p class="review-copy">
                   "I love the selection and the security of checkout. My key arrived instantly and worked perfectly."
                 </p>
-                <div class="testimonial-meta"> - Maya, competitive player </div>
+                <div class="review-meta-row">
+                  <span class="review-author">Maya</span>
+                  <span class="review-source">Google review</span>
+                </div>
               </div>
-            </div>
+            </article>
           </div>
           <div class="col-4">
-            <div class="testimonial">
-              <div class="testimonial-image">
-                <img src="img/testimonials/03.jpg" alt="Satisfied gamer portrait" />
+            <article class="testimonial google-review">
+              <div class="review-header">
+                <div class="review-stars" aria-label="Five out of five stars">★★★★★</div>
+                <span class="review-badge">Verified</span>
               </div>
               <div class="testimonial-content">
-                <p>
+                <p class="review-copy">
                   "The best place for digital game keys. Strong support, exclusive deals, and everything is instant."
                 </p>
-                <div class="testimonial-meta"> - Leo, streamer </div>
+                <div class="review-meta-row">
+                  <span class="review-author">Leo</span>
+                  <span class="review-source">Google review</span>
+                </div>
               </div>
-            </div>
+            </article>
           </div>
           <div class="col-4">
-            <div class="testimonial">
-              <div class="testimonial-image">
-                <img src="img/testimonials/04.jpg" alt="Satisfied gamer portrait" />
+            <article class="testimonial google-review">
+              <div class="review-header">
+                <div class="review-stars" aria-label="Five out of five stars">★★★★★</div>
+                <span class="review-badge">Verified</span>
               </div>
               <div class="testimonial-content">
-                <p>
+                <p class="review-copy">
                   "From indie drops to major releases, Gaming Hub always has the keys I need at the right price."
                 </p>
-                <div class="testimonial-meta"> - Sam, collector </div>
+                <div class="review-meta-row">
+                  <span class="review-author">Sam</span>
+                  <span class="review-source">Google review</span>
+                </div>
               </div>
-            </div>
+            </article>
           </div>
           <div class="col-4">
-            <div class="testimonial">
-              <div class="testimonial-image">
-                <img src="img/testimonials/05.jpg" alt="Satisfied gamer portrait" />
+            <article class="testimonial google-review">
+              <div class="review-header">
+                <div class="review-stars" aria-label="Five out of five stars">★★★★★</div>
+                <span class="review-badge">Verified</span>
               </div>
               <div class="testimonial-content">
-                <p>
+                <p class="review-copy">
                   "I recommend Gaming Hub to all my friends. Great deals, fast delivery, and a smooth experience."
                 </p>
-                <div class="testimonial-meta"> - Nina, gamer </div>
+                <div class="review-meta-row">
+                  <span class="review-author">Nina</span>
+                  <span class="review-source">Google review</span>
+                </div>
               </div>
-            </div>
+            </article>
           </div>
           <div class="col-4">
-            <div class="testimonial">
-              <div class="testimonial-image">
-                <img src="img/testimonials/06.jpg" alt="Satisfied gamer portrait" />
+            <article class="testimonial google-review">
+              <div class="review-header">
+                <div class="review-stars" aria-label="Five out of five stars">★★★★★</div>
+                <span class="review-badge">Verified</span>
               </div>
               <div class="testimonial-content">
-                <p>
+                <p class="review-copy">
                   "Best hub for digital content. Their recommendation feed and deals keep me coming back."
                 </p>
-                <div class="testimonial-meta"> - Jordan, esports fan </div>
+                <div class="review-meta-row">
+                  <span class="review-author">Jordan</span>
+                  <span class="review-source">Google review</span>
+                </div>
               </div>
-            </div>
+            </article>
           </div>
         </div>
+        <section class="review-submission" aria-labelledby="review-form-title">
+          <h3 id="review-form-title">Write a review</h3>
+          <form id="review-form">
+            <div class="review-form-grid">
+              <div class="review-form-field">
+                <label for="review-name">Your name</label>
+                <input id="review-name" name="name" type="text" maxlength="60" autocomplete="name" required />
+              </div>
+              <div class="review-form-field">
+                <label for="review-rating">Rating</label>
+                <select id="review-rating" name="rating" required>
+                  <option value="">Select a rating</option>
+                  <option value="5">5 stars</option>
+                  <option value="4">4 stars</option>
+                  <option value="3">3 stars</option>
+                  <option value="2">2 stars</option>
+                  <option value="1">1 star</option>
+                </select>
+              </div>
+              <div class="review-form-field review-form-field-full">
+                <label for="review-text">Your review</label>
+                <textarea id="review-text" name="review" rows="4" maxlength="500" required></textarea>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-custom">Post review</button>
+            <p class="review-storage-note">Reviews are saved only in this browser.</p>
+            <p id="review-status" class="review-status" role="status" aria-live="polite"></p>
+          </form>
+        </section>
       </div>
-    </div>
+    </section>
 
     <div id="team" class="text-center">
       <div class="container">
@@ -597,10 +709,10 @@
         <div class="row">
           <div class="col-3 team">
             <div class="team-card">
-              <img src="img/team/01.jpg" alt="John Doe" class="team-img" />
+              <img src="img/team/ceo.jpg" alt="Adam valani" class="team-img" />
               <div class="team-caption">
-                <h4>John Doe</h4>
-                <p>Director</p>
+                <h4>Adam valani</h4>
+                <p>Chief Executive Officer</p>
               </div>
             </div>
           </div>
