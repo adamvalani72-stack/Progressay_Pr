@@ -8,5 +8,8 @@
   "dependencies": {
     "dotenv": "^16.6.1",
     "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "playwright": "^1.49.1"
   }
 }

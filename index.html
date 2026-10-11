@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; style-src 'self' https://cdn.jsdelivr.net https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com; img-src 'self' data:; script-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-ancestors 'none'"
+      content="default-src 'self'; style-src 'self' https://cdn.jsdelivr.net https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com; img-src 'self' data: blob: https:; script-src 'self' 'unsafe-inline'; base-uri 'self'; form-action 'self'; object-src 'none'"
     />
     <meta name="referrer" content="no-referrer" />
     <meta
@@ -29,7 +29,80 @@
       content="Website for gaminghub.com"
     />
   </head>
-  <body id="page-top">
+  <body id="page-top" class="age-gate-active">
+    <div
+      id="age-verification-modal"
+      class="age-verification-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="age-verification-title"
+    >
+      <div class="age-verification-panel">
+        <p class="age-verification-eyebrow">Access check</p>
+        <h2 id="age-verification-title">Age verification</h2>
+        <p class="age-verification-copy">
+          This website is intended for users aged 14 and over only.
+          Please confirm your date of birth to continue. Government ID is optional for this demo.
+        </p>
+        <form id="age-verification-form" novalidate>
+          <label class="age-verification-field" for="age-verification-date">
+            Date of birth
+            <input
+              id="age-verification-date"
+              name="dateOfBirth"
+              type="date"
+              max="2026-10-11"
+              required
+            />
+          </label>
+          <label class="age-verification-field" for="age-verification-id-type">
+            ID type (optional)
+            <select id="age-verification-id-type" name="idType">
+              <option value="">Select an ID type</option>
+              <option value="passport">Passport</option>
+              <option value="drivers-license">Driver's license</option>
+              <option value="national-id">National ID</option>
+              <option value="state-id">State ID</option>
+            </select>
+          </label>
+          <label class="age-verification-field" for="age-verification-id-number">
+            Government ID number (optional)
+            <input
+              id="age-verification-id-number"
+              name="idNumber"
+              type="text"
+              autocomplete="off"
+              inputmode="text"
+              minlength="6"
+              maxlength="20"
+              placeholder="Enter the ID number if you wish"
+            />
+          </label>
+          <label class="age-verification-field" for="age-verification-id-scan">
+            ID scan (optional)
+            <input
+              id="age-verification-id-scan"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              capture="environment"
+            />
+            <span class="age-verification-scan-note">Choose or photograph an ID image. It stays on this device and is not saved.</span>
+          </label>
+          <img
+            id="age-verification-id-scan-preview"
+            class="age-verification-scan-preview"
+            alt="Selected ID scan preview"
+            hidden
+          />
+          <button class="age-verification-submit" type="submit">Verify access</button>
+          <button class="age-verification-exit" type="button" id="exit-age-verification">
+            Exit site
+          </button>
+        </form>
+        <p id="age-verification-error" class="age-verification-error" aria-live="polite"></p>
+      </div>
+    </div>
+
     <nav id="menu" class="site-nav">
       <div class="container nav-inner">
         <a class="nav-brand page-scroll" href="#page-top">
@@ -303,6 +376,12 @@
             <p>Take on tactical city battles in a quick, competitive arena made for short matches.</p>
             <button type="button" class="btn btn-custom btn-small" data-game="skyline-showdown">Play now</button>
           </article>
+          <article class="free-game-card">
+            <span class="free-game-tag">Free</span>
+            <h3>Redemption Run</h3>
+            <p>Ride through the frontier, shoot bandits, and survive the dusty trail in this original western action mini-game.</p>
+            <button type="button" class="btn btn-custom btn-small" data-game="redemption-run">Play now</button>
+          </article>
         </div>
       </div>
     </section>
@@ -525,7 +604,7 @@
               <div class="portfolio-item">
                 <div class="hover-bg">
                   <a
-                    href="offical_cover_art_landscape,12uu2irr2_a,avif"
+                    href="img/gta6-banner.svg"
                     title="Grand Theft Auto VI"
                     data-lightbox-gallery="gallery1"
                   >
@@ -533,7 +612,7 @@
                       <h4>Grand Theft Auto VI</h4>
                     </div>
                     <img
-                      src="grand_theft_auto_six.jpg"
+                      src="img/gta6-banner.svg"
                       class="img-fluid"
                       alt="Grand Theft Auto VI"
                     />
@@ -871,7 +950,8 @@
                   </li>
                   <li>
                     <a
-                      href="https://youtube.com"
+                      href="https:
+                      //youtube.com"
                       target="_blank"
                       rel="noreferrer noopener"
                     ><i class="fa fa-youtube"></i></a>
@@ -887,10 +967,109 @@
           <p>
             &copy; gaming hub. All Rights Reserved. Designed byadam. Developed by adam.
           </p>
+          <button type="button" id="redo-age-verification" class="btn btn-custom btn-small">
+            Redo age verification
+          </button>
         </div>
       </div>
     </div>
-
+    <script>
+      console.log("Hello I am adam Valani!")
+    </script>
     <script src="script.js"></script>
   </body>
 </html>
+
+<script></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

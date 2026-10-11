@@ -26,6 +26,207 @@
     });
   }
 
+  var ageVerificationStorageKey = 'gamingHubAgeVerified';
+  var ageVerificationModal = document.getElementById('age-verification-modal');
+  var ageVerificationForm = document.getElementById('age-verification-form');
+  var ageVerificationInput = document.getElementById('age-verification-date');
+  var ageVerificationIdType = document.getElementById('age-verification-id-type');
+  var ageVerificationIdNumber = document.getElementById('age-verification-id-number');
+  var ageVerificationIdScan = document.getElementById('age-verification-id-scan');
+  var ageVerificationIdScanPreview = document.getElementById('age-verification-id-scan-preview');
+  var ageVerificationIdScanPreviewUrl = '';
+  var ageVerificationError = document.getElementById('age-verification-error');
+  var exitAgeVerificationButton = document.getElementById('exit-age-verification');
+  var redoAgeVerificationButton = document.getElementById('redo-age-verification');
+
+  function setAgeGateState(isOpen) {
+    if (!document.body) return;
+    document.body.classList.toggle('age-gate-active', isOpen);
+    if (ageVerificationModal) {
+      ageVerificationModal.hidden = !isOpen;
+    }
+    if (isOpen && ageVerificationInput) {
+      ageVerificationInput.focus();
+    }
+  }
+
+  function getAgeVerificationRecord() {
+    try {
+      return JSON.parse(localStorage.getItem(ageVerificationStorageKey) || 'null');
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function hashValue(value) {
+    var normalized = String(value || '').trim().toLowerCase();
+    var hash = 0;
+    for (var i = 0; i < normalized.length; i += 1) {
+      hash = (hash * 31 + normalized.charCodeAt(i)) >>> 0;
+    }
+    return hash.toString(16);
+  }
+
+  function getAgeFromDate(dateString) {
+    if (!dateString) return -1;
+    var birthDate = new Date(dateString + 'T00:00:00');
+    if (Number.isNaN(birthDate.getTime())) return -1;
+    var today = new Date();
+    var age = today.getFullYear() - birthDate.getFullYear();
+    var monthDifference = today.getMonth() - birthDate.getMonth();
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+      age -= 1;
+    }
+    return age;
+  }
+
+  function normalizeIdNumber(value) {
+    return String(value || '').replace(/[^A-Z0-9]/gi, '').toUpperCase();
+  }
+
+  function isValidGovernmentId(type, number) {
+    if (!type || !number) {
+      return false;
+    }
+    var normalized = normalizeIdNumber(number);
+    return /^[A-Z0-9]{6,20}$/.test(normalized) && normalized.length >= 6;
+  }
+
+  function setAgeError(message) {
+    if (ageVerificationError) {
+      ageVerificationError.textContent = message;
+    }
+  }
+
+  function clearAgeVerificationScan() {
+    if (ageVerificationIdScan) {
+      ageVerificationIdScan.value = '';
+    }
+    if (ageVerificationIdScanPreview) {
+      ageVerificationIdScanPreview.hidden = true;
+      ageVerificationIdScanPreview.removeAttribute('src');
+    }
+    if (ageVerificationIdScanPreviewUrl) {
+      URL.revokeObjectURL(ageVerificationIdScanPreviewUrl);
+      ageVerificationIdScanPreviewUrl = '';
+    }
+  }
+
+  function saveAgeVerification(dateString, idType, idNumber) {
+    var record = {
+      dobHash: hashValue(dateString),
+      idType: String(idType || '').trim(),
+      idHash: hashValue(normalizeIdNumber(idNumber)),
+      verifiedAt: Date.now(),
+      expiresAt: Date.now() + (365 * 24 * 60 * 60 * 1000)
+    };
+    localStorage.setItem(ageVerificationStorageKey, JSON.stringify(record));
+  }
+
+  function isAgeVerified() {
+    var record = getAgeVerificationRecord();
+    if (!record || !record.dobHash || !record.idHash || !record.expiresAt) return false;
+    return Number(record.expiresAt) > Date.now();
+  }
+
+  if (ageVerificationModal && ageVerificationForm) {
+    if (!isAgeVerified()) {
+      setAgeGateState(true);
+    } else {
+      setAgeGateState(false);
+    }
+
+    if (ageVerificationIdScan && ageVerificationIdScanPreview) {
+      ageVerificationIdScan.addEventListener('change', function () {
+        var scanFile = ageVerificationIdScan.files && ageVerificationIdScan.files[0];
+        if (!scanFile) return;
+
+        var supportedImageTypes = ['image/jpeg', 'image/png', 'image/webp'];
+        if (supportedImageTypes.indexOf(scanFile.type) === -1 || scanFile.size > 10 * 1024 * 1024) {
+          clearAgeVerificationScan();
+          setAgeError('Choose a JPEG, PNG, or WebP image smaller than 10 MB.');
+          return;
+        }
+
+        if (ageVerificationIdScanPreviewUrl) {
+          URL.revokeObjectURL(ageVerificationIdScanPreviewUrl);
+        }
+        ageVerificationIdScanPreviewUrl = URL.createObjectURL(scanFile);
+        ageVerificationIdScanPreview.src = ageVerificationIdScanPreviewUrl;
+        ageVerificationIdScanPreview.hidden = false;
+        setAgeError('');
+      });
+    }
+
+    ageVerificationForm.addEventListener('submit', function (event) {
+      event.preventDefault();
+      setAgeError('');
+
+      var dateValue = ageVerificationInput ? ageVerificationInput.value : '';
+      var idTypeValue = ageVerificationIdType ? ageVerificationIdType.value : '';
+      var idNumberValue = ageVerificationIdNumber ? ageVerificationIdNumber.value : '';
+      var age = getAgeFromDate(dateValue);
+
+      if (!dateValue || age < 0) {
+        setAgeError('Please enter a valid date of birth.');
+        return;
+      }
+
+      if (idTypeValue && !isValidGovernmentId(idTypeValue, idNumberValue)) {
+        setAgeError('Please enter a valid government-issued ID number if you provide one.');
+        return;
+      }
+
+      if (age < 14) {
+        setAgeError('Access denied. This website is for users aged 14 and over only.');
+        clearAgeVerificationScan();
+        if (ageVerificationInput) {
+          ageVerificationInput.value = '';
+        }
+        if (ageVerificationIdNumber) {
+          ageVerificationIdNumber.value = '';
+        }
+        if (ageVerificationIdType) {
+          ageVerificationIdType.value = '';
+        }
+        if (exitAgeVerificationButton) {
+          exitAgeVerificationButton.focus();
+        }
+        return;
+      }
+
+      saveAgeVerification(dateValue, idTypeValue, idNumberValue);
+  clearAgeVerificationScan();
+      setAgeGateState(false);
+    });
+
+    if (redoAgeVerificationButton) {
+      redoAgeVerificationButton.addEventListener('click', function () {
+        try {
+          localStorage.removeItem(ageVerificationStorageKey);
+        } catch (error) {
+          setAgeError('Unable to reset verification in this browser.');
+          return;
+        }
+
+        ageVerificationForm.reset();
+        clearAgeVerificationScan();
+        setAgeError('');
+        setAgeGateState(true);
+      });
+    }
+
+    if (exitAgeVerificationButton) {
+      exitAgeVerificationButton.addEventListener('click', function () {
+        try {
+          window.location.href = 'about:blank';
+        } catch (error) {
+          window.close();
+        }
+      });
+    }
+  }
+
   var reviewForm = document.getElementById('review-form');
   var reviewList = document.getElementById('review-list');
   var reviewStatus = document.getElementById('review-status');
@@ -159,6 +360,27 @@
     }
   }
 
+  function setGameModalState(isOpen) {
+    if (!gameModal) {
+      return;
+    }
+
+    if (!isOpen && document.activeElement && gameModal.contains(document.activeElement)) {
+      document.activeElement.blur();
+    }
+
+    gameModal.classList.toggle('is-open', isOpen);
+    gameModal.setAttribute('aria-hidden', String(!isOpen));
+
+    if ('inert' in HTMLElement.prototype && typeof gameModal.toggleAttribute === 'function') {
+      gameModal.toggleAttribute('inert', !isOpen);
+    }
+
+    if (isOpen && closeGameButton) {
+      closeGameButton.focus();
+    }
+  }
+
   function showGameOver(finalScore, message) {
     if (!gameShell) return;
     clearInterval(activeGameInterval);
@@ -171,7 +393,8 @@
       'pixel-patrol': 'Pixel Patrol',
       'neon-kart': 'Neon Kart',
       'orbital-puzzles': 'Orbital Puzzles',
-      'skyline-showdown': 'Skyline Showdown'
+      'skyline-showdown': 'Skyline Showdown',
+      'redemption-run': 'Redemption Run'
     };
     return titles[key] || 'Game';
   }
@@ -441,12 +664,209 @@
     activeGameInterval = setInterval(tick, 1800);
   }
 
+  function renderRedemptionRun() {
+    if (!gameShell) return;
+    var state = {
+      score: 0,
+      health: 5,
+      ammo: 10,
+      playerX: 50,
+      bullets: [],
+      enemies: [],
+      dust: [],
+      cooldown: 0,
+      lastSpawn: 0,
+      reloadTimer: 0
+    };
+    activeGameState = state;
+    gameShell.innerHTML = '<div class="game-panel"><div class="game-stats"><span>Score: <strong id="redemption-score">0</strong></span><span>Health: <strong id="redemption-health">5</strong></span><span>Ammo: <strong id="redemption-ammo">10</strong></span></div><div class="game-scene"><div id="redemption-scene" class="redemption-scene"></div></div><p class="game-message">Use A/D or the arrow keys to move. Press Space to shoot and hold off the bandits.</p></div>';
+
+    var scene = document.getElementById('redemption-scene');
+    var scoreLabel = document.getElementById('redemption-score');
+    var healthLabel = document.getElementById('redemption-health');
+    var ammoLabel = document.getElementById('redemption-ammo');
+
+    var sun = document.createElement('div');
+    sun.className = 'redemption-sun';
+    scene.appendChild(sun);
+
+    var horizon = document.createElement('div');
+    horizon.className = 'redemption-horizon';
+    scene.appendChild(horizon);
+
+    var skyline = document.createElement('div');
+    skyline.className = 'redemption-skyline';
+    scene.appendChild(skyline);
+
+    var player = document.createElement('div');
+    player.className = 'redemption-player';
+    scene.appendChild(player);
+
+    function addCactus(x) {
+      var cactus = document.createElement('div');
+      cactus.className = 'redemption-cactus';
+      cactus.style.left = x + '%';
+      scene.appendChild(cactus);
+      return cactus;
+    }
+
+    addCactus(12);
+    addCactus(28);
+    addCactus(72);
+    addCactus(86);
+
+    function makeDust(x, y) {
+      var dust = document.createElement('div');
+      dust.className = 'redemption-dust';
+      dust.style.left = x + '%';
+      dust.style.top = y + 'px';
+      scene.appendChild(dust);
+      state.dust.push({ element: dust, x: x, y: y, life: 28 });
+    }
+
+    function updateHud() {
+      scoreLabel.textContent = String(state.score);
+      healthLabel.textContent = String(state.health);
+      ammoLabel.textContent = String(state.ammo);
+      player.style.left = state.playerX + '%';
+    }
+
+    function spawnEnemy() {
+      var enemy = document.createElement('div');
+      enemy.className = 'redemption-enemy';
+      var x = Math.random() * 82 + 8;
+      enemy.style.left = x + '%';
+      enemy.style.top = '-24px';
+      scene.appendChild(enemy);
+      state.enemies.push({ element: enemy, x: x, y: -24, speed: 2.1 + Math.random() * 2.2, hit: false });
+    }
+
+    function shoot() {
+      if (state.ammo <= 0 || state.cooldown > 0) return;
+      state.ammo -= 1;
+      state.cooldown = 160;
+      var bullet = document.createElement('div');
+      bullet.className = 'redemption-bullet';
+      var bulletX = state.playerX;
+      bullet.style.left = bulletX + '%';
+      bullet.style.bottom = '46px';
+      scene.appendChild(bullet);
+      state.bullets.push({ element: bullet, x: bulletX, y: 255, speed: 7.2 });
+      updateHud();
+    }
+
+    function hitPlayer() {
+      state.health -= 1;
+      updateHud();
+      if (state.health <= 0) {
+        showGameOver(state.score, 'The outlaws overwhelmed the stagecoach. Saddle up and try again.');
+      }
+    }
+
+    function tick() {
+      if (!gameShell || !scene) return;
+      state.cooldown = Math.max(0, state.cooldown - 16);
+      state.lastSpawn += 16;
+      state.reloadTimer = Math.max(0, state.reloadTimer - 16);
+
+      if (state.reloadTimer === 0 && state.ammo === 0) {
+        state.ammo = 10;
+        state.reloadTimer = 800;
+      }
+
+      if (state.lastSpawn > 820) {
+        state.lastSpawn = 0;
+        spawnEnemy();
+      }
+
+      makeDust(state.playerX + (Math.random() * 8 - 4), 290 + Math.random() * 6);
+      state.dust = state.dust.filter(function (dust) {
+        dust.y += 1.1;
+        dust.element.style.top = dust.y + 'px';
+        dust.element.style.left = dust.x + '%';
+        dust.life -= 1;
+        if (dust.life <= 0) {
+          dust.element.remove();
+          return false;
+        }
+        return true;
+      });
+
+      var remainingBullets = [];
+      state.bullets.forEach(function (bullet) {
+        bullet.y -= bullet.speed;
+        bullet.element.style.top = bullet.y + 'px';
+        bullet.element.style.left = bullet.x + '%';
+        if (bullet.y < -10) {
+          bullet.element.remove();
+          return;
+        }
+        remainingBullets.push(bullet);
+      });
+      state.bullets = remainingBullets;
+
+      var remainingEnemies = [];
+      state.enemies.forEach(function (enemy) {
+        enemy.y += enemy.speed;
+        enemy.element.style.top = enemy.y + 'px';
+        enemy.element.style.left = enemy.x + '%';
+
+        var playerHit = Math.abs(enemy.x - state.playerX) < 10 && enemy.y > 220;
+        if (playerHit) {
+          enemy.element.remove();
+          hitPlayer();
+          return;
+        }
+
+        var enemyDefeated = false;
+        state.bullets.forEach(function (bullet) {
+          if (enemyDefeated) return;
+          if (Math.abs(enemy.x - bullet.x) < 8 && Math.abs(enemy.y - bullet.y) < 18) {
+            bullet.element.remove();
+            enemy.element.remove();
+            state.score += 2;
+            updateHud();
+            enemyDefeated = true;
+          }
+        });
+
+        if (!enemyDefeated) {
+          remainingEnemies.push(enemy);
+        }
+      });
+      state.enemies = remainingEnemies;
+
+      if (state.enemies.length === 0 && Math.random() < 0.15) {
+        spawnEnemy();
+      }
+
+      updateHud();
+    }
+
+    activeKeyHandler = function (event) {
+      var key = event.key && event.key.toLowerCase ? event.key.toLowerCase() : '';
+      if (key === 'arrowleft' || key === 'a') {
+        state.playerX = Math.max(8, state.playerX - 4.9);
+      }
+      if (key === 'arrowright' || key === 'd') {
+        state.playerX = Math.min(92, state.playerX + 4.9);
+      }
+      if (event.code === 'Space') {
+        event.preventDefault();
+        shoot();
+      }
+      updateHud();
+    };
+    window.addEventListener('keydown', activeKeyHandler);
+
+    updateHud();
+    spawnEnemy();
+    activeGameInterval = setInterval(tick, 30);
+  }
+
   function startGame(gameKey) {
     clearActiveGame();
-    if (gameModal) {
-      gameModal.classList.add('is-open');
-      gameModal.setAttribute('aria-hidden', 'false');
-    }
+    setGameModalState(true);
     if (gameTitle) {
       gameTitle.textContent = getGameTitle(gameKey);
     }
@@ -464,6 +884,9 @@
       case 'skyline-showdown':
         renderSkylineShowdown();
         break;
+      case 'redemption-run':
+        renderRedemptionRun();
+        break;
       default:
         if (gameShell) {
           gameShell.innerHTML = '<div class="game-over-box"><div><h4>Coming soon</h4><p>This game is not available yet.</p></div></div>';
@@ -473,8 +896,7 @@
 
   if (gameModal) {
     closeGameButton.addEventListener('click', function () {
-      gameModal.classList.remove('is-open');
-      gameModal.setAttribute('aria-hidden', 'true');
+      setGameModalState(false);
       clearActiveGame();
     });
 
@@ -484,7 +906,8 @@
         'Pixel Patrol': 'pixel-patrol',
         'Neon Kart': 'neon-kart',
         'Orbital Puzzles': 'orbital-puzzles',
-        'Skyline Showdown': 'skyline-showdown'
+        'Skyline Showdown': 'skyline-showdown',
+        'Redemption Run': 'redemption-run'
       };
       var gameKey = gameKeyMap[currentGame];
       if (!gameKey) {
@@ -495,8 +918,7 @@
 
     gameModal.addEventListener('click', function (event) {
       if (event.target === gameModal) {
-        gameModal.classList.remove('is-open');
-        gameModal.setAttribute('aria-hidden', 'true');
+        setGameModalState(false);
         clearActiveGame();
       }
     });
@@ -1347,3 +1769,85 @@
     });
   }
 })();
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  //primitive data type
+
+  let name = "proggressay";
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
