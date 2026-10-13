@@ -15,4 +15,4 @@ The login and signup pages use Supabase Auth for email/password accounts and Goo
 
 This project uses a front-end demo subscription flow and does not integrate with Stripe or any payment gateway. Open `http://localhost:3001/pages/subscriptions.html` after starting the site to review the annual plans.
 
-The Basic, Standard, Premium, VIP, and Galactic plans are annual membership tiers. The current demo pricing ladder runs from £9.99 for Basic to £500 for Galactic per year.
+The Basic, Standard, Premium, VIP, Galactic, and Galactic Plus plans are annual membership tiers. The current demo pricing ladder runs from £9.99 for Basic to £1,000 for Galactic Plus per year.

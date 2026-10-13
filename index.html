@@ -41,8 +41,8 @@
         <p class="age-verification-eyebrow">Access check</p>
         <h2 id="age-verification-title">Age verification</h2>
         <p class="age-verification-copy">
-          This website is intended for users aged 14 and over only.
-          Please confirm your date of birth to continue. Government ID is optional for this demo.
+          This demo grants access to the site, including age-restricted games, after you confirm you are 14 or older and select an ID image.
+          The image is not authenticated or saved, so this is not real ID verification.
         </p>
         <form id="age-verification-form" novalidate>
           <label class="age-verification-field" for="age-verification-date">
@@ -79,14 +79,15 @@
             />
           </label>
           <label class="age-verification-field" for="age-verification-id-scan">
-            ID scan (optional)
+            ID scan (required for this demo)
             <input
               id="age-verification-id-scan"
               type="file"
               accept="image/jpeg,image/png,image/webp"
               capture="environment"
+              required
             />
-            <span class="age-verification-scan-note">Choose or photograph an ID image. It stays on this device and is not saved.</span>
+            <span class="age-verification-scan-note">Choose or photograph an ID image. Only its file type and size are checked; it stays on this device and is not saved.</span>
           </label>
           <img
             id="age-verification-id-scan-preview"
@@ -339,8 +340,12 @@
             <h3>Galactic</h3>
             <p class="membership-amount membership-amount-galactic">£500 <span>/ year</span></p>
           </article>
+          <article class="membership-price membership-price-galactic">
+            <h3>Galactic Plus</h3>
+            <p class="membership-amount membership-amount-galactic">£1,000 <span>/ year</span></p>
+          </article>
         </div>
-        <p class="membership-total">All five plans: <strong>£1,019.96 per year</strong></p>
+        <p class="membership-total">All six plans: <strong>£2,019.96 per year</strong></p>
         <a class="btn btn-custom" href="pages/subscriptions.html">Compare plans</a>
       </div>
     </section>

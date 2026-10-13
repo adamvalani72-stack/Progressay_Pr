@@ -117,6 +117,7 @@
       dobHash: hashValue(dateString),
       idType: String(idType || '').trim(),
       idHash: hashValue(normalizeIdNumber(idNumber)),
+      demoIdScanSelected: Boolean(ageVerificationIdScan && ageVerificationIdScan.files && ageVerificationIdScan.files.length),
       verifiedAt: Date.now(),
       expiresAt: Date.now() + (365 * 24 * 60 * 60 * 1000)
     };
@@ -125,7 +126,7 @@
 
   function isAgeVerified() {
     var record = getAgeVerificationRecord();
-    if (!record || !record.dobHash || !record.idHash || !record.expiresAt) return false;
+    if (!record || !record.dobHash || !record.idHash || !record.demoIdScanSelected || !record.expiresAt) return false;
     return Number(record.expiresAt) > Date.now();
   }
 
@@ -174,6 +175,11 @@
 
       if (idTypeValue && !isValidGovernmentId(idTypeValue, idNumberValue)) {
         setAgeError('Please enter a valid government-issued ID number if you provide one.');
+        return;
+      }
+
+      if (!ageVerificationIdScan || !ageVerificationIdScan.files || !ageVerificationIdScan.files.length) {
+        setAgeError('Select an ID image to continue with demo verification.');
         return;
       }
 
