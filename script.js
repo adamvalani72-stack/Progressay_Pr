@@ -26,213 +26,6 @@
     });
   }
 
-  var ageVerificationStorageKey = 'gamingHubAgeVerified';
-  var ageVerificationModal = document.getElementById('age-verification-modal');
-  var ageVerificationForm = document.getElementById('age-verification-form');
-  var ageVerificationInput = document.getElementById('age-verification-date');
-  var ageVerificationIdType = document.getElementById('age-verification-id-type');
-  var ageVerificationIdNumber = document.getElementById('age-verification-id-number');
-  var ageVerificationIdScan = document.getElementById('age-verification-id-scan');
-  var ageVerificationIdScanPreview = document.getElementById('age-verification-id-scan-preview');
-  var ageVerificationIdScanPreviewUrl = '';
-  var ageVerificationError = document.getElementById('age-verification-error');
-  var exitAgeVerificationButton = document.getElementById('exit-age-verification');
-  var redoAgeVerificationButton = document.getElementById('redo-age-verification');
-
-  function setAgeGateState(isOpen) {
-    if (!document.body) return;
-    document.body.classList.toggle('age-gate-active', isOpen);
-    if (ageVerificationModal) {
-      ageVerificationModal.hidden = !isOpen;
-    }
-    if (isOpen && ageVerificationInput) {
-      ageVerificationInput.focus();
-    }
-  }
-
-  function getAgeVerificationRecord() {
-    try {
-      return JSON.parse(localStorage.getItem(ageVerificationStorageKey) || 'null');
-    } catch (error) {
-      return null;
-    }
-  }
-
-  function hashValue(value) {
-    var normalized = String(value || '').trim().toLowerCase();
-    var hash = 0;
-    for (var i = 0; i < normalized.length; i += 1) {
-      hash = (hash * 31 + normalized.charCodeAt(i)) >>> 0;
-    }
-    return hash.toString(16);
-  }
-
-  function getAgeFromDate(dateString) {
-    if (!dateString) return -1;
-    var birthDate = new Date(dateString + 'T00:00:00');
-    if (Number.isNaN(birthDate.getTime())) return -1;
-    var today = new Date();
-    var age = today.getFullYear() - birthDate.getFullYear();
-    var monthDifference = today.getMonth() - birthDate.getMonth();
-    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-      age -= 1;
-    }
-    return age;
-  }
-
-  function normalizeIdNumber(value) {
-    return String(value || '').replace(/[^A-Z0-9]/gi, '').toUpperCase();
-  }
-
-  function isValidGovernmentId(type, number) {
-    if (!type || !number) {
-      return false;
-    }
-    var normalized = normalizeIdNumber(number);
-    return /^[A-Z0-9]{6,20}$/.test(normalized) && normalized.length >= 6;
-  }
-
-  function setAgeError(message) {
-    if (ageVerificationError) {
-      ageVerificationError.textContent = message;
-    }
-  }
-
-  function clearAgeVerificationScan() {
-    if (ageVerificationIdScan) {
-      ageVerificationIdScan.value = '';
-    }
-    if (ageVerificationIdScanPreview) {
-      ageVerificationIdScanPreview.hidden = true;
-      ageVerificationIdScanPreview.removeAttribute('src');
-    }
-    if (ageVerificationIdScanPreviewUrl) {
-      URL.revokeObjectURL(ageVerificationIdScanPreviewUrl);
-      ageVerificationIdScanPreviewUrl = '';
-    }
-  }
-
-  function saveAgeVerification(dateString, idType, idNumber) {
-    var record = {
-      dobHash: hashValue(dateString),
-      idType: String(idType || '').trim(),
-      idHash: hashValue(normalizeIdNumber(idNumber)),
-      demoIdScanSelected: Boolean(ageVerificationIdScan && ageVerificationIdScan.files && ageVerificationIdScan.files.length),
-      verifiedAt: Date.now(),
-      expiresAt: Date.now() + (365 * 24 * 60 * 60 * 1000)
-    };
-    localStorage.setItem(ageVerificationStorageKey, JSON.stringify(record));
-  }
-
-  function isAgeVerified() {
-    var record = getAgeVerificationRecord();
-    if (!record || !record.dobHash || !record.idHash || !record.demoIdScanSelected || !record.expiresAt) return false;
-    return Number(record.expiresAt) > Date.now();
-  }
-
-  if (ageVerificationModal && ageVerificationForm) {
-    if (!isAgeVerified()) {
-      setAgeGateState(true);
-    } else {
-      setAgeGateState(false);
-    }
-
-    if (ageVerificationIdScan && ageVerificationIdScanPreview) {
-      ageVerificationIdScan.addEventListener('change', function () {
-        var scanFile = ageVerificationIdScan.files && ageVerificationIdScan.files[0];
-        if (!scanFile) return;
-
-        var supportedImageTypes = ['image/jpeg', 'image/png', 'image/webp'];
-        if (supportedImageTypes.indexOf(scanFile.type) === -1 || scanFile.size > 10 * 1024 * 1024) {
-          clearAgeVerificationScan();
-          setAgeError('Choose a JPEG, PNG, or WebP image smaller than 10 MB.');
-          return;
-        }
-
-        if (ageVerificationIdScanPreviewUrl) {
-          URL.revokeObjectURL(ageVerificationIdScanPreviewUrl);
-        }
-        ageVerificationIdScanPreviewUrl = URL.createObjectURL(scanFile);
-        ageVerificationIdScanPreview.src = ageVerificationIdScanPreviewUrl;
-        ageVerificationIdScanPreview.hidden = false;
-        setAgeError('');
-      });
-    }
-
-    ageVerificationForm.addEventListener('submit', function (event) {
-      event.preventDefault();
-      setAgeError('');
-
-      var dateValue = ageVerificationInput ? ageVerificationInput.value : '';
-      var idTypeValue = ageVerificationIdType ? ageVerificationIdType.value : '';
-      var idNumberValue = ageVerificationIdNumber ? ageVerificationIdNumber.value : '';
-      var age = getAgeFromDate(dateValue);
-
-      if (!dateValue || age < 0) {
-        setAgeError('Please enter a valid date of birth.');
-        return;
-      }
-
-      if (idTypeValue && !isValidGovernmentId(idTypeValue, idNumberValue)) {
-        setAgeError('Please enter a valid government-issued ID number if you provide one.');
-        return;
-      }
-
-      if (!ageVerificationIdScan || !ageVerificationIdScan.files || !ageVerificationIdScan.files.length) {
-        setAgeError('Select an ID image to continue with demo verification.');
-        return;
-      }
-
-      if (age < 14) {
-        setAgeError('Access denied. This website is for users aged 14 and over only.');
-        clearAgeVerificationScan();
-        if (ageVerificationInput) {
-          ageVerificationInput.value = '';
-        }
-        if (ageVerificationIdNumber) {
-          ageVerificationIdNumber.value = '';
-        }
-        if (ageVerificationIdType) {
-          ageVerificationIdType.value = '';
-        }
-        if (exitAgeVerificationButton) {
-          exitAgeVerificationButton.focus();
-        }
-        return;
-      }
-
-      saveAgeVerification(dateValue, idTypeValue, idNumberValue);
-  clearAgeVerificationScan();
-      setAgeGateState(false);
-    });
-
-    if (redoAgeVerificationButton) {
-      redoAgeVerificationButton.addEventListener('click', function () {
-        try {
-          localStorage.removeItem(ageVerificationStorageKey);
-        } catch (error) {
-          setAgeError('Unable to reset verification in this browser.');
-          return;
-        }
-
-        ageVerificationForm.reset();
-        clearAgeVerificationScan();
-        setAgeError('');
-        setAgeGateState(true);
-      });
-    }
-
-    if (exitAgeVerificationButton) {
-      exitAgeVerificationButton.addEventListener('click', function () {
-        try {
-          window.location.href = 'about:blank';
-        } catch (error) {
-          window.close();
-        }
-      });
-    }
-  }
-
   var reviewForm = document.getElementById('review-form');
   var reviewList = document.getElementById('review-list');
   var reviewStatus = document.getElementById('review-status');
@@ -1442,6 +1235,8 @@
   var membershipEmail = document.getElementById('membership-email');
   var membershipStatus = document.getElementById('membership-status');
   var membershipError = document.getElementById('membership-error');
+  var membershipSteps = membershipCheckout && membershipCheckout.querySelector('[data-membership-steps]');
+  var accountContinueButton = membershipCheckout && membershipCheckout.querySelector('[data-account-continue]');
   var selectedPlan = null;
   var previousPlanButton = null;
 
@@ -1474,7 +1269,8 @@
     selectedPlan = {
       id: button.dataset.planId,
       name: button.dataset.planName,
-      price: button.dataset.planPrice
+      price: button.dataset.planPrice,
+      period: button.dataset.planPeriod || 'Annual membership'
     };
 
     document.querySelectorAll('[data-selected-plan-name]').forEach(function (element) {
@@ -1483,6 +1279,16 @@
     document.querySelectorAll('[data-selected-plan-price]').forEach(function (element) {
       element.textContent = selectedPlan.price;
     });
+    document.querySelectorAll('[data-selected-plan-period]').forEach(function (element) {
+      element.textContent = selectedPlan.period;
+    });
+    document.querySelectorAll('[data-selected-plan-suffix]').forEach(function (element) {
+      element.hidden = selectedPlan.id === 'free';
+    });
+    if (membershipSteps) membershipSteps.hidden = selectedPlan.id === 'free';
+    if (accountContinueButton) {
+      accountContinueButton.textContent = selectedPlan.id === 'free' ? 'Activate free plan' : 'Continue to payment';
+    }
     accountStepForm.reset();
     paymentStepForm.reset();
     if (membershipStatus) membershipStatus.textContent = '';
@@ -1536,6 +1342,14 @@
   if (accountStepForm) {
     accountStepForm.addEventListener('submit', function (event) {
       event.preventDefault();
+      if (selectedPlan && selectedPlan.id === 'free') {
+        var email = String(new FormData(accountStepForm).get('email') || '').trim();
+        setMembershipStep('complete');
+        if (membershipStatus) {
+          membershipStatus.textContent = 'The Free plan is selected for ' + email + ' in this demo. No payment is due.';
+        }
+        return;
+      }
       setMembershipStep('payment');
       document.querySelector('[name="membership-payment-method"]').focus();
     });
@@ -1842,10 +1656,6 @@
   let name = "proggressay";
 
   
-
-
-
-
 
 
 

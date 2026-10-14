@@ -17,7 +17,7 @@
     <title>Subscriptions | Gaming Hub</title>
     <meta
       name="description"
-      content="Compare Gaming Hub Basic, Standard, Premium, and VIP annual subscriptions."
+      content="Compare nine Gaming Hub plans, from Free to the exclusive £25,000-per-year Ultimate membership."
     />
     <style>
       body {
@@ -85,6 +85,30 @@
 
       .plan:nth-child(4) {
         border-top-color: #293246;
+      }
+
+      .plan-ultimate {
+        border-color: #d7b24c;
+        border-top-color: #e7bd48;
+        background: linear-gradient(180deg, #fff9e9 0%, #fff 34%);
+        box-shadow: 0 16px 38px rgba(128, 91, 18, 0.16);
+      }
+
+      .plan-featured-label {
+        align-self: flex-start;
+        margin: 0 0 12px;
+        padding: 5px 9px;
+        border-radius: 999px;
+        background: #26334f;
+        color: #fff4cc;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .plan-ultimate .plan-price {
+        color: #805b12;
       }
 
       .plan h2 {
@@ -214,6 +238,10 @@
         margin: 18px 0 22px;
         padding: 0;
         list-style: none;
+      }
+
+      .membership-steps[hidden] {
+        display: none;
       }
 
       .membership-steps li {
@@ -454,7 +482,7 @@
         <header class="subscriptions-heading">
           <div>
             <h1>Choose your Gaming Hub plan</h1>
-            <p>Pick the membership that fits you. Each plan is paid yearly.</p>
+            <p>Choose a free membership or a paid plan billed annually.</p>
           </div>
           <img
             class="subscriptions-art"
@@ -463,7 +491,20 @@
           />
         </header>
 
-        <section class="plans-grid" aria-label="Annual subscription plans">
+        <section class="plans-grid" aria-label="Membership plans">
+          <article class="plan" id="free-plan">
+            <h2>Free</h2>
+            <p class="plan-description">Join the Gaming Hub community at no cost, with no payment details required.</p>
+            <p class="plan-price">£0</p>
+            <p class="plan-period">free forever</p>
+            <h3 class="plan-games-label">Included benefits</h3>
+            <ul>
+              <li>Browse the Gaming Hub community</li>
+              <li>Explore games and membership plans</li>
+              <li>Upgrade whenever you like</li>
+            </ul>
+            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="free" data-plan-name="Free" data-plan-price="£0" data-plan-period="Free forever">Choose Free</button>
+          </article>
           <article class="plan">
             <h2>Basic</h2>
             <p class="plan-description">A simple way to join the Gaming Hub community.</p>
@@ -544,6 +585,35 @@
             </ul>
             <button class="btn btn-custom" type="button" data-start-plan data-plan-id="galactic-plus" data-plan-name="Galactic Plus" data-plan-price="£1,000">Choose Galactic Plus</button>
           </article>
+          <article class="plan" id="galactic-plus-plus-plan">
+            <h2>Galactic Plus Plus</h2>
+            <p class="plan-description">Our ultimate annual membership, with every Galactic Plus benefit.</p>
+            <p class="plan-price">£10,000</p>
+            <p class="plan-period">per year</p>
+            <h3 class="plan-games-label">Included games</h3>
+            <ul>
+              <li>Nova Frontier</li>
+              <li>Eclipse Dominion</li>
+              <li>Infinite Odyssey</li>
+            </ul>
+            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="galactic-plus-plus" data-plan-name="Galactic Plus Plus" data-plan-price="£10,000">Choose Galactic Plus Plus</button>
+          </article>
+          <article class="plan plan-ultimate" id="ultimate-plan">
+            <span class="plan-featured-label">The ultimate Gaming Hub offer</span>
+            <h2>Ultimate</h2>
+            <p class="plan-description">For the player who wants it all: the complete Gaming Hub experience, with VIP treatment from day one.</p>
+            <p class="plan-price">£25,000</p>
+            <p class="plan-period">per year</p>
+            <h3 class="plan-games-label">Everything in the offer</h3>
+            <ul>
+              <li>Every benefit from Galactic Plus Plus</li>
+              <li>Priority access to new games, launches, and exclusive drops</li>
+              <li>Personal Gaming Hub member concierge and priority support</li>
+              <li>Invitations to exclusive tournaments and member events</li>
+              <li>Ultimate member status with an exclusive profile badge</li>
+            </ul>
+            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="ultimate" data-plan-name="Ultimate" data-plan-price="£25,000">Choose Ultimate</button>
+          </article>
             </section>
 
             <p class="billing-note">Choose a plan to review your annual billing and payment options.</p>
@@ -559,7 +629,7 @@
               </div>
               <button class="membership-close" type="button" data-close-membership aria-label="Close membership checkout">×</button>
             </div>
-            <ol class="membership-steps" aria-label="Checkout steps">
+            <ol class="membership-steps" aria-label="Checkout steps" data-membership-steps>
               <li data-membership-step="account" aria-current="step">1. Your details</li>
               <li data-membership-step="payment">2. Review and pay</li>
             </ol>
@@ -568,8 +638,8 @@
             <section class="membership-step" id="membership-account-step" aria-labelledby="membership-account-title">
               <h3 id="membership-account-title">Where should we send your membership details?</h3>
               <div class="membership-selected-plan">
-                <p><strong data-selected-plan-name></strong><span>Annual membership</span></p>
-                <strong><span data-selected-plan-price></span> / year</strong>
+                <p><strong data-selected-plan-name></strong><span data-selected-plan-period>Annual membership</span></p>
+                <strong><span data-selected-plan-price></span><span data-selected-plan-suffix> / year</span></strong>
               </div>
               <form id="membership-account-form">
                 <div class="membership-field">
@@ -578,17 +648,17 @@
                 </div>
                 <div class="membership-actions">
                   <button class="membership-back" type="button" data-close-membership>Cancel</button>
-                  <button class="membership-continue" type="submit">Continue to payment</button>
+                  <button class="membership-continue" type="submit" data-account-continue>Continue to payment</button>
                 </div>
               </form>
-              <p class="membership-demo-note">Already have an account? <a href="login.html">Log in</a>. Checkout bills the email above; it does not create a Gaming Hub login.</p>
+              <p class="membership-demo-note">This demo does not create a Gaming Hub login or process payments. Already have an account? <a href="login.html">Log in</a>.</p>
             </section>
 
             <section class="membership-step" id="membership-payment-step" aria-labelledby="membership-payment-title" hidden>
               <h3 id="membership-payment-title">Review your membership</h3>
               <div class="membership-price-summary">
                 <p><strong><span data-selected-plan-name></span> plan</strong><span>Renews yearly</span></p>
-                <strong><span data-selected-plan-price></span> / year</strong>
+                <strong><span data-selected-plan-price></span><span data-selected-plan-suffix> / year</span></strong>
               </div>
               <p class="membership-renewal-note">Due today: <strong data-selected-plan-price></strong>. Your plan bills annually and renews yearly until canceled.</p>
               <form id="membership-payment-form">
@@ -640,8 +710,3 @@
         <script src="../script.js"></script>
       </body>
     </html>
-
-
-    <script src="../script.js"></script>
-  </body>
-</html>

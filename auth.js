@@ -1,9 +1,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 var authConfig = window.GAMING_HUB_AUTH || {};
-var authClient = authConfig.projectUrl && authConfig.publishableKey
-  ? createClient(authConfig.projectUrl, authConfig.publishableKey)
-  : null;
+var authClient = null;
 var loginForm = document.getElementById('login-panel');
 var signupForm = document.getElementById('signup-panel');
 var primaryForm = loginForm || signupForm;
@@ -47,7 +45,46 @@ function showSession(user) {
 }
 
 function authUnavailable() {
-  setStatus('Add the Supabase project URL and publishable key to auth-config.js to enable account access.', 'error');
+  setStatus('Account access is not configured yet. Set SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY on the server, or configure projectUrl and publishableKey in auth-config.js for static hosting.', 'error');
+}
+
+var authConfigPromise = fetch('/api/auth-config', { cache: 'no-store' })
+  .then(function (response) {
+    if (!response.ok) throw new Error('Could not load account settings.');
+    return response.json();
+  })
+  .then(function (serverConfig) {
+    authConfig = {
+      projectUrl: serverConfig.projectUrl || authConfig.projectUrl || '',
+      publishableKey: serverConfig.publishableKey || authConfig.publishableKey || ''
+    };
+    if (authConfig.projectUrl && authConfig.publishableKey) {
+      authClient = createClient(authConfig.projectUrl, authConfig.publishableKey);
+      if (setupNotice) setupNotice.hidden = true;
+      return true;
+    }
+    if (setupNotice) {
+      setupNotice.textContent = 'Secure account access is provided by Supabase. Add SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY to the server environment to enable sign up and log in.';
+    }
+    return false;
+  })
+  .catch(function () {
+    if (authConfig.projectUrl && authConfig.publishableKey) {
+      authClient = createClient(authConfig.projectUrl, authConfig.publishableKey);
+      if (setupNotice) setupNotice.hidden = true;
+      return true;
+    }
+    if (setupNotice) {
+      setupNotice.textContent = 'Could not load account settings. Start the Gaming Hub server or configure auth-config.js for static hosting.';
+    }
+    setStatus('Unable to connect to the account service. Please try again later.', 'error');
+    return false;
+  });
+
+async function ensureAuthClient() {
+  if (await authConfigPromise) return true;
+  authUnavailable();
+  return false;
 }
 
 function getRedirectUrl() {
@@ -68,10 +105,6 @@ async function setBusy(button, busy, idleText) {
   button.textContent = busy ? 'Please wait…' : idleText;
 }
 
-if (setupNotice && !authClient) {
-  setupNotice.textContent = 'Connect a Supabase project to enable secure sign-in. Setup steps are in README.md.';
-}
-
 if (isRecoveryFlow) {
   setRecoveryMode(true);
 }
@@ -79,10 +112,7 @@ if (isRecoveryFlow) {
 if (primaryForm) {
   primaryForm.addEventListener('submit', async function (event) {
     event.preventDefault();
-    if (!authClient) {
-      authUnavailable();
-      return;
-    }
+    if (!await ensureAuthClient()) return;
 
     var formData = new FormData(primaryForm);
     var email = String(formData.get('email') || '').trim();
@@ -92,6 +122,13 @@ if (primaryForm) {
 
     if (signupForm) {
       var confirmPassword = primaryForm.querySelector('[name="confirm-password"]');
+      if (!String(formData.get('name') || '').trim()) {
+        var displayName = primaryForm.querySelector('[name="name"]');
+        displayName.setCustomValidity('Enter a display name.');
+        displayName.reportValidity();
+        displayName.setCustomValidity('');
+        return;
+      }
       if (password !== String(formData.get('confirm-password') || '')) {
         confirmPassword.setCustomValidity('Passwords do not match.');
         confirmPassword.reportValidity();
@@ -117,10 +154,14 @@ if (primaryForm) {
 
         if (signupResult.error) throw signupResult.error;
         if (signupResult.data.session) {
-          setStatus('Your account is ready.', 'success');
+          setStatus('Your account is ready. You are signed in.', 'success');
           showSession(signupResult.data.user);
         } else {
-          setStatus('Check your email for a confirmation link to finish creating your account.', 'success');
+          primaryForm.hidden = true;
+          document.querySelectorAll('.auth-google-button, .auth-divider, .auth-switch').forEach(function (element) {
+            element.hidden = true;
+          });
+          setStatus('Your account was created. Check your email for a confirmation link before logging in.', 'success');
         }
       } else {
         var loginResult = await authClient.auth.signInWithPassword({ email: email, password: password });
@@ -138,10 +179,7 @@ if (primaryForm) {
 
 document.querySelectorAll('[data-google-auth]').forEach(function (button) {
   button.addEventListener('click', async function () {
-    if (!authClient) {
-      authUnavailable();
-      return;
-    }
+    if (!await ensureAuthClient()) return;
 
     button.disabled = true;
     setStatus('', '');
@@ -172,10 +210,7 @@ if (forgotPasswordButton) {
       emailInput.reportValidity();
       return;
     }
-    if (!authClient) {
-      authUnavailable();
-      return;
-    }
+    if (!await ensureAuthClient()) return;
 
     forgotPasswordButton.disabled = true;
     try {
@@ -208,10 +243,7 @@ if (resetForm) {
     event.preventDefault();
     validateResetConfirmation();
     if (!resetForm.reportValidity()) return;
-    if (!authClient) {
-      authUnavailable();
-      return;
-    }
+    if (!await ensureAuthClient()) return;
 
     var submitButton = resetForm.querySelector('[type="submit"]');
     await setBusy(submitButton, true, 'Update password');
@@ -233,19 +265,24 @@ if (resetForm) {
 var signOutButton = document.querySelector('[data-sign-out]');
 if (signOutButton) {
   signOutButton.addEventListener('click', async function () {
-    if (!authClient) return;
+    if (!await ensureAuthClient()) return;
     signOutButton.disabled = true;
-    var result = await authClient.auth.signOut();
-    signOutButton.disabled = false;
-    if (result.error) {
-      setStatus(result.error.message, 'error');
-      return;
+    try {
+      var result = await authClient.auth.signOut();
+      if (result.error) throw result.error;
+      showSession(null);
+      setStatus('You are signed out.', 'success');
+    } catch (error) {
+      setStatus(error.message || 'Could not sign out. Please try again.', 'error');
+    } finally {
+      signOutButton.disabled = false;
     }
-    setStatus('You are signed out.', 'success');
   });
 }
 
-if (authClient) {
+authConfigPromise.then(function (isConfigured) {
+  if (!isConfigured || !authClient) return;
+
   authClient.auth.onAuthStateChange(function (event, session) {
     if (event === 'PASSWORD_RECOVERY') {
       setRecoveryMode(true);
@@ -262,4 +299,4 @@ if (authClient) {
     }
     showSession(result.data.session && result.data.session.user);
   });
-}
+});

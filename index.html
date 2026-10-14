@@ -29,81 +29,7 @@
       content="Website for gaminghub.com"
     />
   </head>
-  <body id="page-top" class="age-gate-active">
-    <div
-      id="age-verification-modal"
-      class="age-verification-modal"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="age-verification-title"
-    >
-      <div class="age-verification-panel">
-        <p class="age-verification-eyebrow">Access check</p>
-        <h2 id="age-verification-title">Age verification</h2>
-        <p class="age-verification-copy">
-          This demo grants access to the site, including age-restricted games, after you confirm you are 14 or older and select an ID image.
-          The image is not authenticated or saved, so this is not real ID verification.
-        </p>
-        <form id="age-verification-form" novalidate>
-          <label class="age-verification-field" for="age-verification-date">
-            Date of birth
-            <input
-              id="age-verification-date"
-              name="dateOfBirth"
-              type="date"
-              max="2026-10-11"
-              required
-            />
-          </label>
-          <label class="age-verification-field" for="age-verification-id-type">
-            ID type (optional)
-            <select id="age-verification-id-type" name="idType">
-              <option value="">Select an ID type</option>
-              <option value="passport">Passport</option>
-              <option value="drivers-license">Driver's license</option>
-              <option value="national-id">National ID</option>
-              <option value="state-id">State ID</option>
-            </select>
-          </label>
-          <label class="age-verification-field" for="age-verification-id-number">
-            Government ID number (optional)
-            <input
-              id="age-verification-id-number"
-              name="idNumber"
-              type="text"
-              autocomplete="off"
-              inputmode="text"
-              minlength="6"
-              maxlength="20"
-              placeholder="Enter the ID number if you wish"
-            />
-          </label>
-          <label class="age-verification-field" for="age-verification-id-scan">
-            ID scan (required for this demo)
-            <input
-              id="age-verification-id-scan"
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              capture="environment"
-              required
-            />
-            <span class="age-verification-scan-note">Choose or photograph an ID image. Only its file type and size are checked; it stays on this device and is not saved.</span>
-          </label>
-          <img
-            id="age-verification-id-scan-preview"
-            class="age-verification-scan-preview"
-            alt="Selected ID scan preview"
-            hidden
-          />
-          <button class="age-verification-submit" type="submit">Verify access</button>
-          <button class="age-verification-exit" type="button" id="exit-age-verification">
-            Exit site
-          </button>
-        </form>
-        <p id="age-verification-error" class="age-verification-error" aria-live="polite"></p>
-      </div>
-    </div>
-
+  <body id="page-top">
     <nav id="menu" class="site-nav">
       <div class="container nav-inner">
         <a class="nav-brand page-scroll" href="#page-top">
@@ -316,10 +242,14 @@
     <section id="memberships" class="text-center subscription-preview">
       <div class="container">
         <div class="section-title">
-          <h2>Annual Memberships</h2>
+          <h2>Membership Plans</h2>
           <p>Choose the Gaming Hub membership that fits your play style.</p>
         </div>
         <div class="membership-prices">
+          <article class="membership-price">
+            <h3>Free</h3>
+            <p class="membership-amount">£0 <span>/ forever</span></p>
+          </article>
           <article class="membership-price">
             <h3>Basic</h3>
             <p class="membership-amount">£9.99 <span>/ year</span></p>
@@ -344,8 +274,16 @@
             <h3>Galactic Plus</h3>
             <p class="membership-amount membership-amount-galactic">£1,000 <span>/ year</span></p>
           </article>
+          <article class="membership-price membership-price-galactic">
+            <h3>Galactic Plus Plus</h3>
+            <p class="membership-amount membership-amount-galactic">£10,000 <span>/ year</span></p>
+          </article>
+          <article class="membership-price membership-price-ultimate">
+            <h3>Ultimate</h3>
+            <p class="membership-amount membership-amount-galactic">£25,000 <span>/ year</span></p>
+          </article>
         </div>
-        <p class="membership-total">All six plans: <strong>£2,019.96 per year</strong></p>
+        <p class="membership-total">All nine plans: <strong>£37,019.96 per year</strong></p>
         <a class="btn btn-custom" href="pages/subscriptions.html">Compare plans</a>
       </div>
     </section>
@@ -972,9 +910,6 @@
           <p>
             &copy; gaming hub. All Rights Reserved. Designed byadam. Developed by adam.
           </p>
-          <button type="button" id="redo-age-verification" class="btn btn-custom btn-small">
-            Redo age verification
-          </button>
         </div>
       </div>
     </div>
@@ -986,13 +921,6 @@
 </html>
 
 <script></script>
-
-
-
-
-
-
-
 
 
 

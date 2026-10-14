@@ -14,6 +14,14 @@ app.get('/api/health', function (request, response) {
   response.json({ status: 'ok' });
 });
 
+app.get('/api/auth-config', function (request, response) {
+  response.set('Cache-Control', 'no-store');
+  response.json({
+    projectUrl: process.env.SUPABASE_URL || '',
+    publishableKey: process.env.SUPABASE_PUBLISHABLE_KEY || ''
+  });
+});
+
 app.use(function (request, response, next) {
   if (['/server.js', '/package.json', '/package-lock.json'].includes(request.path)) {
     response.sendStatus(404);
