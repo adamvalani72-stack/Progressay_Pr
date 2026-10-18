@@ -817,7 +817,9 @@
       if (item.pricePence !== undefined) {
         return toBigInt(item.pricePence);
       }
-      return toBigInt(item.price) * 100n;
+      var price = String(item.price || '').replace(/,/g, '').match(/^(\d+)(?:\.(\d{1,2}))?$/);
+      if (!price) return 0n;
+      return BigInt(price[1]) * 100n + BigInt((price[2] || '').padEnd(2, '0') || '0');
     }
 
     function getItemType(item) {
@@ -924,7 +926,12 @@
         var lineTotal = getItemPrice(item) * BigInt(item.quantity);
         totalCost += lineTotal;
         var line = document.createElement('li');
-        line.innerHTML = '<span>' + item.name + ' x' + item.quantity + '</span><span>' + formatCurrency(lineTotal) + '</span>';
+        var description = document.createElement('span');
+        var amount = document.createElement('span');
+        description.textContent = String(item.name) + ' x' + item.quantity;
+        amount.textContent = formatCurrency(lineTotal);
+        line.appendChild(description);
+        line.appendChild(amount);
         checkoutSummaryItems.appendChild(line);
       });
 
@@ -1066,7 +1073,7 @@
           var itemType = button.dataset.itemType || 'product';
           var price = button.dataset.pricePence !== undefined
             ? toBigInt(button.dataset.pricePence)
-            : toBigInt(button.dataset.price || '0') * 100n;
+          : getItemPrice({ price: button.dataset.price || '0' });
         var cart = getCart();
         var existingItem = cart.find(function (item) {
             return item.name === name && getItemType(item) === itemType;
@@ -1163,37 +1170,85 @@
     }
 
     if (checkoutForm) {
-      checkoutForm.addEventListener('submit', function (event) {
+      checkoutForm.addEventListener('submit', async function (event) {
         event.preventDefault();
-        var selectedMethod = document.querySelector('input[name="payment-method"]:checked');
-        var isInstantPay = selectedMethod && selectedMethod.value === 'instant';
-        var isFreeOrder = hasFreeOrderPromo();
-
-        if (!isInstantPay && !isFreeOrder && !validateCardDetails()) {
-          checkoutForm.reportValidity();
+        if (checkoutSuccess) {
+          checkoutSuccess.textContent = '';
+          checkoutSuccess.classList.remove('visible');
+        }
+        var email = String(new FormData(checkoutForm).get('checkout-email') || '').trim();
+        var items = getCheckoutCart().map(function (item) {
+          return { name: item.name, quantity: item.quantity };
+        });
+        if (!items.length) {
+          if (checkoutSuccess) {
+            checkoutSuccess.textContent = 'There are no products to check out.';
+            checkoutSuccess.classList.add('visible');
+          }
           return;
         }
+        if (!checkoutForm.reportValidity()) return;
 
-        if (checkoutSuccess) {
-          checkoutSuccess.textContent = isFreeOrder
-            ? 'Free demo checkout complete. No payment was charged.'
-            : isInstantPay
-              ? 'Demo instant payment complete. No real payment was charged.'
-              : checkoutType === 'subscription'
-                ? 'Demo subscription started. No recurring payment was charged.'
-                : 'Demo product order complete. No real payment was charged.';
-          checkoutSuccess.classList.add('visible');
+        if (placeOrderButton) {
+          placeOrderButton.disabled = true;
+          placeOrderButton.textContent = 'Connecting to secure checkout…';
         }
-        saveCart(getCart().filter(function (item) {
-          return getItemType(item) !== checkoutType;
-        }));
-        renderCart();
-        checkoutForm.reset();
-        updatePaymentMethod();
-        setTimeout(function () {
-          closeCheckout();
-        }, 2000);
+        try {
+          var response = await fetch('/api/checkout-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email, items: items })
+          });
+          var data = await response.json();
+          if (!response.ok) throw new Error(data.error || 'Could not start secure checkout.');
+          var checkoutUrl = new URL(data.url);
+          if (checkoutUrl.protocol !== 'https:') throw new Error('The secure checkout URL was invalid.');
+          window.location.assign(checkoutUrl.href);
+        } catch (error) {
+          if (checkoutSuccess) {
+            checkoutSuccess.textContent = error.message || 'Secure checkout is unavailable. Please try again.';
+            checkoutSuccess.classList.add('visible');
+          }
+        } finally {
+          if (placeOrderButton) {
+            placeOrderButton.disabled = false;
+            placeOrderButton.textContent = 'Continue to secure checkout';
+          }
+        }
       });
+    }
+
+    if (checkoutSuccess) {
+      var checkoutParams = new URLSearchParams(window.location.search);
+      var checkoutSessionId = checkoutParams.get('session_id');
+      if (checkoutParams.get('checkout') === 'cancelled') {
+        checkoutSuccess.textContent = 'Checkout was canceled. Your cart is still saved.';
+        checkoutSuccess.classList.add('visible');
+      } else if (checkoutParams.get('checkout') === 'success' && checkoutSessionId) {
+        fetch('/api/checkout-session/' + encodeURIComponent(checkoutSessionId))
+          .then(function (response) {
+            if (!response.ok) throw new Error('Payment confirmation is not available yet.');
+            return response.json();
+          })
+          .then(function (data) {
+            if (data.paymentStatus !== 'paid') throw new Error('Payment is still being confirmed. Your order is not marked complete yet.');
+            checkoutSuccess.textContent = 'Payment confirmed. Thank you for your order.';
+            saveCart(getCart().filter(function (item) { return getItemType(item) !== 'product'; }));
+            renderCart();
+            checkoutSuccess.classList.add('visible');
+          })
+          .catch(function (error) {
+            checkoutSuccess.textContent = error.message;
+            checkoutSuccess.classList.add('visible');
+          });
+      }
+      if (checkoutParams.has('checkout')) {
+        checkoutParams.delete('checkout');
+        checkoutParams.delete('session_id');
+        var cleanCheckoutUrl = new URL(window.location.href);
+        cleanCheckoutUrl.search = checkoutParams.toString();
+        window.history.replaceState({}, document.title, cleanCheckoutUrl.pathname + cleanCheckoutUrl.search + cleanCheckoutUrl.hash);
+      }
     }
 
     if (clearCartButton) {
@@ -1317,9 +1372,30 @@
     if (selectedPlanButton) {
       openMembershipCheckout(selectedPlanButton);
       if (checkoutParams.get('checkout') === 'success') {
-        setMembershipStep('complete');
-        if (membershipStatus) {
-          membershipStatus.textContent = selectedPlanButton.dataset.planName + ' membership is active in this demo.';
+        var membershipSessionId = checkoutParams.get('session_id');
+        if (membershipSessionId) {
+          fetch('/api/checkout-session/' + encodeURIComponent(membershipSessionId))
+            .then(function (response) {
+              if (!response.ok) throw new Error('Payment confirmation is not available yet.');
+              return response.json();
+            })
+            .then(function (data) {
+              if (data.paymentStatus !== 'paid' || data.mode !== 'subscription' ||
+                  data.planId !== selectedPlanButton.dataset.planId) {
+                throw new Error('Your membership payment is not confirmed yet.');
+              }
+              setMembershipStep('complete');
+              if (membershipStatus) membershipStatus.textContent = 'Payment confirmed. Your ' + selectedPlanButton.dataset.planName + ' membership is active.';
+            })
+            .catch(function (error) {
+              if (membershipError) {
+                membershipError.hidden = false;
+                membershipError.textContent = error.message;
+              }
+            });
+        } else if (membershipError) {
+          membershipError.hidden = false;
+          membershipError.textContent = 'A payment confirmation could not be verified.';
         }
         var cleanUrl = new URL(window.location.href);
         cleanUrl.searchParams.delete('plan');
@@ -1343,15 +1419,12 @@
     accountStepForm.addEventListener('submit', function (event) {
       event.preventDefault();
       if (selectedPlan && selectedPlan.id === 'free') {
-        var email = String(new FormData(accountStepForm).get('email') || '').trim();
-        setMembershipStep('complete');
-        if (membershipStatus) {
-          membershipStatus.textContent = 'The Free plan is selected for ' + email + ' in this demo. No payment is due.';
-        }
+        window.location.assign('signup.html');
         return;
       }
       setMembershipStep('payment');
-      document.querySelector('[name="membership-payment-method"]').focus();
+      var membershipSubmitButton = paymentStepForm && paymentStepForm.querySelector('[type="submit"]');
+      if (membershipSubmitButton) membershipSubmitButton.focus();
     });
   }
 
@@ -1364,37 +1437,34 @@
   }
 
   if (paymentStepForm) {
-    var paymentMethodInputs = paymentStepForm.querySelectorAll('input[name="membership-payment-method"]');
-
-    function updateSelectedPaymentMethod() {
-      paymentMethodInputs.forEach(function (radio) {
-        var label = radio.closest('label');
-        if (label) {
-          label.classList.toggle('selected', radio.checked);
-        }
-      });
-    }
-
-    paymentMethodInputs.forEach(function (radio) {
-      radio.addEventListener('change', updateSelectedPaymentMethod);
-    });
-
-    updateSelectedPaymentMethod();
-
-    paymentStepForm.addEventListener('submit', function (event) {
+    paymentStepForm.addEventListener('submit', async function (event) {
       event.preventDefault();
       if (!selectedPlan || !membershipEmail) return;
 
-      var selectedMethod = paymentStepForm.querySelector('input[name="membership-payment-method"]:checked');
-      var selectedMethodName = selectedMethod ? selectedMethod.value : 'payment method';
-
-      setMembershipStep('complete');
-      if (membershipStatus) {
-        membershipStatus.textContent = selectedPlan.name + ' membership is active in this demo using ' + selectedMethodName + '.';
-      }
-      if (membershipError) {
-        membershipError.hidden = true;
-        membershipError.textContent = '';
+      var submitButton = paymentStepForm.querySelector('[type="submit"]');
+      submitButton.disabled = true;
+      if (membershipError) membershipError.hidden = true;
+      try {
+        var response = await fetch('/api/membership-checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            planId: selectedPlan.id,
+            email: membershipEmail.value.trim()
+          })
+        });
+        var data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Could not start secure checkout.');
+        var checkoutUrl = new URL(data.url);
+        if (checkoutUrl.protocol !== 'https:') throw new Error('The secure checkout URL was invalid.');
+        window.location.assign(checkoutUrl.href);
+      } catch (error) {
+        if (membershipError) {
+          membershipError.textContent = error.message || 'Could not start secure checkout.';
+          membershipError.hidden = false;
+        }
+      } finally {
+        submitButton.disabled = false;
       }
     });
   }
@@ -1519,7 +1589,7 @@
       }
     }
 
-    contactForm.addEventListener('submit', function (event) {
+    contactForm.addEventListener('submit', async function (event) {
       event.preventDefault();
       var nameField = contactForm.elements.name;
       var emailField = contactForm.elements.email;
@@ -1565,20 +1635,29 @@
         return;
       }
 
-      contactForm.reset();
-      contactForm.querySelectorAll('[aria-invalid="true"]').forEach(function (field) {
-        field.setAttribute('aria-invalid', 'false');
-      });
-
-      var nameValue = contactForm.elements.name ? contactForm.elements.name.value.trim() : '';
-      var emailValue = contactForm.elements.email ? contactForm.elements.email.value.trim() : '';
-      var messageValue = contactForm.elements.message ? contactForm.elements.message.value.trim() : '';
-      var mailtoLink = 'mailto:info@company.com?subject=' + encodeURIComponent('New message from ' + nameValue) + '&body=' + encodeURIComponent('Name: ' + nameValue + '\nEmail: ' + emailValue + '\n\nMessage:\n' + messageValue);
-
-      window.location.href = mailtoLink;
-
-      if (success) {
-        success.textContent = 'Your email app should open with your message ready to send.';
+      var submitButton = contactForm.querySelector('[type="submit"]');
+      if (submitButton) submitButton.disabled = true;
+      try {
+        var response = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: nameField.value.trim(),
+            email: emailField.value.trim(),
+            message: messageField.value.trim()
+          })
+        });
+        var data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Your message could not be sent.');
+        contactForm.reset();
+        contactForm.querySelectorAll('[aria-invalid="true"]').forEach(function (field) {
+          field.setAttribute('aria-invalid', 'false');
+        });
+        if (success) success.textContent = 'Your message has been sent. We will get back to you soon.';
+      } catch (error) {
+        if (success) success.textContent = error.message || 'Your message could not be sent. Please try again.';
+      } finally {
+        if (submitButton) submitButton.disabled = false;
       }
     });
 
@@ -1651,19 +1730,95 @@
 
 
 
-  //primitive data type
+(function () {
+  var form = document.getElementById('gift-balance-form');
+  var codeInput = document.getElementById('gift-card-code');
+  var submitButton = document.getElementById('gift-balance-submit');
+  var status = document.getElementById('gift-balance-status');
+  var result = document.getElementById('gift-balance-result');
+  var lastFourLabel = document.getElementById('gift-card-last-four');
+  var balanceLabel = document.getElementById('gift-card-current-balance');
+  var savedList = document.getElementById('saved-gift-balances-list');
+  var storageKey = 'gamingHubGiftBalanceSnapshots';
+  if (!form || !codeInput || !status || !result || !savedList) return;
 
-  let name = "proggressay";
+  function getSavedBalances() {
+    try {
+      var saved = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      return Array.isArray(saved) ? saved.filter(function (entry) {
+        return entry && typeof entry.cardId === 'string' && /^[A-Z0-9]{4}$/.test(entry.lastFour) &&
+          Number.isSafeInteger(entry.balancePence) && entry.balancePence >= 0 &&
+          typeof entry.checkedAt === 'string';
+      }).slice(0, 10) : [];
+    } catch (error) {
+      return [];
+    }
+  }
 
-  
+  function formatPounds(pence) {
+    return new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(pence / 100);
+  }
 
+  function renderSavedBalances() {
+    savedList.replaceChildren();
+    getSavedBalances().forEach(function (entry) {
+      var item = document.createElement('li');
+      var checkedAt = new Date(entry.checkedAt);
+      item.textContent = 'Card ending ' + entry.lastFour + ': ' + formatPounds(entry.balancePence) +
+        ' (last checked ' + (Number.isNaN(checkedAt.getTime()) ? 'at an unknown time' : checkedAt.toLocaleString()) + ')';
+      savedList.appendChild(item);
+    });
+    if (!savedList.childElementCount) {
+      var empty = document.createElement('li');
+      empty.textContent = 'No balances saved yet.';
+      savedList.appendChild(empty);
+    }
+  }
 
+  renderSavedBalances();
+  form.addEventListener('submit', async function (event) {
+    event.preventDefault();
+    var code = codeInput.value.trim();
+    if (!/^[A-Za-z0-9-]{8,64}$/.test(code)) {
+      status.textContent = 'Enter a valid gift card code.';
+      result.hidden = true;
+      return;
+    }
 
+    submitButton.disabled = true;
+    status.textContent = 'Checking your gift card…';
+    result.hidden = true;
+    try {
+      var response = await fetch('/api/gift-cards/balance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: code })
+      });
+      var data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Could not check that gift card.');
 
-
-
-
-
-
-
-
+      lastFourLabel.textContent = data.lastFour;
+      balanceLabel.textContent = formatPounds(data.balancePence);
+      result.hidden = false;
+      status.textContent = 'Balance verified just now.';
+      var saved = getSavedBalances().filter(function (entry) { return entry.cardId !== data.cardId; });
+      saved.unshift({
+        cardId: data.cardId,
+        lastFour: data.lastFour,
+        balancePence: data.balancePence,
+        checkedAt: data.checkedAt
+      });
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(saved.slice(0, 10)));
+      } catch (error) {
+        status.textContent = 'Balance verified, but this browser could not save it on this device.';
+      }
+      renderSavedBalances();
+      codeInput.value = '';
+    } catch (error) {
+      status.textContent = error.message || 'Could not check that gift card. Please try again.';
+    } finally {
+      submitButton.disabled = false;
+    }
+  });
+})();

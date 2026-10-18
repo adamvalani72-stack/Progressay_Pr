@@ -1936,6 +1936,28 @@
           </aside>
         </div>
 
+        <section class="gift-balance-checker" aria-labelledby="gift-balance-title">
+          <h2 id="gift-balance-title">Check a gift card balance</h2>
+          <p>Enter your Gaming Hub gift card code to check its current server-verified balance. The card code is not saved on this device.</p>
+          <form id="gift-balance-form">
+            <label for="gift-card-code">Gift card code</label>
+            <div class="gift-balance-form-row">
+              <input id="gift-card-code" name="code" type="password" autocomplete="off" minlength="8" maxlength="64" required />
+              <button class="btn btn-custom" id="gift-balance-submit" type="submit">Check balance</button>
+            </div>
+          </form>
+          <p id="gift-balance-status" class="gift-balance-status" role="status" aria-live="polite"></p>
+          <div id="gift-balance-result" class="gift-balance-result" hidden>
+            <p>Verified card ending in <strong id="gift-card-last-four"></strong></p>
+            <p>Current balance: <strong id="gift-card-current-balance"></strong></p>
+          </div>
+          <div class="saved-gift-balances">
+            <h3>Saved on this device</h3>
+            <p>These are last-checked snapshots. Check a card again to see its current balance.</p>
+            <ul id="saved-gift-balances-list"></ul>
+          </div>
+        </section>
+
         <div class="shop-benefits">
           <div class="benefit-box">
             <i class="fa fa-truck"></i>
@@ -1973,135 +1995,25 @@
           <form id="checkout-form">
             <div class="form-grid">
               <div class="form-field">
-                <label for="checkout-name">Full name</label>
-                <input id="checkout-name" name="checkout-name" type="text" required />
-              </div>
-              <div class="form-field">
                 <label for="checkout-email">Email</label>
-                <input id="checkout-email" name="checkout-email" type="email" required />
-              </div>
-              <div class="form-field full subscription-shipping-field">
-                <label for="checkout-address">Address</label>
-                <input id="checkout-address" name="checkout-address" type="text" required />
-              </div>
-              <div class="form-field subscription-shipping-field">
-                <label for="checkout-city">City</label>
-                <input id="checkout-city" name="checkout-city" type="text" required />
-              </div>
-              <div class="form-field subscription-shipping-field">
-                <label for="checkout-country">Country</label>
-                <select id="checkout-country" name="checkout-country" required>
-                  <option value="">Select</option>
-                  <option>United States</option>
-                  <option>Canada</option>
-                  <option>United Kingdom</option>
-                  <option>Australia</option>
-                  <option>Germany</option>
-                  <option>Other</option>
-                </select>
-              </div>
-              <div class="form-field full">
-                <label for="promo-code">Promo code</label>
-                <div class="promo-inline">
-                  <input id="promo-code" name="promo-code" type="text" placeholder="Enter promo code" />
-                  <button type="button" class="btn-secondary" id="apply-promo">Apply</button>
-                </div>
-                <div class="promo-message" id="promo-message" aria-live="polite"></div>
+                <input id="checkout-email" name="checkout-email" type="email" autocomplete="email" required />
               </div>
             </div>
 
             <div class="payment-box">
               <div class="payment-header">
                 <span class="secure-badge">Secure checkout</span>
-                <span class="accepted-cards">Card • PayPal • Apple Pay • Instant Pay demo</span>
+                <span class="accepted-cards">Powered by Stripe</span>
               </div>
-
-              <div class="payment-methods" aria-label="Payment method">
-                <label class="payment-option selected">
-                  <input type="radio" name="payment-method" value="card" checked />
-                  <span>Credit / Debit Card</span>
-                </label>
-                <label class="payment-option">
-                  <input type="radio" name="payment-method" value="paypal" />
-                  <span>PayPal</span>
-                </label>
-                <label class="payment-option">
-                  <input type="radio" name="payment-method" value="apple-pay" />
-                  <span>Apple Pay</span>
-                </label>
-                <label class="payment-option">
-                  <input type="radio" name="payment-method" value="gold" />
-                  <span>Gold</span>
-                </label>
-                <label class="payment-option">
-                  <input type="radio" name="payment-method" value="bank-transfer" />
-                  <span>Bank Transfer</span>
-                </label>
-                <label class="payment-option">
-                  <input type="radio" name="payment-method" value="installments" />
-                  <span>Buy Now, Pay Later</span>
-                </label>
-                <label class="payment-option">
-                  <input type="radio" name="payment-method" value="instant" />
-                  <span>Instant Pay</span>
-                </label>
-              </div>
-              <p class="payment-demo-note" id="payment-demo-note">Demo checkout only. No real payment is charged.</p>
-
-              <div class="form-grid payment-grid" id="payment-card-fields">
-                <div class="form-field full">
-                  <label for="card-name">Name on card</label>
-                  <input id="card-name" name="card-name" type="text" placeholder="Adam Valani" autocomplete="cc-name" required />
-                </div>
-                <div class="form-field full">
-                  <label for="card-number">Card number</label>
-                  <input id="card-number" name="card-number" type="text" inputmode="numeric" autocomplete="cc-number" placeholder="1234 5678 9012 3456" maxlength="19" required />
-                </div>
-                <div class="form-field">
-                  <label for="card-expiry">Expiry</label>
-                  <input id="card-expiry" name="card-expiry" type="text" inputmode="numeric" autocomplete="cc-exp" placeholder="MM / YY" maxlength="7" required />
-                </div>
-                <div class="form-field">
-                  <label for="card-cvv">CVV</label>
-                  <input id="card-cvv" name="card-cvv" type="password" inputmode="numeric" autocomplete="cc-csc" placeholder="123" maxlength="4" required />
-                </div>
-                <div class="form-field">
-                  <label for="card-postcode">Billing postcode</label>
-                  <input id="card-postcode" name="card-postcode" type="text" autocomplete="postal-code" placeholder="SW1A 1AA" required />
-                </div>
-                <div class="form-field">
-                  <label for="card-country">Billing country</label>
-                  <select id="card-country" name="card-country" required>
-                    <option value="">Select</option>
-                    <option>United Kingdom</option>
-                    <option>United States</option>
-                    <option>Canada</option>
-                    <option>Australia</option>
-                    <option>Germany</option>
-                  </select>
-                </div>
-              </div>
-
-              <label class="secure-check" id="secure-check">
-                <input type="checkbox" name="secure-auth" checked required />
-                I confirm this payment is protected by 3D Secure and encrypted checkout.
-              </label>
-            </div>
-
-            <div class="security-footer">
-              <div class="security-lock">🔒</div>
-              <div>
-                <strong>256-bit encrypted payment</strong>
-                <p>Your payment details are protected using secure bank-grade encryption.</p>
-              </div>
+              <p class="payment-demo-note" id="payment-demo-note">You will enter payment details on Stripe. Gaming Hub never receives or stores your card number or security code.</p>
             </div>
 
             <div class="checkout-actions">
               <button type="button" class="btn-secondary" id="cancel-checkout">Cancel</button>
-              <button type="submit" class="btn btn-custom" id="place-order-button">Place order</button>
+              <button type="submit" class="btn btn-custom" id="place-order-button">Continue to secure checkout</button>
             </div>
 
-            <div class="checkout-success" id="checkout-success">Your order has been placed successfully.</div>
+            <p class="checkout-success" id="checkout-success" role="status" aria-live="polite"></p>
           </form>
 
           <div class="checkout-summary">

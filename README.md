@@ -14,6 +14,13 @@ The login and signup pages use Supabase Auth for email/password accounts and Goo
 
 ## Subscription setup
 
-This project uses a front-end demo subscription flow and does not integrate with Stripe or any payment gateway. Open `http://localhost:3001/pages/subscriptions.html` after starting the site to review the annual plans.
+Product orders and paid annual memberships use Stripe-hosted Checkout; card details are never collected by Gaming Hub. Checkout is disabled by default. Configure a Stripe test secret, webhook signing secret, Supabase project URL, publishable key, and server-only service-role key in `.env`, apply the SQL migration in `supabase/migrations/`, then set `STRIPE_CHECKOUT_ENABLED=true`. Keep `ENABLE_LIVE_PAYMENTS=false` while testing. A Stripe test key cannot enable live payments. Configure a Stripe webhook for `/api/stripe-webhook` with checkout completion and subscription update/deletion events.
 
-The Free plan costs £0 and has no payment step. Basic, Standard, Premium, VIP, Galactic, Galactic Plus, Galactic Plus Plus, and Ultimate are paid annual membership tiers, from £9.99 to £25,000 per year. Ultimate is presented as the all-inclusive top tier, with priority access and support, a member concierge, event invitations, and exclusive status. The membership checkout is a demo and does not create accounts or process payments.
+The listed membership and catalog amounts are used only in test checkout until they are reviewed and approved. Catalog prices over Stripe's per-item limit are rejected. A successful payment is recorded in Supabase only after webhook verification.
+Ultimate Peak is the top annual membership at £100,000 per year. Its all-in bundle includes Ultimate Elite, Ultimate Pro, and Ultimate benefits plus four Elite-level companion memberships.
+
+## Gift card balances
+
+The gaming-products page checks a gift card against the server-side `gift_cards` table. Apply the migration before using the checker. Gift card codes are normalized to uppercase and stored as SHA-256 hashes; never store plaintext codes in Supabase. Seed a card only after securely issuing it, setting `code_hash` to the SHA-256 hex digest of its uppercase code, `last_four` to its final four characters, and `initial_balance_pence`/`balance_pence` to the amount in pence. Balance lookups are rate-limited. The current device saves only the last four characters and a last-verified balance snapshot; it does not save the card code, and saved amounts are not live until checked again.
+
+Checkout and balance lookup require server-side credentials. Do not expose `SUPABASE_SERVICE_ROLE_KEY`, Stripe secrets, or gift card codes in browser files or source control.

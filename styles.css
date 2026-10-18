@@ -2134,3 +2134,55 @@ label {
     padding: 24px 20px;
   }
 }
+.gift-balance-checker {
+  margin: 2.5rem auto;
+  padding: 1.5rem;
+  max-width: 760px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 12px;
+  background: rgba(12, 18, 32, 0.82);
+  color: #fff;
+}
+
+.gift-balance-checker h2,
+.gift-balance-checker h3 {
+  color: inherit;
+}
+
+.gift-balance-form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.gift-balance-form-row input {
+  flex: 1 1 220px;
+  min-width: 0;
+  padding: 0.75rem;
+  border: 1px solid #8b95a7;
+  border-radius: 6px;
+}
+
+.gift-balance-status,
+.gift-balance-result {
+  margin-top: 1rem;
+}
+
+.gift-balance-result {
+  padding: 1rem;
+  border-left: 3px solid #54d69a;
+  background: rgba(84, 214, 154, 0.1);
+}
+
+.saved-gift-balances {
+  margin-top: 1.5rem;
+}
+
+.saved-gift-balances ul {
+  padding-left: 1.25rem;
+}
+
+.saved-gift-balances li {
+  margin: 0.5rem 0;
+}

@@ -17,7 +17,7 @@
     <title>Subscriptions | Gaming Hub</title>
     <meta
       name="description"
-      content="Compare nine Gaming Hub plans, from Free to the exclusive £25,000-per-year Ultimate membership."
+      content="Compare twelve Gaming Hub plans, from Free to the £100,000-per-year Ultimate Peak membership, packed with premium benefits."
     />
     <style>
       body {
@@ -109,6 +109,54 @@
 
       .plan-ultimate .plan-price {
         color: #805b12;
+      }
+
+      .plan-ultimate-pro {
+        border-color: #8a72d6;
+        border-top-color: #7956d8;
+        background: linear-gradient(180deg, #f5f0ff 0%, #fff 34%);
+        box-shadow: 0 16px 38px rgba(78, 49, 142, 0.18);
+      }
+
+      .plan-ultimate-pro .plan-featured-label {
+        background: #49327f;
+        color: #f4edff;
+      }
+
+      .plan-ultimate-pro .plan-price {
+        color: #563b9b;
+      }
+
+      .plan-ultimate-elite {
+        border-color: #52627f;
+        border-top-color: #26334f;
+        background: linear-gradient(180deg, #edf1f8 0%, #fff 34%);
+        box-shadow: 0 18px 42px rgba(26, 38, 62, 0.2);
+      }
+
+      .plan-ultimate-elite .plan-featured-label {
+        background: #172033;
+        color: #f2d88a;
+      }
+
+      .plan-ultimate-elite .plan-price {
+        color: #26334f;
+      }
+
+      .plan-ultimate-peak {
+        border-color: #78a77b;
+        border-top-color: #247044;
+        background: linear-gradient(180deg, #edf8ef 0%, #fff 38%);
+        box-shadow: 0 18px 42px rgba(31, 100, 58, 0.2);
+      }
+
+      .plan-ultimate-peak .plan-featured-label {
+        background: #1c5935;
+        color: #e7ffe9;
+      }
+
+      .plan-ultimate-peak .plan-price {
+        color: #1c5935;
       }
 
       .plan h2 {
@@ -614,9 +662,61 @@
             </ul>
             <button class="btn btn-custom" type="button" data-start-plan data-plan-id="ultimate" data-plan-name="Ultimate" data-plan-price="£25,000">Choose Ultimate</button>
           </article>
-            </section>
+          <article class="plan plan-ultimate-pro" id="ultimate-pro-plan">
+            <span class="plan-featured-label">Our most exclusive membership</span>
+            <h2>Ultimate Pro</h2>
+            <p class="plan-description">The most complete Gaming Hub experience, with elevated personal service and first access to what is next.</p>
+            <p class="plan-price">£50,000</p>
+            <p class="plan-period">per year</p>
+            <h3 class="plan-games-label">Everything in the offer</h3>
+            <ul>
+              <li>Every benefit from Ultimate</li>
+              <li>A dedicated account manager for personalized membership support</li>
+              <li>First access to new game launches, beta releases, and exclusive drops</li>
+              <li>Invitations to private Ultimate Pro gaming events</li>
+              <li>Personalized gaming setup consultation</li>
+              <li>Exclusive Ultimate Pro profile badge and member status</li>
+            </ul>
+            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="ultimate-pro" data-plan-name="Ultimate Pro" data-plan-price="£50,000">Choose Ultimate Pro</button>
+          </article>
+          <article class="plan plan-ultimate-elite" id="ultimate-elite-plan">
+            <span class="plan-featured-label">Our highest membership tier</span>
+            <h2>Ultimate Elite</h2>
+            <p class="plan-description">Everything in Ultimate Pro, plus the highest-touch service and most exclusive access Gaming Hub offers.</p>
+            <p class="plan-price">£75,000</p>
+            <p class="plan-period">per year</p>
+            <h3 class="plan-games-label">Everything in the offer</h3>
+            <ul>
+              <li>Every benefit from Ultimate Pro</li>
+              <li>Private one-to-one gaming sessions with invited creators and tournament players</li>
+              <li>Custom-built gaming setup consultation and upgrade plan</li>
+              <li>Guaranteed invitations to flagship Gaming Hub events</li>
+              <li>Early access to selected releases and limited member drops</li>
+              <li>Exclusive Ultimate Elite profile badge and member status</li>
+            </ul>
+            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="ultimate-elite" data-plan-name="Ultimate Elite" data-plan-price="£75,000">Choose Ultimate Elite</button>
+          </article>
+          <article class="plan plan-ultimate-peak" id="ultimate-peak-plan">
+            <span class="plan-featured-label">Peak benefits. One annual price.</span>
+            <h2>Ultimate Peak</h2>
+            <p class="plan-description">Our biggest all-in membership bundle: every top-tier benefit, more ways to play, and personal service throughout the year.</p>
+            <p class="plan-price">£100,000</p>
+            <p class="plan-period">per year</p>
+            <h3 class="plan-games-label">The all-in Peak bundle</h3>
+            <ul>
+              <li>Every benefit from Ultimate Elite, Ultimate Pro, and Ultimate</li>
+              <li>Four companion memberships with Elite-level benefits</li>
+              <li>Annual gaming setup refresh consultation for you and your companions</li>
+              <li>Priority invitations for you and a guest to flagship Gaming Hub events</li>
+              <li>First access to every eligible launch, beta, tournament, and member drop</li>
+              <li>Dedicated account manager and priority support for your whole group</li>
+              <li>Exclusive Ultimate Peak profile badge and member status</li>
+            </ul>
+            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="ultimate-peak" data-plan-name="Ultimate Peak" data-plan-price="£100,000">Choose Ultimate Peak</button>
+          </article>
+        </section>
 
-            <p class="billing-note">Choose a plan to review your annual billing and payment options.</p>
+            <p class="billing-note">Combined annual total for all paid plans, if purchased once each: <strong>£262,019.96</strong>. Free is £0; plans are individual subscription options.</p>
           </div>
         </main>
 
@@ -651,7 +751,7 @@
                   <button class="membership-continue" type="submit" data-account-continue>Continue to payment</button>
                 </div>
               </form>
-              <p class="membership-demo-note">This demo does not create a Gaming Hub login or process payments. Already have an account? <a href="login.html">Log in</a>.</p>
+              <p class="membership-demo-note">Paid memberships are processed by Stripe Checkout when checkout is configured. Already have an account? <a href="login.html">Log in</a>.</p>
             </section>
 
             <section class="membership-step" id="membership-payment-step" aria-labelledby="membership-payment-title" hidden>
@@ -662,34 +762,7 @@
               </div>
               <p class="membership-renewal-note">Due today: <strong data-selected-plan-price></strong>. Your plan bills annually and renews yearly until canceled.</p>
               <form id="membership-payment-form">
-                <fieldset class="membership-payment">
-                  <legend>Payment method</legend>
-                  <label>
-                    <input type="radio" name="membership-payment-method" value="Visa / Mastercard" checked />
-                    Visa / Mastercard
-                  </label>
-                  <label>
-                    <input type="radio" name="membership-payment-method" value="Apple Pay" />
-                    Apple Pay
-                  </label>
-                  <label>
-                    <input type="radio" name="membership-payment-method" value="PayPal" />
-                    PayPal
-                  </label>
-                  <label>
-                    <input type="radio" name="membership-payment-method" value="Bank transfer" />
-                    Bank transfer
-                  </label>
-                  <label>
-                    <input type="radio" name="membership-payment-method" value="Mobile wallet" />
-                    Mobile wallet
-                  </label>
-                  <label>
-                    <input type="radio" name="membership-payment-method" value="Gift card" />
-                    Gift card
-                  </label>
-                  <p class="membership-demo-note">This is a demo membership flow. No real payment provider is connected.</p>
-                </fieldset>
+                <p class="membership-demo-note">Payment details are entered securely on Stripe. Available methods depend on your Stripe account configuration.</p>
                 <div class="membership-actions">
                   <button class="membership-back" type="button" data-membership-back>Back</button>
                   <button class="membership-continue" type="submit">Continue to secure payment</button>

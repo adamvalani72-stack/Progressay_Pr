@@ -44,6 +44,10 @@ function showSession(user) {
   }
 }
 
+function goToGamingHub() {
+  window.location.assign('../index.html#page-top');
+}
+
 function authUnavailable() {
   setStatus('Account access is not configured yet. Set SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY on the server, or configure projectUrl and publishableKey in auth-config.js for static hosting.', 'error');
 }
@@ -154,8 +158,7 @@ if (primaryForm) {
 
         if (signupResult.error) throw signupResult.error;
         if (signupResult.data.session) {
-          setStatus('Your account is ready. You are signed in.', 'success');
-          showSession(signupResult.data.user);
+          goToGamingHub();
         } else {
           primaryForm.hidden = true;
           document.querySelectorAll('.auth-google-button, .auth-divider, .auth-switch').forEach(function (element) {
@@ -166,8 +169,7 @@ if (primaryForm) {
       } else {
         var loginResult = await authClient.auth.signInWithPassword({ email: email, password: password });
         if (loginResult.error) throw loginResult.error;
-        setStatus('You are signed in.', 'success');
-        showSession(loginResult.data.user);
+        goToGamingHub();
       }
     } catch (error) {
       setStatus(error.message || 'Authentication failed. Please try again.', 'error');
@@ -287,6 +289,10 @@ authConfigPromise.then(function (isConfigured) {
     if (event === 'PASSWORD_RECOVERY') {
       setRecoveryMode(true);
       setStatus('Choose a new password for your account.', '');
+      return;
+    }
+    if (event === 'SIGNED_IN' && session && !isRecoveryFlow) {
+      goToGamingHub();
       return;
     }
     showSession(session && session.user);
