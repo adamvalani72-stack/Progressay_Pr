@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/png" href="img/Neon%20Gaming%20Hub%20Emblem.png" />
     <meta
       http-equiv="Content-Security-Policy"
       content="default-src 'self'; style-src 'self' https://cdn.jsdelivr.net https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com; img-src 'self' data: blob: https:; script-src 'self' 'unsafe-inline'; base-uri 'self'; form-action 'self'; object-src 'none'"
@@ -32,8 +33,8 @@
   <body id="page-top">
     <nav id="menu" class="site-nav">
       <div class="container nav-inner">
-        <a class="nav-brand page-scroll" href="#page-top">
-          gaminghub.com
+        <a class="nav-brand page-scroll" href="#page-top" aria-label="Gaming Hub home">
+          <img src="img/Neon%20Gaming%20Hub%20Emblem.png" alt="Gaming Hub" />
         </a>
         <button
           type="button"
@@ -49,8 +50,10 @@
         <div id="nav-links" class="nav-links">
           <ul class="nav-list">
             <li><a href="#features" class="page-scroll">Features</a></li>
+            <li><a href="#exclusive-events" class="page-scroll">Events</a></li>
             <li><a href="#about" class="page-scroll">About</a></li>
             <li><a href="#services" class="page-scroll">Services</a></li>
+            <li><a href="pages/member-hub.html">Member games</a></li>
             <li><a href="pages/gaming-products.html">Products</a></li>
             <li><a href="pages/subscriptions.html">Subscriptions</a></li>
             <li><a href="pages/login.html">Log in</a></li>
@@ -76,15 +79,48 @@
                   Discover the ultimate digital playground for gamers. Fast game keys,
                   exclusive offers, and a connected community all in one place.
                 </p>
-                <a href="#features" class="btn btn-custom btn-lg page-scroll">
-                  Explore Features
-                </a>
+                <div class="hero-actions">
+                  <a href="#features" class="btn btn-custom btn-lg page-scroll">
+                    Explore Features
+                  </a>
+                  <a href="pages/member-hub.html" class="btn btn-secondary btn-lg">
+                    Open Gaming Hub AI
+                  </a>
+                </div>
+                <form class="landing-search" id="landing-search" role="search" aria-label="Search games and membership content">
+                  <label class="visually-hidden" for="landing-search-input">Search games</label>
+                  <input id="landing-search-input" type="search" name="q" placeholder="Search games, discoveries, or membership perks…" />
+                  <button type="submit">Search</button>
+                </form>
               </div>
             </div>
           </div>
         </div>
       </div>
     </header>
+
+    <section class="ai-showcase" aria-labelledby="ai-showcase-title">
+      <div class="container ai-showcase-grid">
+        <div class="ai-showcase-copy">
+          <p class="member-hub-eyebrow">AI ASSISTANT</p>
+          <h2 id="ai-showcase-title">Gaming Hub AI</h2>
+          <p>Ask for a game recommendation, a strategy tip, or help choosing the best plan for your next session.</p>
+          <div class="ai-showcase-actions">
+            <a href="pages/member-hub.html#gaminghub-ai" class="btn btn-custom">Open assistant</a>
+            <span>Live recommendations • instant gaming help</span>
+          </div>
+        </div>
+        <div class="ai-showcase-panel" aria-label="Gaming Hub AI preview">
+          <div class="ai-mini-header">
+            <span class="ai-dot ai-dot-blue"></span>
+            <span class="ai-dot ai-dot-purple"></span>
+            <span class="ai-dot ai-dot-pink"></span>
+          </div>
+          <div class="ai-mini-message ai-mini-user">Looking for a quick competitive game.</div>
+          <div class="ai-mini-message ai-mini-assistant">Try Pixel Patrol for quick action or Neon Kart if you want something fast and competitive.</div>
+        </div>
+      </div>
+    </section>
 
     <div id="features" class="text-center">
       <div class="container">
@@ -245,6 +281,9 @@
           <h2>Membership Plans</h2>
           <p>Choose the Gaming Hub membership that fits your play style.</p>
         </div>
+        <div class="basic-subscription-showcase" aria-label="Basic Gaming Hub subscription card">
+          <img src="img/basic-subscription.svg" alt="Basic Gaming Hub subscription artwork" />
+        </div>
         <div class="membership-prices">
           <article class="membership-price">
             <h3>Free</h3>
@@ -252,39 +291,77 @@
           </article>
           <article class="membership-price">
             <h3>Basic</h3>
-            <p class="membership-amount">£9.99 <span>/ year</span></p>
+            <p class="membership-amount">£1.99 <span>/ year</span></p>
           </article>
           <article class="membership-price">
             <h3>Standard</h3>
-            <p class="membership-amount">£29.99 <span>/ year</span></p>
+            <p class="membership-amount">£9.99 <span>/ year</span></p>
           </article>
           <article class="membership-price">
             <h3>Premium</h3>
-            <p class="membership-amount">£79.99 <span>/ year</span></p>
+            <p class="membership-amount">£19.99 <span>/ year</span></p>
           </article>
           <article class="membership-price">
             <h3>VIP</h3>
-            <p class="membership-amount">£399.99 <span>/ year</span></p>
+            <p class="membership-amount">£299.99 <span>/ year</span></p>
           </article>
           <article class="membership-price membership-price-galactic">
             <h3>Galactic</h3>
-            <p class="membership-amount membership-amount-galactic">£500 <span>/ year</span></p>
+            <p class="membership-amount membership-amount-galactic">£499.99 <span>/ year</span></p>
           </article>
           <article class="membership-price membership-price-galactic">
             <h3>Galactic Plus</h3>
-            <p class="membership-amount membership-amount-galactic">£1,000 <span>/ year</span></p>
+            <p class="membership-amount membership-amount-galactic">£799.99 <span>/ year</span></p>
           </article>
           <article class="membership-price membership-price-galactic">
             <h3>Galactic Plus Plus</h3>
-            <p class="membership-amount membership-amount-galactic">£10,000 <span>/ year</span></p>
+            <p class="membership-amount membership-amount-galactic">£999.99 <span>/ year</span></p>
           </article>
           <article class="membership-price membership-price-ultimate">
             <h3>Ultimate</h3>
-            <p class="membership-amount membership-amount-galactic">£25,000 <span>/ year</span></p>
+            <p class="membership-amount membership-amount-galactic">£19,999.99 <span>/ year</span></p>
           </article>
         </div>
-        <p class="membership-total">All nine plans: <strong>£37,019.96 per year</strong></p>
+        <p class="membership-total">All nine plans: <strong>£22,631.92 per year</strong></p>
         <a class="btn btn-custom" href="pages/subscriptions.html">Compare plans</a>
+      </div>
+    </section>
+
+    <section id="exclusive-events" class="exclusive-events" aria-labelledby="exclusive-events-title">
+      <div class="container exclusive-events-layout">
+        <div class="exclusive-events-copy">
+          <span class="exclusive-events-kicker">ULTIMATE MEMBERS · INVITE-ONLY EXPERIENCES</span>
+          <h2 id="exclusive-events-title">Your membership.<br />Your backstage pass.</h2>
+          <p class="exclusive-events-intro">
+            Step beyond the game with Gaming Hub Exclusive Events: a subscriber-only
+            series created for our Ultimate community.
+          </p>
+          <ul class="exclusive-events-list">
+            <li><span aria-hidden="true">01</span>Invite-only tournaments and member meetups</li>
+            <li><span aria-hidden="true">02</span>Creator meet-and-greets and private lounges</li>
+            <li><span aria-hidden="true">03</span>Early access to selected game launches</li>
+          </ul>
+          <p class="exclusive-events-eligibility">
+            Included with an active <strong>Ultimate, Ultimate Pro, Ultimate Elite,</strong>
+            or <strong>Ultimate Peak</strong> annual membership.
+          </p>
+          <div class="exclusive-events-actions">
+            <a class="btn btn-custom" href="pages/subscriptions.html#ultimate-plan">Explore Ultimate</a>
+            <span>Ultimate from £19,999.99 / year</span>
+          </div>
+          <p class="exclusive-events-note">
+            Event registration is required. Dates, locations, availability, and any
+            event-specific terms will be shared with eligible members.
+          </p>
+        </div>
+        <figure class="exclusive-events-art">
+          <img
+            src="img/galactic-gaming-hub-setup.png"
+            alt="The Galactic Gaming Hub setup: a neon-lit gaming room with a multi-screen gaming station and premium gaming equipment."
+            loading="lazy"
+          />
+          <figcaption><span aria-hidden="true">✦</span> The next level is played together.</figcaption>
+        </figure>
       </div>
     </section>
 
@@ -921,21 +998,6 @@
 </html>
 
 <script></script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

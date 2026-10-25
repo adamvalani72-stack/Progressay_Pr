@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: gaming-hub
+    runtime: node
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: REQUIRE_REMOTE_DATABASE
+        value: "true"
+      - key: GAMING_HUB_DATA_DIR
+        value: /tmp/gaming-hub-data
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: STRIPE_CHECKOUT_ENABLED
+        value: "true"
+      - key: ENABLE_LIVE_PAYMENTS
+        value: "false"

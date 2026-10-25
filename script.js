@@ -26,6 +26,60 @@
     });
   }
 
+  var landingSearchForm = document.getElementById('landing-search');
+  if (landingSearchForm) {
+    landingSearchForm.addEventListener('submit', function (event) {
+      event.preventDefault();
+      var input = landingSearchForm.querySelector('input[name="q"]');
+      var value = input ? input.value.trim() : '';
+      var target = new URL('pages/member-hub.html', window.location.href);
+      if (value) {
+        target.searchParams.set('search', value);
+      }
+      window.location.href = target.toString();
+    });
+  }
+
+  var memberSearchForm = document.getElementById('member-search-form');
+  var memberSearchInput = document.getElementById('member-search-input');
+  var memberGameCards = document.querySelectorAll('.member-game-card');
+  var memberGameCount = document.querySelector('.member-games-count');
+
+  function applyMemberSearch(query) {
+    var term = (query || '').trim().toLowerCase();
+    var visibleCount = 0;
+    memberGameCards.forEach(function (card) {
+      var text = (card.textContent || '').toLowerCase();
+      var matches = !term || text.indexOf(term) !== -1;
+      card.hidden = !matches;
+      if (matches) visibleCount += 1;
+    });
+    if (memberGameCount) {
+      memberGameCount.textContent = visibleCount === 1 ? '1 game to explore' : visibleCount + ' games to explore';
+    }
+  }
+
+  if (memberSearchForm && memberSearchInput) {
+    var initialQuery = new URLSearchParams(window.location.search).get('search');
+    if (initialQuery) memberSearchInput.value = initialQuery;
+    applyMemberSearch(initialQuery || '');
+
+    memberSearchForm.addEventListener('submit', function (event) {
+      event.preventDefault();
+      var value = memberSearchInput.value.trim();
+      var params = new URLSearchParams(window.location.search);
+      if (value) {
+        params.set('search', value);
+      } else {
+        params.delete('search');
+      }
+      var nextUrl = new URL(window.location.href);
+      nextUrl.search = params.toString();
+      window.history.replaceState({}, '', nextUrl);
+      applyMemberSearch(value);
+    });
+  }
+
   var reviewForm = document.getElementById('review-form');
   var reviewList = document.getElementById('review-list');
   var reviewStatus = document.getElementById('review-status');
@@ -143,6 +197,8 @@
   var activeGameInterval = null;
   var activeKeyHandler = null;
   var activeGameState = null;
+  var activeGameKey = null;
+  var gameProgress = Object.create(null);
 
   function clearActiveGame() {
     if (activeGameInterval) {
@@ -154,9 +210,68 @@
       activeKeyHandler = null;
     }
     activeGameState = null;
+    activeGameKey = null;
     if (gameShell) {
       gameShell.innerHTML = '';
     }
+  }
+
+  function updateGameProgressLabel() {
+    if (!gameShell || !activeGameKey) return;
+    var panel = gameShell.querySelector('.game-panel');
+    if (!panel) return;
+    var label = panel.querySelector('[data-game-personal-best]');
+    if (!label) {
+      label = document.createElement('p');
+      label.className = 'game-message';
+      label.dataset.gamePersonalBest = '';
+      panel.appendChild(label);
+    }
+    label.textContent = Object.prototype.hasOwnProperty.call(gameProgress, activeGameKey)
+      ? 'Account personal best: ' + gameProgress[activeGameKey] + '.'
+      : 'Sign in to sync your best scores across devices.';
+  }
+
+  function loadGameProgress() {
+    fetch('/api/auth/progress', { credentials: 'same-origin', cache: 'no-store' })
+      .then(function (response) {
+        if (!response.ok) return null;
+        return response.json();
+      })
+      .then(function (result) {
+        if (!result || !Array.isArray(result.progress)) return;
+        result.progress.forEach(function (item) {
+          gameProgress[item.gameKey] = item.bestScore;
+        });
+        updateGameProgressLabel();
+      })
+      .catch(function () {});
+  }
+
+  function saveGameProgress(gameKey, score) {
+    var status = gameShell && gameShell.querySelector('[data-game-sync-status]');
+    if (!status || !gameKey) return;
+    status.textContent = 'Saving account progress…';
+    fetch('/api/auth/progress', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'GamingHub' },
+      body: JSON.stringify({ gameKey: gameKey, score: score })
+    }).then(function (response) {
+      return response.json().then(function (result) {
+        return { response: response, result: result };
+      });
+    }).then(function (result) {
+      if (result.response.status === 401) {
+        status.textContent = 'Sign in to save and sync your best scores across devices.';
+        return;
+      }
+      if (!result.response.ok) throw new Error(result.result.error || 'Progress could not be synced.');
+      gameProgress[gameKey] = result.result.progress.bestScore;
+      status.textContent = 'Personal best: ' + result.result.progress.bestScore + '. Progress saved to your account.';
+    }).catch(function () {
+      status.textContent = 'Progress could not be synced. Check your connection and try again.';
+    });
   }
 
   function setGameModalState(isOpen) {
@@ -182,9 +297,11 @@
 
   function showGameOver(finalScore, message) {
     if (!gameShell) return;
+    var gameKey = activeGameKey;
     clearInterval(activeGameInterval);
     activeGameInterval = null;
-    gameShell.innerHTML = '<div class="game-over-box"><div><h4>Game over</h4><p>' + message + '<br>Final score: ' + finalScore + '</p></div></div>';
+    gameShell.innerHTML = '<div class="game-over-box"><div><h4>Game over</h4><p>' + message + '<br>Final score: ' + finalScore + '</p><p data-game-sync-status role="status" aria-live="polite"></p></div></div>';
+    saveGameProgress(gameKey, finalScore);
   }
 
   function getGameTitle(key) {
@@ -665,6 +782,7 @@
 
   function startGame(gameKey) {
     clearActiveGame();
+    activeGameKey = gameKey;
     setGameModalState(true);
     if (gameTitle) {
       gameTitle.textContent = getGameTitle(gameKey);
@@ -691,9 +809,11 @@
           gameShell.innerHTML = '<div class="game-over-box"><div><h4>Coming soon</h4><p>This game is not available yet.</p></div></div>';
         }
     }
+    updateGameProgressLabel();
   }
 
   if (gameModal) {
+    loadGameProgress();
     closeGameButton.addEventListener('click', function () {
       setGameModalState(false);
       clearActiveGame();
@@ -1513,7 +1633,7 @@
       event.preventDefault();
       form.reset();
       if (accountStatus) {
-        accountStatus.textContent = 'Authentication is not connected yet. Contact the site owner for account access.';
+        accountStatus.textContent = 'Account access could not be initialized. Reload the page and try again.';
       }
     });
   });

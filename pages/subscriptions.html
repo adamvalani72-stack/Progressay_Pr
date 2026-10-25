@@ -17,7 +17,7 @@
     <title>Subscriptions | Gaming Hub</title>
     <meta
       name="description"
-      content="Compare twelve Gaming Hub plans, from Free to the £100,000-per-year Ultimate Peak membership, packed with premium benefits."
+      content="Compare twelve Gaming Hub plans, from Free to the £25,000-per-year Ultimate Peak membership, packed with premium benefits."
     />
     <style>
       body {
@@ -51,10 +51,10 @@
       }
 
       .subscriptions-art {
+        display: block;
         width: 100%;
-        max-height: 220px;
-        object-fit: cover;
-        border-radius: 12px;
+        height: auto;
+        border-radius: 8px;
       }
 
       .plans-grid {
@@ -132,6 +132,7 @@
         border-top-color: #26334f;
         background: linear-gradient(180deg, #edf1f8 0%, #fff 34%);
         box-shadow: 0 18px 42px rgba(26, 38, 62, 0.2);
+      }
       }
 
       .plan-ultimate-elite .plan-featured-label {
@@ -500,7 +501,9 @@
   <body>
     <nav id="menu" class="site-nav">
       <div class="container nav-inner">
-        <a class="nav-brand" href="../index.html#page-top">gaming hub</a>
+        <a class="nav-brand" href="../index.html#page-top" aria-label="Gaming Hub home">
+          <img src="../img/Neon%20Gaming%20Hub%20Emblem.png" alt="Gaming Hub" />
+        </a>
         <button
           type="button"
           class="nav-toggle"
@@ -534,8 +537,8 @@
           </div>
           <img
             class="subscriptions-art"
-            src="../img/portfolio/06-small.jpg"
-            alt="Gaming Hub subscription membership"
+            src="../img/Neon Gaming Hub Subscription Galaxy.png"
+            alt="Gaming Hub annual subscription plans from Free through Ultimate Peak"
           />
         </header>
 
@@ -553,10 +556,13 @@
             </ul>
             <button class="btn btn-custom" type="button" data-start-plan data-plan-id="free" data-plan-name="Free" data-plan-price="£0" data-plan-period="Free forever">Choose Free</button>
           </article>
-          <article class="plan">
+          <article class="plan plan-basic-visual">
             <h2>Basic</h2>
+            <div class="basic-plan-showcase">
+              <img src="../img/basic-subscription.svg" alt="Basic Gaming Hub subscription card" />
+            </div>
             <p class="plan-description">A simple way to join the Gaming Hub community.</p>
-            <p class="plan-price">£9.99</p>
+            <p class="plan-price">£1.99</p>
             <p class="plan-period">per year</p>
             <h3 class="plan-games-label">Included games</h3>
             <ul>
@@ -564,13 +570,13 @@
               <li>Neon Kart</li>
               <li>Orbital Puzzles</li>
             </ul>
-            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="basic" data-plan-name="Basic" data-plan-price="£9.99">Choose Basic</button>
+            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="basic" data-plan-name="Basic" data-plan-price="£1.99">Choose Basic</button>
           </article>
 
           <article class="plan">
             <h2>Standard</h2>
             <p class="plan-description">More ways to discover games and join in.</p>
-            <p class="plan-price">£29.99</p>
+            <p class="plan-price">£9.99</p>
             <p class="plan-period">per year</p>
             <h3 class="plan-games-label">Included games</h3>
             <ul>
@@ -578,13 +584,13 @@
               <li>Mystic Market</li>
               <li>Skyline Showdown</li>
             </ul>
-            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="standard" data-plan-name="Standard" data-plan-price="£29.99">Choose Standard</button>
+            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="standard" data-plan-name="Standard" data-plan-price="£9.99">Choose Standard</button>
           </article>
 
           <article class="plan">
             <h2>Premium</h2>
             <p class="plan-description">Extra access, offers, and support for dedicated players.</p>
-            <p class="plan-price">£79.99</p>
+            <p class="plan-price">£19.99</p>
             <p class="plan-period">per year</p>
             <h3 class="plan-games-label">Included games</h3>
             <ul>
@@ -592,25 +598,25 @@
               <li>Phantom Circuit</li>
               <li>Wildlight Quest</li>
             </ul>
-            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="premium" data-plan-name="Premium" data-plan-price="£79.99">Choose Premium</button>
+            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="premium" data-plan-name="Premium" data-plan-price="£19.99">Choose Premium</button>
           </article>
 
           <article class="plan">
             <h2>VIP</h2>
             <p class="plan-description">The highest level of Gaming Hub membership.</p>
-            <p class="plan-price">£399.99</p>
+            <p class="plan-price">£299.99</p>
             <p class="plan-period">per year</p>
             <h3 class="plan-games-label">Included games</h3>
             <ul>
               <li>Chrono Clash</li>
             </ul>
-            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="vip" data-plan-name="VIP" data-plan-price="£399.99">Choose VIP</button>
+            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="vip" data-plan-name="VIP" data-plan-price="£299.99">Choose VIP</button>
           </article>
 
           <article class="plan" id="galactic-plan">
             <h2>Galactic</h2>
             <p class="plan-description">The ultimate annual Gaming Hub membership.</p>
-            <p class="plan-price plan-price-galactic">£500</p>
+            <p class="plan-price plan-price-galactic">£499.99</p>
             <p class="plan-period">per year</p>
             <h3 class="plan-games-label">Included games</h3>
             <ul>
@@ -618,12 +624,12 @@
               <li>Eclipse Dominion</li>
               <li>Infinite Odyssey</li>
             </ul>
-            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="galactic" data-plan-name="Galactic" data-plan-price="£500">Choose Galactic</button>
+            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="galactic" data-plan-name="Galactic" data-plan-price="£499.99">Choose Galactic</button>
           </article>
           <article class="plan" id="galactic-plus-plan">
             <h2>Galactic Plus</h2>
             <p class="plan-description">The highest-level annual Gaming Hub membership, with every Galactic benefit.</p>
-            <p class="plan-price">£1,000</p>
+            <p class="plan-price">£799.99</p>
             <p class="plan-period">per year</p>
             <h3 class="plan-games-label">Included games</h3>
             <ul>
@@ -631,12 +637,12 @@
               <li>Eclipse Dominion</li>
               <li>Infinite Odyssey</li>
             </ul>
-            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="galactic-plus" data-plan-name="Galactic Plus" data-plan-price="£1,000">Choose Galactic Plus</button>
+            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="galactic-plus" data-plan-name="Galactic Plus" data-plan-price="£799.99">Choose Galactic Plus</button>
           </article>
           <article class="plan" id="galactic-plus-plus-plan">
             <h2>Galactic Plus Plus</h2>
             <p class="plan-description">Our ultimate annual membership, with every Galactic Plus benefit.</p>
-            <p class="plan-price">£10,000</p>
+            <p class="plan-price">£999.99</p>
             <p class="plan-period">per year</p>
             <h3 class="plan-games-label">Included games</h3>
             <ul>
@@ -644,79 +650,79 @@
               <li>Eclipse Dominion</li>
               <li>Infinite Odyssey</li>
             </ul>
-            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="galactic-plus-plus" data-plan-name="Galactic Plus Plus" data-plan-price="£10,000">Choose Galactic Plus Plus</button>
+            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="galactic-plus-plus" data-plan-name="Galactic Plus Plus" data-plan-price="£999.99">Choose Galactic Plus Plus</button>
           </article>
           <article class="plan plan-ultimate" id="ultimate-plan">
             <span class="plan-featured-label">The ultimate Gaming Hub offer</span>
             <h2>Ultimate</h2>
             <p class="plan-description">For the player who wants it all: the complete Gaming Hub experience, with VIP treatment from day one.</p>
-            <p class="plan-price">£25,000</p>
+            <p class="plan-price">£1,999.99</p>
             <p class="plan-period">per year</p>
             <h3 class="plan-games-label">Everything in the offer</h3>
             <ul>
               <li>Every benefit from Galactic Plus Plus</li>
               <li>Priority access to new games, launches, and exclusive drops</li>
               <li>Personal Gaming Hub member concierge and priority support</li>
-              <li>Invitations to exclusive tournaments and member events</li>
+              <li>Access to subscriber-only Gaming Hub events, including invite-only tournaments and member meetups (registration required)</li>
               <li>Ultimate member status with an exclusive profile badge</li>
             </ul>
-            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="ultimate" data-plan-name="Ultimate" data-plan-price="£25,000">Choose Ultimate</button>
+            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="ultimate" data-plan-name="Ultimate" data-plan-price="£1,999.99">Choose Ultimate</button>
           </article>
           <article class="plan plan-ultimate-pro" id="ultimate-pro-plan">
             <span class="plan-featured-label">Our most exclusive membership</span>
             <h2>Ultimate Pro</h2>
             <p class="plan-description">The most complete Gaming Hub experience, with elevated personal service and first access to what is next.</p>
-            <p class="plan-price">£50,000</p>
+            <p class="plan-price">£19,999.99</p>
             <p class="plan-period">per year</p>
             <h3 class="plan-games-label">Everything in the offer</h3>
             <ul>
               <li>Every benefit from Ultimate</li>
               <li>A dedicated account manager for personalized membership support</li>
               <li>First access to new game launches, beta releases, and exclusive drops</li>
-              <li>Invitations to private Ultimate Pro gaming events</li>
+              <li>Invitations to private Ultimate Pro events, creator meetups, and game-launch experiences</li>
               <li>Personalized gaming setup consultation</li>
               <li>Exclusive Ultimate Pro profile badge and member status</li>
             </ul>
-            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="ultimate-pro" data-plan-name="Ultimate Pro" data-plan-price="£50,000">Choose Ultimate Pro</button>
+            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="ultimate-pro" data-plan-name="Ultimate Pro" data-plan-price="£19,999.99">Choose Ultimate Pro</button>
           </article>
           <article class="plan plan-ultimate-elite" id="ultimate-elite-plan">
             <span class="plan-featured-label">Our highest membership tier</span>
             <h2>Ultimate Elite</h2>
             <p class="plan-description">Everything in Ultimate Pro, plus the highest-touch service and most exclusive access Gaming Hub offers.</p>
-            <p class="plan-price">£75,000</p>
+            <p class="plan-price">£21,000</p>
             <p class="plan-period">per year</p>
             <h3 class="plan-games-label">Everything in the offer</h3>
             <ul>
               <li>Every benefit from Ultimate Pro</li>
               <li>Private one-to-one gaming sessions with invited creators and tournament players</li>
               <li>Custom-built gaming setup consultation and upgrade plan</li>
-              <li>Guaranteed invitations to flagship Gaming Hub events</li>
+              <li>Guaranteed invitations to flagship Gaming Hub events and VIP lounge experiences</li>
               <li>Early access to selected releases and limited member drops</li>
               <li>Exclusive Ultimate Elite profile badge and member status</li>
             </ul>
-            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="ultimate-elite" data-plan-name="Ultimate Elite" data-plan-price="£75,000">Choose Ultimate Elite</button>
+            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="ultimate-elite" data-plan-name="Ultimate Elite" data-plan-price="£21,000">Choose Ultimate Elite</button>
           </article>
           <article class="plan plan-ultimate-peak" id="ultimate-peak-plan">
             <span class="plan-featured-label">Peak benefits. One annual price.</span>
             <h2>Ultimate Peak</h2>
             <p class="plan-description">Our biggest all-in membership bundle: every top-tier benefit, more ways to play, and personal service throughout the year.</p>
-            <p class="plan-price">£100,000</p>
+            <p class="plan-price">£25,000</p>
             <p class="plan-period">per year</p>
             <h3 class="plan-games-label">The all-in Peak bundle</h3>
             <ul>
               <li>Every benefit from Ultimate Elite, Ultimate Pro, and Ultimate</li>
               <li>Four companion memberships with Elite-level benefits</li>
               <li>Annual gaming setup refresh consultation for you and your companions</li>
-              <li>Priority invitations for you and a guest to flagship Gaming Hub events</li>
+              <li>Priority invitations for you and a guest to flagship events and VIP lounges</li>
               <li>First access to every eligible launch, beta, tournament, and member drop</li>
               <li>Dedicated account manager and priority support for your whole group</li>
               <li>Exclusive Ultimate Peak profile badge and member status</li>
             </ul>
-            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="ultimate-peak" data-plan-name="Ultimate Peak" data-plan-price="£100,000">Choose Ultimate Peak</button>
+            <button class="btn btn-custom" type="button" data-start-plan data-plan-id="ultimate-peak" data-plan-name="Ultimate Peak" data-plan-price="£25,000">Choose Ultimate Peak</button>
           </article>
         </section>
 
-            <p class="billing-note">Combined annual total for all paid plans, if purchased once each: <strong>£262,019.96</strong>. Free is £0; plans are individual subscription options.</p>
+            <p class="billing-note">Combined annual total for all paid plans, if purchased once each: <strong>£70,631.91</strong>. Free is £0; plans are individual subscription options.</p>
           </div>
         </main>
 

@@ -6,17 +6,17 @@ const rootDirectory = path.dirname(fileURLToPath(import.meta.url));
 const stripeMaximumUnitAmount = 99_999_999n;
 
 export const membershipPlans = Object.freeze({
-  basic: { name: 'Basic', pricePence: 999n },
-  standard: { name: 'Standard', pricePence: 2_999n },
-  premium: { name: 'Premium', pricePence: 7_999n },
-  vip: { name: 'VIP', pricePence: 39_999n },
-  galactic: { name: 'Galactic', pricePence: 50_000n },
-  'galactic-plus': { name: 'Galactic Plus', pricePence: 100_000n },
-  'galactic-plus-plus': { name: 'Galactic Plus Plus', pricePence: 1_000_000n },
-  ultimate: { name: 'Ultimate', pricePence: 2_500_000n },
-  'ultimate-pro': { name: 'Ultimate Pro', pricePence: 5_000_000n },
-  'ultimate-elite': { name: 'Ultimate Elite', pricePence: 7_500_000n },
-  'ultimate-peak': { name: 'Ultimate Peak', pricePence: 10_000_000n }
+  basic: { name: 'Basic', pricePence: 199n },
+  standard: { name: 'Standard', pricePence: 999n },
+  premium: { name: 'Premium', pricePence: 1_999n },
+  vip: { name: 'VIP', pricePence: 29_999n },
+  galactic: { name: 'Galactic', pricePence: 49_999n },
+  'galactic-plus': { name: 'Galactic Plus', pricePence: 79_999n },
+  'galactic-plus-plus': { name: 'Galactic Plus Plus', pricePence: 99_999n },
+  ultimate: { name: 'Ultimate', pricePence: 199_999n },
+  'ultimate-pro': { name: 'Ultimate Pro', pricePence: 1_999_999n },
+  'ultimate-elite': { name: 'Ultimate Elite', pricePence: 2_100_000n },
+  'ultimate-peak': { name: 'Ultimate Peak', pricePence: 2_500_000n }
 });
 
 function decodeHtmlAttribute(value) {

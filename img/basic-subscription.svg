@@ -1,0 +1,123 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGlow1" x1="130" y1="80" x2="1480" y2="860" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#020914"/>
+      <stop offset="0.35" stop-color="#08111e"/>
+      <stop offset="1" stop-color="#090a12"/>
+    </linearGradient>
+    <radialGradient id="blueGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1160 210) rotate(90) scale(430 550)">
+      <stop stop-color="#1CCAFF" stop-opacity="0.9"/>
+      <stop offset="0.32" stop-color="#2E72FF" stop-opacity="0.52"/>
+      <stop offset="1" stop-color="#2E72FF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="purpleGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(520 700) rotate(90) scale(410 500)">
+      <stop stop-color="#D728FF" stop-opacity="0.95"/>
+      <stop offset="0.35" stop-color="#9B42FF" stop-opacity="0.52"/>
+      <stop offset="1" stop-color="#9B42FF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="cardStroke" x1="80" y1="120" x2="1060" y2="820" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3ADAF9"/>
+      <stop offset="0.52" stop-color="#7A5CF7"/>
+      <stop offset="1" stop-color="#FF37F2"/>
+    </linearGradient>
+    <linearGradient id="titleGrad" x1="200" y1="180" x2="980" y2="620" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F1F7FF"/>
+      <stop offset="0.18" stop-color="#D7E7FF"/>
+      <stop offset="0.42" stop-color="#A7DDF7"/>
+      <stop offset="0.7" stop-color="#8C8BF7"/>
+      <stop offset="1" stop-color="#E39CFF"/>
+    </linearGradient>
+    <linearGradient id="basicGrad" x1="200" y1="600" x2="700" y2="820" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D8F8FF"/>
+      <stop offset="0.2" stop-color="#7FE3FF"/>
+      <stop offset="0.5" stop-color="#8B82FF"/>
+      <stop offset="1" stop-color="#E86CFF"/>
+    </linearGradient>
+    <linearGradient id="badgeGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#23DFFF"/>
+      <stop offset="1" stop-color="#9B52FF"/>
+    </linearGradient>
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="180%">
+      <feDropShadow dx="0" dy="26" stdDeviation="30" flood-color="#0B1534" flood-opacity="0.7"/>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bgGlow1)"/>
+  <ellipse cx="1260" cy="220" rx="370" ry="300" fill="url(#blueGlow)"/>
+  <ellipse cx="420" cy="740" rx="480" ry="260" fill="url(#purpleGlow)"/>
+
+  <g opacity="0.18" stroke="#5AE5FF" stroke-width="2">
+    <path d="M-40 280L480 0"/>
+    <path d="M100 900L780 150"/>
+    <path d="M1180 0L1600 440"/>
+    <path d="M1180 900L1600 500"/>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="123" y="110" width="990" height="700" rx="36" fill="#050D1B" stroke="url(#cardStroke)" stroke-width="4"/>
+    <rect x="1120" y="420" width="440" height="310" rx="28" fill="#050D1B" stroke="url(#cardStroke)" stroke-width="4"/>
+  </g>
+
+  <g opacity="0.8" stroke="#25D6FF" stroke-width="4">
+    <path d="M158 120H1100"/>
+    <path d="M158 780H1100"/>
+    <path d="M156 120L95 180"/>
+    <path d="M1105 120L1160 175"/>
+  </g>
+
+  <g transform="translate(0 10)" filter="url(#softGlow)">
+    <text x="270" y="250" font-size="180" fill="url(#titleGrad)" font-family="Arial Black, Impact, sans-serif" font-weight="900" letter-spacing="-8">♛</text>
+    <text x="220" y="415" font-size="202" fill="url(#titleGrad)" font-family="Arial Black, Impact, sans-serif" font-weight="900" letter-spacing="-10">GAMING</text>
+    <text x="240" y="577" font-size="188" fill="url(#titleGrad)" font-family="Arial Black, Impact, sans-serif" font-weight="900" letter-spacing="-10">HUB</text>
+    <text x="220" y="692" font-size="142" fill="url(#basicGrad)" font-family="Arial Black, Impact, sans-serif" font-weight="900" letter-spacing="-4">BASIC</text>
+    <text x="300" y="778" font-size="66" fill="url(#badgeGrad)" font-family="Arial, sans-serif" font-weight="700" letter-spacing="3">SUBSCRIPTION</text>
+  </g>
+
+  <g transform="translate(165 686)" fill="none" stroke="#79F1FF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" filter="url(#softGlow)">
+    <rect x="0" y="15" width="62" height="48" rx="10"/>
+    <path d="M18 15V6C18 2.68629 20.6863 0 24 0H38C41.3137 0 44 2.68629 44 6V15"/>
+    <path d="M16 37L8 48"/>
+    <path d="M46 37L54 48"/>
+    <path d="M22 26H40"/>
+    <path d="M31 18V30"/>
+  </g>
+  <g transform="translate(405 690)" fill="none" stroke="#76F5FF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" filter="url(#softGlow)">
+    <circle cx="56" cy="40" r="32"/>
+    <path d="M52 16L58 30L74 34L62 44L65 58L52 51L39 58L42 44L30 34L46 30L52 16Z"/>
+    <path d="M34 70H78"/>
+  </g>
+  <g transform="translate(700 685)" fill="none" stroke="#7EEBFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" filter="url(#softGlow)">
+    <rect x="0" y="22" width="72" height="56" rx="10"/>
+    <path d="M17 22V13C17 7.47715 21.4772 3 27 3H45C50.5228 3 55 7.47715 55 13V22"/>
+    <path d="M18 40H54"/>
+    <path d="M26 40V54"/>
+    <path d="M46 40V54"/>
+    <path d="M17 51H55"/>
+  </g>
+
+  <g font-family="Arial, sans-serif" font-weight="700" fill="#F3F8FF" opacity="0.9" filter="url(#softGlow)">
+    <text x="145" y="815" font-size="26">EXCLUSIVE</text>
+    <text x="148" y="845" font-size="26">CONTENT</text>
+    <text x="376" y="815" font-size="26">MEMBER</text>
+    <text x="388" y="845" font-size="26">DISCOUNTS</text>
+    <text x="680" y="815" font-size="26">MONTHLY</text>
+    <text x="702" y="845" font-size="26">REWARDS</text>
+  </g>
+
+  <g transform="translate(1170 445)" filter="url(#softGlow)">
+    <text x="90" y="82" font-size="56" fill="#E9F9FF" font-family="Arial Black, Impact, sans-serif" font-weight="900" letter-spacing="-4">GAMING</text>
+    <text x="122" y="165" font-size="74" fill="#E9F9FF" font-family="Arial Black, Impact, sans-serif" font-weight="900" letter-spacing="-4">HUB</text>
+    <text x="96" y="250" font-size="46" fill="url(#basicGrad)" font-family="Arial Black, Impact, sans-serif" font-weight="900" letter-spacing="-2">BASIC</text>
+    <text x="88" y="304" font-size="26" fill="url(#badgeGrad)" font-family="Arial, sans-serif" font-weight="700" letter-spacing="2">SUBSCRIPTION</text>
+    <g transform="translate(332 95)">
+      <text x="0" y="70" font-size="96" fill="url(#titleGrad)" font-family="Arial Black, Impact, sans-serif" font-weight="900">GH</text>
+    </g>
+  </g>
+</svg>

@@ -6,11 +6,36 @@ import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadProductCatalog, membershipPlans, validateCheckoutItems } from './commerce.js';
+import { createAuthService } from './server-auth.js';
+import { createAiService } from './server-ai.js';
 
 const app = express();
 const port = Number(process.env.PORT || 3001);
-const siteUrl = (process.env.SITE_URL || `http://localhost:${port}`).replace(/\/$/, '');
+const codespaceExternalUrl = process.env.CODESPACE_NAME && process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN
+  ? `https://${process.env.CODESPACE_NAME}-${port}.${process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}`
+  : null;
+const siteUrl = (process.env.SITE_URL || process.env.RENDER_EXTERNAL_URL || codespaceExternalUrl || `http://localhost:${port}`).replace(/\/$/, '');
+const siteOrigin = new URL(siteUrl);
+const isLocalSite = siteOrigin.hostname === 'localhost' || siteOrigin.hostname === '127.0.0.1' ||
+  siteOrigin.hostname === '::1' || siteOrigin.hostname.endsWith('.localhost');
+if (siteOrigin.protocol !== 'https:' && !(siteOrigin.protocol === 'http:' && isLocalSite)) {
+  throw new Error('Set SITE_URL to an HTTPS origin before running Gaming Hub outside local development.');
+}
+if (siteOrigin.pathname !== '/' || siteOrigin.search || siteOrigin.hash) {
+  throw new Error('SITE_URL must contain only the site origin, such as https://gaminghub.example.');
+}
 const rootDirectory = path.dirname(fileURLToPath(import.meta.url));
+const authDataDirectory = path.resolve(
+  rootDirectory,
+  process.env.GAMING_HUB_DATA_DIR || path.join('..', '.gaming-hub-data')
+);
+const authDataRelativePath = path.relative(rootDirectory, authDataDirectory);
+const authDataIsOutsidePublicDirectory = authDataRelativePath === '..' ||
+  authDataRelativePath.startsWith(`..${path.sep}`);
+if (!authDataIsOutsidePublicDirectory) {
+  throw new Error('GAMING_HUB_DATA_DIR must be outside the public website directory.');
+}
+const aiService = createAiService();
 const stripeKey = process.env.STRIPE_SECRET_KEY || '';
 const stripe = stripeKey.startsWith('sk_test_') || stripeKey.startsWith('sk_live_')
   ? new Stripe(stripeKey)
@@ -22,6 +47,16 @@ const supabase = supabaseUrl && supabaseServiceKey
       auth: { autoRefreshToken: false, persistSession: false }
     })
   : null;
+if (process.env.REQUIRE_REMOTE_DATABASE === 'true' && !supabase) {
+  throw new Error('Configure SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY for remote account storage.');
+}
+const authService = await createAuthService({
+  dataDirectory: authDataDirectory,
+  secureCookies: siteUrl.startsWith('https://') || Boolean(codespaceExternalUrl),
+  allowedOrigin: siteOrigin.origin,
+  additionalAllowedOrigins: codespaceExternalUrl ? [new URL(codespaceExternalUrl).origin] : [],
+  cloudDatabase: supabase
+});
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
 const checkoutEnabled = process.env.STRIPE_CHECKOUT_ENABLED === 'true';
 const livePaymentsEnabled = process.env.ENABLE_LIVE_PAYMENTS === 'true';
@@ -143,18 +178,17 @@ app.post('/api/stripe-webhook', express.raw({ type: 'application/json', limit: '
   }
 });
 
-app.use(express.json({ limit: '10kb' }));
+app.use(express.json({ limit: '20kb' }));
 
 app.get('/api/health', function (request, response) {
   response.json({ status: 'ok' });
 });
 
-app.get('/api/auth-config', function (request, response) {
-  response.set('Cache-Control', 'no-store');
-  response.json({
-    projectUrl: supabaseUrl,
-    publishableKey: process.env.SUPABASE_PUBLISHABLE_KEY || ''
-  });
+app.use('/api/auth', authService.router);
+app.use('/api/ai', authService.requireApiAuth, aiService.router);
+
+app.get('/pages/member-hub.html', authService.requirePageAuth, function (request, response) {
+  response.sendFile(path.join(rootDirectory, 'pages/member-hub.html'));
 });
 
 app.post('/api/gift-cards/balance', async function (request, response) {
@@ -381,7 +415,7 @@ app.post('/api/reviews', async function (request, response) {
 });
 
 app.use(function (request, response, next) {
-  if (['/server.js', '/package.json', '/package-lock.json', '/commerce.js'].includes(request.path)) {
+  if (['/server.js', '/server-auth.js', '/server-ai.js', '/package.json', '/package-lock.json', '/commerce.js'].includes(request.path)) {
     response.sendStatus(404);
     return;
   }

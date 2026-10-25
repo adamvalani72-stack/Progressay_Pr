@@ -3,9 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/png" href="../img/Neon%20Gaming%20Hub%20Emblem.png" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; script-src 'self' https://esm.sh; connect-src 'self' https://esm.sh https://*.supabase.co wss://*.supabase.co; base-uri 'self'; form-action 'self'; object-src 'none'; frame-ancestors 'none'"
+      content="default-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; script-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-ancestors 'none'"
     />
     <meta name="referrer" content="no-referrer" />
     <link
@@ -20,7 +21,9 @@
   <body>
     <nav id="menu" class="site-nav">
       <div class="container nav-inner">
-        <a class="nav-brand" href="../index.html#page-top">gaming hub</a>
+        <a class="nav-brand" href="../index.html#page-top" aria-label="Gaming Hub home">
+          <img src="../img/Neon%20Gaming%20Hub%20Emblem.png" alt="Gaming Hub" />
+        </a>
         <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="nav-links">
           <span class="visually-hidden">Toggle navigation</span>
           <span class="nav-toggle-bar"></span>
@@ -43,12 +46,7 @@
       <section class="auth-card" aria-labelledby="signup-title">
         <span class="auth-eyebrow">GAMING HUB ACCOUNT</span>
         <h1 id="signup-title">Join Gaming Hub</h1>
-        <p class="auth-intro">Create your account to get started. We’ll email you a confirmation link.</p>
-        <button class="auth-google-button" type="button" data-google-auth>
-          <span class="google-auth-mark" aria-hidden="true">G</span>
-          Continue with Google
-        </button>
-        <div class="auth-divider"><span>or continue with email</span></div>
+        <p class="auth-intro">Create an account to join Gaming Hub from this server.</p>
         <form class="account-form auth-form" id="signup-panel">
           <div class="auth-field">
             <label for="signup-name">Display name</label>
@@ -61,7 +59,7 @@
           <div class="auth-field">
             <label for="signup-password">Password</label>
             <div class="auth-password-input">
-              <input id="signup-password" name="password" type="password" autocomplete="new-password" minlength="8" aria-describedby="password-guidance password-strength" required />
+              <input id="signup-password" name="password" type="password" autocomplete="new-password" minlength="8" maxlength="128" aria-describedby="password-guidance password-strength" required />
               <button class="auth-password-toggle" type="button" aria-label="Show password" aria-pressed="false">Show</button>
             </div>
             <p class="auth-field-hint" id="password-guidance">Use at least 8 characters. A mix of letters, numbers, and symbols is stronger.</p>
@@ -73,7 +71,7 @@
           <div class="auth-field">
             <label for="signup-confirm-password">Confirm password</label>
             <div class="auth-password-input">
-              <input id="signup-confirm-password" name="confirm-password" type="password" autocomplete="new-password" required />
+              <input id="signup-confirm-password" name="confirm-password" type="password" autocomplete="new-password" maxlength="128" required />
               <button class="auth-password-toggle" type="button" aria-label="Show password" aria-pressed="false">Show</button>
             </div>
           </div>
@@ -85,14 +83,13 @@
           <button class="auth-text-button" type="button" data-sign-out>Sign out</button>
         </div>
         <p class="auth-switch">Already have an account? <a href="login.html">Log in</a></p>
-        <p class="auth-notice" id="auth-setup-notice">Secure authentication is provided by Supabase.</p>
+        <p class="auth-notice" id="auth-setup-notice">Your account is stored on the Gaming Hub server. Passwords are stored as salted hashes, not plain text.</p>
         <p class="auth-status" id="account-status" role="status" aria-live="polite"></p>
         <p class="auth-support">Account support: <a href="mailto:adamvalani72@gmail.com">adamvalani72@gmail.com</a></p>
       </section>
     </main>
 
     <script src="../script.js"></script>
-    <script src="../auth-config.js"></script>
     <script type="module" src="../auth.js"></script>
   </body>
 </html>
