@@ -1187,6 +1187,57 @@
       radio.addEventListener('change', updatePaymentMethod);
     });
 
+    function isGiftCardProduct(name) {
+      return /gift card/i.test(String(name || ''));
+    }
+
+    function scalePriceValue(value, name) {
+      if (!value || isGiftCardProduct(name)) {
+        return value;
+      }
+
+      var numeric = Number(String(value).replace(/[^0-9.]/g, ''));
+      if (!Number.isFinite(numeric)) {
+        return value;
+      }
+
+      return Number((numeric * 5).toFixed(2));
+    }
+
+    function formatScaledPrice(value, name) {
+      var scaled = scalePriceValue(value, name);
+      var numeric = Number(String(scaled).replace(/[^0-9.]/g, ''));
+      if (!Number.isFinite(numeric)) {
+        return value;
+      }
+
+      return formatCurrency(BigInt(Math.round(numeric * 100)));
+    }
+
+    function applyProductPriceMultiplier() {
+      document.querySelectorAll('.add-to-cart').forEach(function (button) {
+        var productName = button.dataset.name || '';
+        if (isGiftCardProduct(productName)) {
+          return;
+        }
+
+        if (button.dataset.price) {
+          button.dataset.price = String(scalePriceValue(button.dataset.price, productName));
+        }
+
+        var productCard = button.closest('.product-card');
+        if (!productCard) {
+          return;
+        }
+
+        productCard.querySelectorAll('.product-price .price, .product-price .old-price').forEach(function (priceNode) {
+          priceNode.textContent = formatScaledPrice(priceNode.textContent, productName);
+        });
+      });
+    }
+
+    applyProductPriceMultiplier();
+
     document.querySelectorAll('.add-to-cart').forEach(function (button) {
       button.addEventListener('click', function () {
         var name = button.dataset.name;
