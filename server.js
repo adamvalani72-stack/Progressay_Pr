@@ -5,9 +5,11 @@ import { createClient } from '@supabase/supabase-js';
 import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { loadProductCatalog, membershipPlans, validateCheckoutItems } from './commerce.js';
+import { validateCheckoutItems } from './commerce.js';
 import { createAuthService } from './server-auth.js';
 import { createAiService } from './server-ai.js';
+import { createDataService } from './server-data.js';
+import { createCustomerService, createCatalogService } from './server-customer.js';
 
 const app = express();
 const port = Number(process.env.PORT || 3001);
@@ -57,10 +59,20 @@ const authService = await createAuthService({
   additionalAllowedOrigins: codespaceExternalUrl ? [new URL(codespaceExternalUrl).origin] : [],
   cloudDatabase: supabase
 });
+const dataService = createDataService({
+  database: supabase,
+  requireOwner: authService.requireOwner,
+  requireSameOriginJson: authService.requireSameOriginJson
+});
+const customerService = createCustomerService({
+  database: supabase,
+  requireApiAuth: authService.requireApiAuth,
+  requireSameOriginJson: authService.requireSameOriginJson
+});
+const catalogService = createCatalogService({ database: supabase });
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
 const checkoutEnabled = process.env.STRIPE_CHECKOUT_ENABLED === 'true';
 const livePaymentsEnabled = process.env.ENABLE_LIVE_PAYMENTS === 'true';
-const productCatalogPromise = loadProductCatalog();
 const contactRequests = new Map();
 const giftCardLookups = new Map();
 
@@ -95,6 +107,19 @@ function requireConfiguredCommerce(response) {
 function isValidEmail(value) {
   return typeof value === 'string' && value.length <= 254 &&
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+}
+
+function getCheckoutEmail(request) {
+  const suppliedEmail = request.body?.email;
+  if (request.authUser) {
+    if (suppliedEmail !== undefined &&
+        (typeof suppliedEmail !== 'string' ||
+          suppliedEmail.trim().toLowerCase() !== request.authUser.email.toLowerCase())) {
+      return null;
+    }
+    return request.authUser.email;
+  }
+  return isValidEmail(suppliedEmail) ? suppliedEmail.trim() : null;
 }
 
 function rateLimitContact(request) {
@@ -134,11 +159,24 @@ app.post('/api/stripe-webhook', express.raw({ type: 'application/json', limit: '
   try {
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object;
+      const subscription = session.mode === 'subscription'
+        ? await stripe.subscriptions.retrieve(session.subscription)
+        : null;
+      const requestedAccountId = session.metadata?.account_id || subscription?.metadata?.account_id;
+      let accountId = null;
+      if (typeof requestedAccountId === 'string' && requestedAccountId) {
+        const { data: account, error } = await supabase.from('gaming_hub_accounts')
+          .select('id')
+          .eq('id', requestedAccountId)
+          .maybeSingle();
+        if (error) throw error;
+        accountId = account?.id || null;
+      }
       if (session.mode === 'subscription') {
-        const subscription = await stripe.subscriptions.retrieve(session.subscription);
         const { error } = await supabase.from('memberships').upsert({
           stripe_subscription_id: subscription.id,
           stripe_customer_id: String(session.customer || ''),
+          account_id: accountId,
           plan_id: session.metadata?.plan_id || subscription.metadata?.plan_id || '',
           customer_email: session.customer_details?.email || session.customer_email || '',
           status: subscription.status,
@@ -150,6 +188,7 @@ app.post('/api/stripe-webhook', express.raw({ type: 'application/json', limit: '
         const { error } = await supabase.from('orders').upsert({
           stripe_session_id: session.id,
           stripe_customer_id: String(session.customer || ''),
+          account_id: accountId,
           customer_email: session.customer_details?.email || session.customer_email || '',
           amount_total: session.amount_total,
           currency: session.currency,
@@ -178,6 +217,7 @@ app.post('/api/stripe-webhook', express.raw({ type: 'application/json', limit: '
   }
 });
 
+app.use('/api/ai', express.json({ limit: '100kb' }), aiService.router);
 app.use(express.json({ limit: '20kb' }));
 
 app.get('/api/health', function (request, response) {
@@ -185,11 +225,9 @@ app.get('/api/health', function (request, response) {
 });
 
 app.use('/api/auth', authService.router);
-app.use('/api/ai', authService.requireApiAuth, aiService.router);
-
-app.get('/pages/member-hub.html', authService.requirePageAuth, function (request, response) {
-  response.sendFile(path.join(rootDirectory, 'pages/member-hub.html'));
-});
+app.use('/api/admin', express.json({ limit: '20kb' }), dataService.router);
+app.use('/api/customer', customerService.router);
+app.use('/api/catalog', catalogService.router);
 
 app.post('/api/gift-cards/balance', async function (request, response) {
   if (!supabase) {
@@ -232,20 +270,45 @@ app.post('/api/gift-cards/balance', async function (request, response) {
   });
 });
 
-app.post('/api/checkout-session', async function (request, response) {
+app.post('/api/checkout-session', authService.optionalApiAuth, async function (request, response) {
   if (!requireConfiguredCommerce(response)) return;
-  if (!isValidEmail(request.body?.email)) {
+  const checkoutEmail = getCheckoutEmail(request);
+  if (!checkoutEmail) {
     response.status(400).json({ error: 'Enter a valid email address for your order.' });
     return;
   }
 
+  let catalog;
   try {
-    const catalog = await productCatalogPromise;
-    const items = validateCheckoutItems(request.body.items, catalog);
+    const { data, error } = await supabase.from('products')
+      .select('name, price_pence')
+      .eq('is_active', true)
+      .limit(200);
+    if (error) throw error;
+    catalog = new Map();
+    for (const product of data) {
+      if (catalog.has(product.name)) throw new Error('The active product catalog contains duplicate names.');
+      catalog.set(product.name, { name: product.name, pricePence: BigInt(product.price_pence) });
+    }
+  } catch (error) {
+    console.error('Product catalog could not be loaded for checkout:', error.message);
+    response.status(503).json({ error: 'The product catalog is temporarily unavailable. Please try again.' });
+    return;
+  }
+
+  let items;
+  try {
+    items = validateCheckoutItems(request.body?.items, catalog);
+  } catch (error) {
+    response.status(400).json({ error: error.message });
+    return;
+  }
+
+  try {
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       automatic_payment_methods: { enabled: true },
-      customer_email: request.body.email.trim(),
+      customer_email: checkoutEmail.trim(),
       line_items: items.map((item) => ({
         quantity: item.quantity,
         price_data: {
@@ -258,25 +321,49 @@ app.post('/api/checkout-session', async function (request, response) {
       shipping_address_collection: { allowed_countries: ['GB', 'US', 'CA', 'AU', 'DE'] },
       success_url: `${siteUrl}/pages/gaming-products.html?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${siteUrl}/pages/gaming-products.html?checkout=cancelled`,
-      metadata: { kind: 'product' }
+      metadata: {
+        kind: 'product',
+        ...(request.authUser ? { account_id: request.authUser.id } : {})
+      }
     });
     response.json({ url: session.url });
   } catch (error) {
-    const status = /cart|product|price|item|quantity|choose/i.test(error.message) ? 400 : 502;
-    response.status(status).json({ error: status === 400 ? error.message : 'Could not start secure checkout. Please try again.' });
+    console.error('Product checkout could not be created:', error.message);
+    response.status(502).json({ error: 'Could not start secure checkout. Please try again.' });
   }
 });
 
-app.post('/api/membership-checkout', async function (request, response) {
+app.post('/api/membership-checkout', authService.optionalApiAuth, async function (request, response) {
   if (!requireConfiguredCommerce(response)) return;
   const planId = request.body?.planId;
-  const plan = membershipPlans[planId];
-  if (!plan) {
-    response.status(400).json({ error: 'Choose a valid paid membership plan.' });
+  const checkoutEmail = getCheckoutEmail(request);
+  if (!checkoutEmail) {
+    response.status(400).json({ error: 'Enter a valid email address for your membership.' });
     return;
   }
-  if (!isValidEmail(request.body?.email)) {
-    response.status(400).json({ error: 'Enter a valid email address for your membership.' });
+  if (typeof planId !== 'string' || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(planId)) {
+    response.status(400).json({ error: 'Choose a valid active paid membership plan.' });
+    return;
+  }
+
+  let plan;
+  try {
+    const { data, error } = await supabase.from('subscription_plans')
+      .select('id, name, price_pence, billing_interval')
+      .eq('id', planId)
+      .eq('is_active', true)
+      .maybeSingle();
+    if (error) throw error;
+    if (!data || !/^\d+$/.test(String(data.price_pence)) ||
+        Number(data.price_pence) <= 0 || Number(data.price_pence) > 99_999_999 ||
+        data.billing_interval !== 'year') {
+      response.status(400).json({ error: 'Choose a valid active paid membership plan.' });
+      return;
+    }
+    plan = { name: data.name, pricePence: Number(data.price_pence) };
+  } catch (error) {
+    console.error('Membership plan could not be loaded for checkout:', error.message);
+    response.status(503).json({ error: 'Membership plans are temporarily unavailable. Please try again.' });
     return;
   }
 
@@ -284,20 +371,29 @@ app.post('/api/membership-checkout', async function (request, response) {
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
       automatic_payment_methods: { enabled: true },
-      customer_email: request.body.email.trim(),
+      customer_email: checkoutEmail.trim(),
       line_items: [{
         quantity: 1,
         price_data: {
           currency: 'gbp',
-          unit_amount: Number(plan.pricePence),
+          unit_amount: plan.pricePence,
           recurring: { interval: 'year' },
           product_data: { name: `${plan.name} Gaming Hub membership` }
         }
       }],
       success_url: `${siteUrl}/pages/subscriptions.html?plan=${encodeURIComponent(planId)}&checkout=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${siteUrl}/pages/subscriptions.html?plan=${encodeURIComponent(planId)}&checkout=cancelled`,
-      metadata: { kind: 'membership', plan_id: planId },
-      subscription_data: { metadata: { plan_id: planId } }
+      metadata: {
+        kind: 'membership',
+        plan_id: planId,
+        ...(request.authUser ? { account_id: request.authUser.id } : {})
+      },
+      subscription_data: {
+        metadata: {
+          plan_id: planId,
+          ...(request.authUser ? { account_id: request.authUser.id } : {})
+        }
+      }
     });
     response.json({ url: session.url });
   } catch (error) {
@@ -415,7 +511,7 @@ app.post('/api/reviews', async function (request, response) {
 });
 
 app.use(function (request, response, next) {
-  if (['/server.js', '/server-auth.js', '/server-ai.js', '/package.json', '/package-lock.json', '/commerce.js'].includes(request.path)) {
+  if (['/server.js', '/server-auth.js', '/server-ai.js', '/server-data.js', '/server-customer.js', '/package.json', '/package-lock.json', '/commerce.js'].includes(request.path)) {
     response.sendStatus(404);
     return;
   }

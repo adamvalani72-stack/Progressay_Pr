@@ -344,24 +344,6 @@ export async function createAuthService(options) {
     return { tokenHash, account: session.account };
   }
 
-  async function requirePageAuth(request, response, next) {
-    let session;
-    try {
-      session = await findSession(request);
-    } catch (error) {
-      console.error('Page session lookup failed:', error.message);
-      response.status(503).send('Account sessions are temporarily unavailable.');
-      return;
-    }
-    if (!session?.account) {
-      clearSessionCookie(response, options.secureCookies);
-      response.redirect(303, '/pages/login.html?next=members');
-      return;
-    }
-    response.set('Cache-Control', 'no-store');
-    next();
-  }
-
   async function requireApiAuth(request, response, next) {
     let session;
     try {
@@ -372,10 +354,44 @@ export async function createAuthService(options) {
       return;
     }
     if (!session?.account) {
-      response.status(401).json({ error: 'Sign in to use Gaming Hub AI.' });
+      response.status(401).json({ error: 'Sign in to use this feature.' });
       return;
     }
     request.authUser = publicUser(session.account);
+    next();
+  }
+
+  async function optionalApiAuth(request, response, next) {
+    try {
+      const session = await findSession(request);
+      if (session?.account) request.authUser = publicUser(session.account);
+      next();
+    } catch (error) {
+      console.error('Optional API session lookup failed:', error.message);
+      response.status(503).json({ error: 'Account sessions are temporarily unavailable.' });
+    }
+  }
+
+  async function requireOwner(request, response, next) {
+    let session;
+    try {
+      session = await findSession(request);
+    } catch (error) {
+      console.error('Admin session lookup failed:', error.message);
+      response.status(503).json({ error: 'Account sessions are temporarily unavailable.' });
+      return;
+    }
+    if (!session?.account) {
+      response.status(401).json({ error: 'Sign in with an owner account to manage Gaming Hub data.' });
+      return;
+    }
+    const user = publicUser(session.account);
+    if (user.role !== 'owner') {
+      response.status(403).json({ error: 'Owner access is required to manage Gaming Hub data.' });
+      return;
+    }
+    request.authUser = user;
+    response.set('Cache-Control', 'no-store');
     next();
   }
 
@@ -592,5 +608,5 @@ export async function createAuthService(options) {
     response.json({ signedOut: true });
   });
 
-  return { router: authRouter, requireApiAuth, requirePageAuth };
+  return { router: authRouter, requireApiAuth, optionalApiAuth, requireOwner, requireSameOriginJson };
 }

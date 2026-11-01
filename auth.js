@@ -174,7 +174,7 @@ if (signOutButton) {
     try {
       await requestAuth('logout', {});
       if (protectedPage) {
-        window.location.replace('login.html?next=members');
+        showProtectedPage(null);
         return;
       }
       showSession(null);
@@ -192,8 +192,7 @@ async function initializeAuthPage() {
   try {
     var result = await requestAuth('session');
     if (protectedPage) {
-      if (result.user) showProtectedPage(result.user);
-      else window.location.replace('login.html?next=members');
+      showProtectedPage(result.user);
       return;
     }
     if (result.user && getNextPage() === 'members') {

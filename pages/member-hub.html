@@ -15,8 +15,8 @@
       referrerpolicy="no-referrer"
     />
     <link rel="stylesheet" href="../styles.css" />
-    <title>Member Games | Gaming Hub</title>
-    <meta name="description" content="Browse the Gaming Hub game collection as a signed-in member." />
+    <title>Gaming Hub AI &amp; Member Games</title>
+    <meta name="description" content="Explore Gaming Hub AI and browse the game collection." />
   </head>
   <body>
     <nav id="menu" class="site-nav">
@@ -33,7 +33,7 @@
         <div id="nav-links" class="nav-links">
           <ul class="nav-list">
             <li><a href="../index.html#features">Home</a></li>
-            <li><a href="member-hub.html" aria-current="page">Member games</a></li>
+            <li><a href="member-hub.html" aria-current="page">Gaming Hub AI</a></li>
             <li><a href="#gaminghub-ai">Gaming Hub AI</a></li>
             <li><a href="gaming-products.html">Products</a></li>
             <li><a href="subscriptions.html">Subscriptions</a></li>
@@ -42,69 +42,71 @@
       </div>
     </nav>
 
-    <main class="member-hub-page" data-auth-required hidden>
-      <section class="member-hub-hero">
-        <div class="container member-hub-hero-inner">
-          <div>
-            <p class="member-hub-eyebrow">GAMING HUB MEMBERS</p>
-            <h1>Your game discovery hub</h1>
-            <p>Browse the collection and find something for your next session. No game launches from this page.</p>
-          </div>
-          <div class="member-profile">
-            <span class="member-avatar" aria-hidden="true">GH</span>
-            <span data-member-email>Gaming Hub member</span>
-            <button type="button" class="member-sign-out" data-sign-out>Sign out</button>
-          </div>
-        </div>
-      </section>
-
-      <section class="member-games-section" aria-labelledby="member-games-title">
-        <div class="container">
-          <div class="member-games-heading">
+    <main class="member-hub-page">
+      <div data-auth-required hidden>
+        <section class="member-hub-hero">
+          <div class="container member-hub-hero-inner">
             <div>
-              <p class="member-hub-eyebrow">PICK YOUR NEXT ADVENTURE</p>
-              <h2 id="member-games-title">Featured games</h2>
+              <p class="member-hub-eyebrow">GAMING HUB MEMBERS</p>
+              <h1>Your game discovery hub</h1>
+              <p>Browse the collection and find something for your next session. No game launches from this page.</p>
             </div>
-            <form class="member-search" id="member-search-form" role="search" aria-label="Search featured games">
-              <label class="visually-hidden" for="member-search-input">Search games</label>
-              <input id="member-search-input" type="search" name="q" placeholder="Search featured games" />
-              <button type="submit">Search</button>
-            </form>
+            <div class="member-profile">
+              <span class="member-avatar" aria-hidden="true">GH</span>
+              <span data-member-email>Gaming Hub member</span>
+              <button type="button" class="member-sign-out" data-sign-out>Sign out</button>
+            </div>
           </div>
-          <div class="member-games-grid">
-            <article class="member-game-card member-game-card-pixel">
-              <span class="member-game-category">ARCADE</span>
-              <h3>Pixel Patrol</h3>
-              <p>Take on rapid-fire missions, chase high scores, and see how long you can last.</p>
-              <span class="member-game-note">Available to browse</span>
-            </article>
-            <article class="member-game-card member-game-card-kart">
-              <span class="member-game-category">RACING</span>
-              <h3>Neon Kart</h3>
-              <p>Discover glowing tracks, sharp turns, and fast-paced arcade racing.</p>
-              <span class="member-game-note">Available to browse</span>
-            </article>
-            <article class="member-game-card member-game-card-orbital">
-              <span class="member-game-category">PUZZLE</span>
-              <h3>Orbital Puzzles</h3>
-              <p>Solve clever space-themed challenges and chain together satisfying combos.</p>
-              <span class="member-game-note">Available to browse</span>
-            </article>
-            <article class="member-game-card member-game-card-skyline">
-              <span class="member-game-category">STRATEGY</span>
-              <h3>Skyline Showdown</h3>
-              <p>Plan your moves in quick, competitive battles across a futuristic city.</p>
-              <span class="member-game-note">Available to browse</span>
-            </article>
-            <article class="member-game-card member-game-card-redemption">
-              <span class="member-game-category">ACTION</span>
-              <h3>Redemption Run</h3>
-              <p>Head out on the frontier and face a dusty trail full of western action.</p>
-              <span class="member-game-note">Available to browse</span>
-            </article>
+        </section>
+
+        <section class="member-games-section" aria-labelledby="member-games-title">
+          <div class="container">
+            <div class="member-games-heading">
+              <div>
+                <p class="member-hub-eyebrow">PICK YOUR NEXT ADVENTURE</p>
+                <h2 id="member-games-title">Featured games</h2>
+              </div>
+              <form class="member-search" id="member-search-form" role="search" aria-label="Search featured games">
+                <label class="visually-hidden" for="member-search-input">Search games</label>
+                <input id="member-search-input" type="search" name="q" placeholder="Search featured games" />
+                <button type="submit">Search</button>
+              </form>
+            </div>
+            <div class="member-games-grid">
+              <article class="member-game-card member-game-card-pixel">
+                <span class="member-game-category">ARCADE</span>
+                <h3>Pixel Patrol</h3>
+                <p>Take on rapid-fire missions, chase high scores, and see how long you can last.</p>
+                <span class="member-game-note">Available to browse</span>
+              </article>
+              <article class="member-game-card member-game-card-kart">
+                <span class="member-game-category">RACING</span>
+                <h3>Neon Kart</h3>
+                <p>Discover glowing tracks, sharp turns, and fast-paced arcade racing.</p>
+                <span class="member-game-note">Available to browse</span>
+              </article>
+              <article class="member-game-card member-game-card-orbital">
+                <span class="member-game-category">PUZZLE</span>
+                <h3>Orbital Puzzles</h3>
+                <p>Solve clever space-themed challenges and chain together satisfying combos.</p>
+                <span class="member-game-note">Available to browse</span>
+              </article>
+              <article class="member-game-card member-game-card-skyline">
+                <span class="member-game-category">STRATEGY</span>
+                <h3>Skyline Showdown</h3>
+                <p>Plan your moves in quick, competitive battles across a futuristic city.</p>
+                <span class="member-game-note">Available to browse</span>
+              </article>
+              <article class="member-game-card member-game-card-redemption">
+                <span class="member-game-category">ACTION</span>
+                <h3>Redemption Run</h3>
+                <p>Head out on the frontier and face a dusty trail full of western action.</p>
+                <span class="member-game-note">Available to browse</span>
+              </article>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
 
       <section class="member-ai-section" id="gaminghub-ai" aria-labelledby="member-ai-title">
         <div class="container">
@@ -133,20 +135,25 @@
               <button type="button" data-ai-prompt="Recommend one of the featured games for a quick session.">Pick a quick game</button>
               <button type="button" data-ai-prompt="Give me a few beginner-friendly strategy tips for a puzzle game.">Puzzle tips</button>
               <button type="button" data-ai-prompt="I like racing games. Which featured game might I enjoy, and why?">Find a game for me</button>
+              <button type="button" class="member-ai-new-chat" id="ai-new-chat">New chat</button>
             </div>
             <form class="member-ai-form" id="ai-chat-form">
               <label class="visually-hidden" for="ai-message">Message Gaming Hub AI</label>
-              <textarea id="ai-message" name="message" rows="2" maxlength="1200" placeholder="Ask for a game recommendation or tip…" required></textarea>
-              <button class="member-ai-send" id="ai-send" type="submit" disabled>Send</button>
+              <textarea id="ai-message" name="message" rows="3" maxlength="4000" placeholder="Ask about games, strategy, builds, hardware, or troubleshooting…" required></textarea>
+              <div class="member-ai-submit">
+                <span class="member-ai-char-count" id="ai-char-count" aria-live="polite">0 / 4000</span>
+                <button class="member-ai-send" id="ai-send" type="submit" disabled>Send</button>
+              </div>
             </form>
-            <p class="member-ai-privacy">Your chat stays in this page and isn’t saved by Gaming Hub. Messages are sent to the selected AI provider to generate a reply. Don’t share passwords or private information.</p>
+            <p class="member-ai-keyboard-hint">Enter to send · Shift + Enter for a new line</p>
+            <p class="member-ai-privacy">Chat messages aren’t saved by Gaming Hub. Hosted AI providers receive your messages; the offline guide uses built-in game tips. Don’t share passwords or private information.</p>
           </div>
         </div>
       </section>
     </main>
 
-    <main class="member-gate-page" data-auth-gate>
-      <section class="member-gate-card">
+    <section class="member-gate-page" data-auth-gate hidden>
+      <div class="member-gate-card">
         <span class="member-gate-mark" aria-hidden="true">GH</span>
         <h1>Members only</h1>
         <p>Sign in to browse the Gaming Hub game collection.</p>
@@ -154,8 +161,8 @@
         <p class="auth-notice" id="auth-setup-notice">Your account is managed by the Gaming Hub server.</p>
         <p class="auth-status" id="account-status" role="status" aria-live="polite"></p>
         <p class="member-gate-signup">New to Gaming Hub? <a href="signup.html?next=members">Create an account</a></p>
-      </section>
-    </main>
+      </div>
+    </section>
 
     <script src="../script.js"></script>
     <script type="module" src="../auth.js"></script>

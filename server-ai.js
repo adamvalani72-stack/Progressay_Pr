@@ -1,12 +1,14 @@
 import express from 'express';
 
 const systemPrompt = [
-  'You are Gaming Hub AI, a friendly gaming assistant.',
-  'Help users discover games, compare genres, and learn fair-play tips and strategy.',
+  'You are Gaming Hub AI, a knowledgeable and practical gaming assistant.',
+  'Help with game recommendations, advanced strategies, builds, walkthroughs, mechanics, esports, gaming hardware, accessibility, troubleshooting, and game-related questions across platforms and genres.',
+  'Answer promptly and stay focused. Give practical steps and a useful reason; expand with examples and tradeoffs when the user asks for detail.',
+  'Ask a concise clarifying question only when essential details are missing; otherwise state reasonable assumptions and answer.',
   'Gaming Hub currently features Pixel Patrol (arcade action), Neon Kart (arcade racing), Orbital Puzzles (space puzzles), Skyline Showdown (tactical city battles), and Redemption Run (western action).',
-  'Do not claim to launch games or to know live game data unless the user provides it.',
+  'Be transparent about uncertainty, game-version differences, and information that may have changed. Do not claim to launch games or know live data unless the user provides it.',
   'Do not ask users to share passwords, payment details, private account information, or other sensitive data.',
-  'Keep advice safe, age-appropriate, and respectful. Be clear when you are uncertain.'
+  'Keep advice safe, age-appropriate, respectful, and within fair play; do not help with cheating, account theft, or bypassing game security.'
 ].join(' ');
 
 const providerDefinitions = {
@@ -27,6 +29,10 @@ const providerDefinitions = {
     modelEnv: 'ANTHROPIC_MODEL',
     endpoint: 'https://api.anthropic.com/v1/messages'
   },
+  local: {
+    label: 'Gaming Hub Guide (offline)',
+    local: true
+  },
   ollama: {
     label: 'Ollama (self-hosted)',
     modelEnv: 'OLLAMA_MODEL',
@@ -37,22 +43,61 @@ const providerDefinitions = {
 };
 
 const requestWindowMs = 10 * 60 * 1000;
-const requestLimit = 12;
+const requestLimit = 30;
 const maximumMessages = 12;
-const maximumMessageLength = 1200;
-const timeoutMs = 30_000;
+const maximumMessageLength = 4000;
+const maximumResponseTokens = 600;
+const timeoutMs = 60_000;
 
 function getProviderList() {
   return Object.entries(providerDefinitions).map(([id, definition]) => ({
     id,
     label: definition.label,
-    configured: id === 'ollama'
+    configured: definition.local || (id === 'ollama'
       ? Boolean(process.env[definition.modelEnv]?.trim())
-      : Boolean(process.env[definition.key]?.trim() && process.env[definition.modelEnv]?.trim()),
+      : Boolean(process.env[definition.key]?.trim() && process.env[definition.modelEnv]?.trim())),
     ...(process.env[definition.modelEnv]?.trim()
       ? { model: process.env[definition.modelEnv].trim() }
       : {})
   }));
+}
+
+function getLocalGuideReply(messages) {
+  const message = messages.at(-1).content.toLowerCase();
+  if (/\b(hi|hello|hey)\b/.test(message)) {
+    return 'Hi! I’m the offline Gaming Hub Guide. I can suggest a featured game or share general beginner tips. What do you enjoy playing?';
+  }
+  if (/\b(rac(e|ing)|kart|drive|cars?)\b/.test(message)) {
+    return 'Try Neon Kart. For faster, cleaner laps: learn braking points, enter tight turns wide, aim for a late apex, then accelerate as you straighten out. Practice a clean line before testing shortcuts. I don’t have the game’s exact track data, so this is general racing advice.';
+  }
+  if (/\b(puzzl(e|es)|brain|logic|orbital)\b/.test(message)) {
+    return 'Try Orbital Puzzles. Check the objective and move limits, scan for moves that open blocked areas or set up combos, and save scarce power-ups for a real bottleneck. Share the board or rules for a tailored walkthrough.';
+  }
+  if (/\b(strateg(y|ic)|tactic|battle|skyline)\b/.test(message)) {
+    return 'For Skyline Showdown, check the objective and turn limit, deal with the biggest threat, and choose a move that keeps a useful follow-up. Avoid committing every resource to one attack if it leaves an objective exposed. Share the map and available actions for specific tactics.';
+  }
+  if (/\b(western|frontier|redemption)\b/.test(message)) {
+    return 'Redemption Run is the featured western action game. Learn movement, aiming, and defense separately; use cover, save consumables for difficult encounters, and review what caused a failed attempt. Tell me the mission for focused advice.';
+  }
+  if (/\b(action|arcade|quick|pixel|patrol)\b/.test(message)) {
+    return 'Pixel Patrol suits a quick arcade-action session. Prioritize survival over risky bonuses, keep room to react, and learn enemy patterns. After a failed run, identify one mistake—positioning, timing, or target choice—and focus on it next time.';
+  }
+  if (/\b(build|loadout|weapon|gear|skill tree|character)\b/.test(message)) {
+    return 'For a strong build or loadout, start from the job you want it to do rather than chasing the highest-rated items. Pick one primary strength, cover its main weakness with a complementary option, and check whether your choices compete for the same resource or playstyle. Test the setup in a low-stakes encounter, change one component at a time, and compare consistency as well as peak damage. Builds depend heavily on the game, mode, patch, and available items; share those details and your preferred playstyle for a tailored recommendation.';
+  }
+  if (/\b(hardware|fps|lag|stutter\w*|crash\w*|performance|controller|headset|graphics)\b/.test(message)) {
+    return 'For gaming performance issues, change one thing at a time so you can identify the cause. Check whether the issue is network latency or local frame-rate stutter; close unnecessary background tasks; verify the game’s files and updates; and lower one demanding graphics setting to test its effect. For controller or headset problems, confirm the device is selected in the game and operating-system settings, then reconnect it. Tell me your platform, game, hardware, and what you observe for specific troubleshooting. Don’t share account passwords or private data.';
+  }
+  if (/\b(esports|ranked|competitive|rank|team|practice|aim)\b/.test(message)) {
+    return 'For competitive improvement, use a short review loop: choose one measurable skill, warm up with a focused drill, play a small set of matches, then review one decision you could change. Track process metrics such as positioning, objective timing, or communication—not only wins. Practice the weakest repeatable skill, take breaks when focus drops, and adapt to the current game version rather than relying on outdated tier lists. Share the game, role, and rank range for more specific coaching.';
+  }
+  if (/\b(recommend|suggest|which game|pick|choose|like|enjoy|genre)\b/.test(message)) {
+    return 'Here are the featured games by style: Pixel Patrol for arcade action, Neon Kart for racing, Orbital Puzzles for puzzles, Skyline Showdown for tactical strategy, and Redemption Run for western action. Tell me which genres you enjoy and I’ll narrow it down.';
+  }
+  if (/\b(tip|tips|beginner|strategy|advice|how do i|help)\b/.test(message)) {
+    return 'A useful improvement loop for most games is: set one specific goal for the session; observe the rules, enemy patterns, or map before committing resources; try one deliberate change; and review what happened afterward. Separate execution mistakes from planning mistakes so you know what to practice next. I can tailor this to Pixel Patrol, Neon Kart, Orbital Puzzles, Skyline Showdown, or Redemption Run if you name the game and describe the challenge.';
+  }
+  return 'I’m the offline Gaming Hub Guide, so I can help with the featured games and general beginner tips, but I don’t have a live AI model connected. Ask me to recommend a game, compare genres, or give tips for one of the featured games.';
 }
 
 function parseChatMessages(input) {
@@ -94,6 +139,7 @@ async function readProviderJson(response, provider) {
 async function requestProvider(providerId, messages, fetchProvider) {
   const provider = providerDefinitions[providerId];
   if (!provider) throw Object.assign(new Error('Select a supported AI provider.'), { status: 400 });
+  if (provider.local) return getLocalGuideReply(messages);
 
   const signal = AbortSignal.timeout(timeoutMs);
   let response;
@@ -112,7 +158,7 @@ async function requestProvider(providerId, messages, fetchProvider) {
         model,
         instructions: systemPrompt,
         input: messages,
-        max_output_tokens: 700,
+        max_output_tokens: maximumResponseTokens,
         store: false
       })
     });
@@ -144,7 +190,7 @@ async function requestProvider(providerId, messages, fetchProvider) {
           role: message.role === 'assistant' ? 'model' : 'user',
           parts: [{ text: message.content }]
         })),
-        generationConfig: { maxOutputTokens: 700, temperature: 0.7 }
+        generationConfig: { maxOutputTokens: maximumResponseTokens, temperature: 0.7 }
       })
     });
     data = await readProviderJson(response, provider.label);
@@ -173,7 +219,7 @@ async function requestProvider(providerId, messages, fetchProvider) {
         model,
         system: systemPrompt,
         messages,
-        max_tokens: 700,
+        max_tokens: maximumResponseTokens,
         temperature: 0.7
       })
     });
@@ -205,7 +251,7 @@ async function requestProvider(providerId, messages, fetchProvider) {
       model,
       stream: false,
       messages: [{ role: 'system', content: systemPrompt }, ...messages],
-      options: { num_predict: 700, temperature: 0.7 }
+      options: { num_predict: maximumResponseTokens, temperature: 0.7 }
     })
   });
   data = await readProviderJson(response, provider.label);
@@ -225,11 +271,6 @@ export function createAiService(options = {}) {
   });
 
   router.post('/chat', async (request, response) => {
-    const user = request.authUser;
-    if (!user) {
-      response.status(401).json({ error: 'Sign in to use Gaming Hub AI.' });
-      return;
-    }
     const provider = request.body?.provider;
     const messages = parseChatMessages(request.body?.messages);
     if (!providerDefinitions[provider] || !messages) {
@@ -240,19 +281,20 @@ export function createAiService(options = {}) {
     }
 
     const now = Date.now();
-    const recent = (requests.get(user.id) || []).filter((time) => now - time < requestWindowMs);
+    const clientKey = request.ip || request.socket.remoteAddress || 'unknown';
+    const recent = (requests.get(clientKey) || []).filter((time) => now - time < requestWindowMs);
     if (recent.length >= requestLimit) {
       response.set('Retry-After', String(Math.ceil(requestWindowMs / 1000)));
       response.status(429).json({ error: 'Gaming Hub AI message limit reached. Try again in 10 minutes.' });
       return;
     }
     recent.push(now);
-    requests.set(user.id, recent);
+    requests.set(clientKey, recent);
     if (requests.size > 5000) {
-      for (const [userId, timestamps] of requests) {
+      for (const [key, timestamps] of requests) {
         const active = timestamps.filter((time) => now - time < requestWindowMs);
-        if (active.length) requests.set(userId, active);
-        else requests.delete(userId);
+        if (active.length) requests.set(key, active);
+        else requests.delete(key);
       }
     }
 
