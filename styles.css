@@ -279,10 +279,9 @@ hr {
 
 #menu .nav-brand img {
   display: block;
-  width: 56px;
-  height: 56px;
+  width: 84px;
+  height: auto;
   object-fit: contain;
-  border-radius: 6px;
 }
 
 #menu .nav-list {
@@ -1456,15 +1455,46 @@ header .intro-text {
   padding-bottom: 200px;
   text-align: center;
 }
+@keyframes hero-enter {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.intro-text > * {
+  animation: hero-enter 700ms both;
+}
+.intro-text > :nth-child(2) {
+  animation-delay: 100ms;
+}
+.intro-text > :nth-child(3) {
+  animation-delay: 200ms;
+}
+.intro-text > :nth-child(4) {
+  animation-delay: 300ms;
+}
+.intro-text > :nth-child(5) {
+  animation-delay: 400ms;
+}
 /* Features Section */
 #features {
   padding: 100px 0;
   background: #f6f6f6;
 }
+#features .col-3 {
+  transition: transform 220ms ease;
+}
+#features .col-3:hover {
+  transform: translateY(-6px);
+}
 #features i.fa {
   font-size: 38px;
   margin-bottom: 20px;
-  transition: all 0.5s;
+  transition: transform 220ms ease, box-shadow 220ms ease;
   color: #fff;
   width: 100px;
   height: 100px;
@@ -1472,6 +1502,18 @@ header .intro-text {
   border-radius: 50%;
   background: linear-gradient(to right, #6372ff 0%, #5ca9fb 100%);
   box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.05);
+}
+#features .col-3:hover i.fa {
+  transform: scale(1.06) rotate(-4deg);
+  box-shadow: 12px 14px 18px rgba(0, 0, 0, 0.12);
+}
+@media (prefers-reduced-motion: reduce) {
+  .intro-text > *,
+  #features .col-3,
+  #features i.fa {
+    animation: none;
+    transition: none;
+  }
 }
 /* About Section */
 #about {
@@ -2398,6 +2440,10 @@ label {
 
   #menu .nav-inner {
     position: relative;
+  }
+
+  #menu .nav-brand img {
+    width: 68px;
   }
 
   #menu .nav-links {
